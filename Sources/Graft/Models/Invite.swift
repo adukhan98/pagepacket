@@ -13,7 +13,7 @@ enum InviteRole: String, CaseIterable, Identifiable, Codable {
 }
 
 struct Invite: Identifiable, Hashable, Codable {
-    let id = UUID()
+    var id = UUID()
     var email: String
     var role: InviteRole
     var createdAt: Date = Date()

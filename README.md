@@ -1,10 +1,13 @@
 # Graft
 
+![Graft logo](Assets/Brand/graft-logo-lockup.png)
+
 Graft is a premium local-first Markdown editor for macOS. It keeps Markdown files as plain files on disk so people and coding agents can work in the same workspace.
 
 ## What is implemented
 
 - SwiftUI macOS app with native sidebar, toolbar, inspector, and settings.
+- Custom Graft app icon and logo assets in `Assets/Brand/`.
 - Edit, Preview, and Split modes for Markdown files.
 - Folder-based workspace loading from real `.md` files.
 - Markdown preview for headings, paragraphs, lists, tasks, quotes, tables, code fences, links, horizontal rules, and local images.

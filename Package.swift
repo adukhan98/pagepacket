@@ -13,7 +13,10 @@ let package = Package(
     targets: [
         .executableTarget(
             name: "Graft",
-            path: "Sources/Graft"
+            path: "Sources/Graft",
+            resources: [
+                .copy("Resources")
+            ]
         ),
         .executableTarget(
             name: "GraftCLI",
