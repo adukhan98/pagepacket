@@ -16,9 +16,9 @@ struct EditorContainerView: View {
                 case .split:
                     HSplitView {
                         MarkdownEditorView()
-                            .frame(minWidth: 360)
+                            .frame(minWidth: 320)
                         MarkdownPreviewView()
-                            .frame(minWidth: 360)
+                            .frame(minWidth: 320)
                     }
                 }
             }
@@ -46,9 +46,10 @@ private struct EmptyWorkspaceView: View {
             }
             Text("Open a Markdown workspace")
                 .font(.system(size: 36, weight: .medium, design: .rounded))
+                .foregroundStyle(GraftTheme.ink)
             Text("Graft keeps your Markdown as plain files so people, Codex, Claude Code, Cursor, Hermes, and shell tools can edit the same workspace.")
                 .font(.title3)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(GraftTheme.body)
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: 620)
             Button {

@@ -55,16 +55,25 @@ struct MarkdownRenderer {
             } else if trimmed.hasPrefix(">") {
                 blocks.append(.quote(String(trimmed.dropFirst()).trimmingCharacters(in: .whitespaces)))
             } else if trimmed.hasPrefix("- [ ] ") || trimmed.hasPrefix("* [ ] ") {
-                blocks.append(.task(done: false, text: String(trimmed.dropFirst(6))))
+                blocks.append(.task(done: false, depth: listDepth(for: line), text: String(trimmed.dropFirst(6))))
             } else if trimmed.hasPrefix("- [x] ") || trimmed.hasPrefix("* [x] ") || trimmed.hasPrefix("- [X] ") || trimmed.hasPrefix("* [X] ") {
-                blocks.append(.task(done: true, text: String(trimmed.dropFirst(6))))
+                blocks.append(.task(done: true, depth: listDepth(for: line), text: String(trimmed.dropFirst(6))))
             } else if trimmed.hasPrefix("- ") || trimmed.hasPrefix("* ") {
-                blocks.append(.unorderedItem(String(trimmed.dropFirst(2))))
-            } else if isOrderedItem(trimmed) {
-                let text = trimmed.split(separator: ".", maxSplits: 1).dropFirst().joined(separator: ".").trimmingCharacters(in: .whitespaces)
-                blocks.append(.orderedItem(text))
+                blocks.append(.unorderedItem(depth: listDepth(for: line), text: String(trimmed.dropFirst(2))))
+            } else if let ordered = orderedItem(trimmed) {
+                blocks.append(.orderedItem(number: ordered.number, depth: listDepth(for: line), text: ordered.text))
             } else {
-                blocks.append(.paragraph(trimmed))
+                var paragraphLines = [trimmed]
+                index += 1
+                while index < lines.count {
+                    let nextLine = lines[index]
+                    let next = nextLine.trimmingCharacters(in: .whitespaces)
+                    guard !next.isEmpty, !startsBlock(next, original: nextLine) else { break }
+                    paragraphLines.append(next)
+                    index += 1
+                }
+                blocks.append(.paragraph(paragraphLines.joined(separator: " ")))
+                continue
             }
 
             index += 1
@@ -84,13 +93,66 @@ struct MarkdownRenderer {
         let alt = String(line[line.index(line.startIndex, offsetBy: 2)..<closeAlt])
         let pathStart = line.index(closeAlt, offsetBy: 2)
         let pathEnd = line.index(before: line.endIndex)
-        return .image(alt: alt, path: String(line[pathStart..<pathEnd]))
+        let rawDestination = String(line[pathStart..<pathEnd])
+        let path = normalizedImagePath(rawDestination)
+        guard !path.isEmpty else { return nil }
+        return .image(alt: alt, path: path)
     }
 
-    private func isOrderedItem(_ line: String) -> Bool {
-        guard let dot = line.firstIndex(of: ".") else { return false }
+    private func normalizedImagePath(_ rawDestination: String) -> String {
+        var destination = rawDestination.trimmingCharacters(in: .whitespacesAndNewlines)
+        if let quoteRange = destination.range(of: #"[\s]+"[^"]*"\s*$"#, options: .regularExpression) {
+            destination.removeSubrange(quoteRange)
+        }
+        if let titleRange = destination.range(of: #"\s+'[^']*'\s*$"#, options: .regularExpression) {
+            destination.removeSubrange(titleRange)
+        }
+        destination = destination.trimmingCharacters(in: .whitespacesAndNewlines)
+        if destination.hasPrefix("<"), destination.hasSuffix(">") {
+            destination.removeFirst()
+            destination.removeLast()
+        }
+        if destination.hasPrefix("./") {
+            destination.removeFirst(2)
+        }
+        return destination.removingPercentEncoding ?? destination
+    }
+
+    private func orderedItem(_ line: String) -> (number: Int, text: String)? {
+        guard let dot = line.firstIndex(of: ".") else { return nil }
         let prefix = line[..<dot]
-        return !prefix.isEmpty && prefix.allSatisfy(\.isNumber)
+        guard !prefix.isEmpty,
+              prefix.allSatisfy(\.isNumber),
+              let number = Int(prefix) else {
+            return nil
+        }
+        let text = line[line.index(after: dot)...].trimmingCharacters(in: .whitespaces)
+        guard !text.isEmpty else { return nil }
+        return (number, text)
+    }
+
+    private func startsBlock(_ trimmed: String, original: String) -> Bool {
+        trimmed.hasPrefix("```")
+            || trimmed.hasPrefix("#")
+            || trimmed.hasPrefix(">")
+            || trimmed.hasPrefix("- ")
+            || trimmed.hasPrefix("* ")
+            || trimmed.hasPrefix("- [ ] ")
+            || trimmed.hasPrefix("* [ ] ")
+            || trimmed.hasPrefix("- [x] ")
+            || trimmed.hasPrefix("* [x] ")
+            || trimmed.hasPrefix("- [X] ")
+            || trimmed.hasPrefix("* [X] ")
+            || orderedItem(trimmed) != nil
+            || parseImage(trimmed) != nil
+            || trimmed == "---"
+            || trimmed == "***"
+            || isTableRow(trimmed)
+    }
+
+    private func listDepth(for line: String) -> Int {
+        let leadingSpaces = line.prefix { $0 == " " }.count
+        return min(leadingSpaces / 2, 4)
     }
 
     private func isTableRow(_ line: String) -> Bool {

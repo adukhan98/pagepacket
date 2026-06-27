@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <filter id="grain" x="-20%" y="-20%" width="140%" height="140%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.86" numOctaves="4" seed="17"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 0.08 0 0 0 0 0.10 0 0 0 0 0.07 0 0 0 0.18 0"/>
+    </filter>
+    <filter id="softInk" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="0.45"/>
+    </filter>
+    <radialGradient id="mintBloom" cx="69%" cy="38%" r="58%">
+      <stop offset="0" stop-color="#dff7e6" stop-opacity="0.94"/>
+      <stop offset="0.36" stop-color="#cdf0d5" stop-opacity="0.46"/>
+      <stop offset="1" stop-color="#f4efdf" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="paperShade" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#fffbef"/>
+      <stop offset="0.52" stop-color="#f4efdf"/>
+      <stop offset="1" stop-color="#eadfc8"/>
+    </linearGradient>
+  </defs>
+  <rect width="1920" height="1080" fill="url(#paperShade)"/>
+  <rect width="1920" height="1080" fill="url(#mintBloom)"/>
+  <g opacity="0.34" stroke="#08100a" stroke-width="1">
+    <path d="M-40 184 C284 170 502 208 790 190 C1130 168 1326 142 1960 172" fill="none"/>
+    <path d="M-64 302 C252 330 472 292 804 318 C1110 342 1410 298 1988 330" fill="none"/>
+    <path d="M-52 450 C318 422 608 486 928 446 C1242 406 1488 454 1990 418" fill="none"/>
+    <path d="M-38 626 C354 604 570 648 884 626 C1246 600 1452 596 1964 638" fill="none"/>
+    <path d="M-80 796 C244 764 570 812 910 790 C1242 768 1514 740 2000 786" fill="none"/>
+  </g>
+  <g opacity="0.13" fill="#08100a" font-family="IBM Plex Mono, monospace" font-weight="700">
+    <text x="156" y="246" font-size="88">#</text>
+    <text x="328" y="404" font-size="54">.md</text>
+    <text x="1152" y="230" font-size="76">[]</text>
+    <text x="1350" y="514" font-size="106">*</text>
+    <text x="522" y="732" font-size="74">```</text>
+    <text x="1500" y="818" font-size="58">git</text>
+  </g>
+  <g opacity="0.38" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M162 820 C368 714 506 744 676 586 C850 424 1074 454 1218 298 C1342 164 1512 180 1712 108" stroke="#048c3d" stroke-width="16"/>
+    <path d="M162 820 C368 714 506 744 676 586 C850 424 1074 454 1218 298 C1342 164 1512 180 1712 108" stroke="#fffbef" stroke-width="5" opacity="0.78"/>
+    <path d="M230 880 C438 774 604 798 776 636 C948 472 1094 544 1280 392 C1458 248 1610 294 1806 238" stroke="#08100a" stroke-width="2.5" opacity="0.52"/>
+  </g>
+  <g opacity="0.28" stroke="#08100a" stroke-width="1.2" fill="none" filter="url(#softInk)">
+    <path d="M212 118 C258 142 278 166 312 206"/>
+    <path d="M766 150 C792 184 846 204 918 214"/>
+    <path d="M1110 846 C1190 806 1264 790 1342 802"/>
+    <path d="M1464 642 C1528 672 1588 672 1640 650"/>
+  </g>
+  <rect width="1920" height="1080" filter="url(#grain)" opacity="0.76"/>
+</svg>

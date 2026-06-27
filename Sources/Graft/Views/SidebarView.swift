@@ -11,56 +11,116 @@ struct SidebarView: View {
                     .foregroundStyle(GraftTheme.ink)
                 Text("Local-first Markdown for humans and agents")
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(GraftTheme.muted)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(16)
+            .padding(.leading, 64)
+            .padding(.trailing, 16)
+            .padding(.top, 42)
+            .padding(.bottom, 16)
 
-            List(selection: Binding(
-                get: { workspace.selectedFile },
-                set: { file in
-                    if let file {
-                        workspace.load(file: file)
-                    }
-                }
-            )) {
-                Section("Markdown") {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 16) {
+                    SidebarSectionTitle("Markdown")
                     ForEach(workspace.files) { file in
-                        HStack(spacing: 8) {
-                            Image(systemName: "doc.text")
-                                .foregroundStyle(GraftTheme.teal)
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(file.title)
-                                    .lineLimit(1)
-                                Text(file.relativePath)
-                                    .font(.caption2)
-                                    .foregroundStyle(.secondary)
-                                    .lineLimit(1)
-                            }
+                        SidebarFileRow(
+                            file: file,
+                            isSelected: workspace.selectedFile == file
+                        ) {
+                            workspace.load(file: file)
                         }
-                        .tag(file)
                     }
-                }
 
-                Section("Agents") {
-                    ForEach(workspace.agents) { agent in
-                        HStack(spacing: 8) {
-                            Circle()
-                                .strokeBorder(GraftTheme.accent(agent.accentName), lineWidth: 2)
-                                .background(Circle().fill(GraftTheme.accent(agent.accentName).opacity(0.16)))
-                                .frame(width: 18, height: 18)
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(agent.name)
-                                Text(agent.status)
-                                    .font(.caption2)
-                                    .foregroundStyle(.secondary)
-                            }
+                    if !workspace.agents.isEmpty {
+                        SidebarSectionTitle("Activity")
+                        ForEach(workspace.agents) { agent in
+                            SidebarActivityRow(agent: agent)
                         }
                     }
                 }
+                .padding(.leading, 56)
+                .padding(.trailing, 10)
+                .padding(.bottom, 16)
             }
-            .listStyle(.sidebar)
         }
-        .background(.thinMaterial)
+        .graftPanelBackground()
+        .frame(minWidth: 280, idealWidth: 300, maxWidth: 340)
+        .overlay(alignment: .trailing) {
+            Rectangle()
+                .fill(GraftTheme.line)
+                .frame(width: 1)
+        }
+    }
+}
+
+private struct SidebarSectionTitle: View {
+    let title: String
+
+    init(_ title: String) {
+        self.title = title
+    }
+
+    var body: some View {
+        Text(title)
+            .font(.caption.weight(.semibold))
+            .foregroundStyle(GraftTheme.ink)
+            .textCase(.uppercase)
+            .padding(.horizontal, 8)
+    }
+}
+
+private struct SidebarFileRow: View {
+    let file: MarkdownFile
+    let isSelected: Bool
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 8) {
+                Image(systemName: "doc.text")
+                    .foregroundStyle(isSelected ? Color.white : GraftTheme.teal)
+                    .frame(width: 18)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(file.title)
+                        .font(.callout.weight(.semibold))
+                        .lineLimit(1)
+                        .foregroundStyle(isSelected ? Color.white : GraftTheme.ink)
+                    Text(file.relativePath)
+                        .font(.caption2)
+                        .foregroundStyle(isSelected ? Color.white.opacity(0.78) : GraftTheme.muted)
+                        .lineLimit(1)
+                }
+                Spacer()
+            }
+            .padding(.horizontal, 10)
+            .padding(.vertical, 8)
+            .background(isSelected ? GraftTheme.selectedFill : Color.clear)
+            .clipShape(RoundedRectangle(cornerRadius: 7, style: .continuous))
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+private struct SidebarActivityRow: View {
+    let agent: AgentActivity
+
+    var body: some View {
+        HStack(spacing: 8) {
+            Circle()
+                .fill(GraftTheme.accent(agent.accentName))
+                .frame(width: 9, height: 9)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(agent.name)
+                    .foregroundStyle(GraftTheme.ink)
+                Text(agent.status)
+                    .font(.caption2)
+                    .foregroundStyle(GraftTheme.muted)
+            }
+            Spacer()
+        }
+        .padding(.horizontal, 10)
+        .padding(.vertical, 8)
+        .background(GraftTheme.surfaceCard)
+        .clipShape(RoundedRectangle(cornerRadius: 7, style: .continuous))
     }
 }

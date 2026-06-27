@@ -1,0 +1,179 @@
+- generic [ref=e2]:
+  - banner:
+    - navigation "Primary" [ref=e3]:
+      - link "Graft home" [ref=e4] [cursor=pointer]:
+        - /url: "#top"
+        - generic [ref=e5]: Graft
+      - generic "Page sections" [ref=e6]:
+        - link "Workflow" [ref=e7] [cursor=pointer]:
+          - /url: "#workflow"
+        - link "Files" [ref=e8] [cursor=pointer]:
+          - /url: "#files"
+        - link "Agents" [ref=e9] [cursor=pointer]:
+          - /url: "#agents"
+      - link "Waitlist" [ref=e10] [cursor=pointer]:
+        - /url: "#waitlist"
+  - main [ref=e11]:
+    - generic [ref=e12]:
+      - generic [ref=e13]:
+        - heading "Markdown for human and agent edits." [level=1] [ref=e14]
+        - paragraph [ref=e15]: A native Mac editor for plain files, local snapshots, and coding agents working in the same workspace.
+        - generic [ref=e16]:
+          - generic [ref=e17]: Join the waitlist
+          - generic [ref=e18]:
+            - textbox "Join the waitlist" [ref=e19]:
+              - /placeholder: name@company.com
+            - button "Request access" [ref=e20] [cursor=pointer]
+          - paragraph [ref=e21]:
+            - generic [ref=e22]: "*"
+            - text: No cloud account required for the local-first v1.
+      - figure "Graft editor workspace preview" [ref=e23]:
+        - generic [ref=e24]:
+          - generic [ref=e30]: README.md - Graft
+          - generic [ref=e31]:
+            - complementary [ref=e32]:
+              - generic [ref=e33]:
+                - generic [ref=e34]: Files
+                - generic [ref=e35]: /
+              - generic [ref=e36]: Filter files...
+              - generic [ref=e37]:
+                - strong [ref=e38]: Acme-Project
+                - generic [ref=e41]: README.md
+                - generic [ref=e44]: Roadmap.md
+                - generic [ref=e47]: CHANGELOG.md
+                - generic [ref=e50]: architecture.md
+                - generic [ref=e53]: decisions.md
+                - generic [ref=e56]: release.sh
+              - generic [ref=e57]:
+                - generic [ref=e58]: +
+                - generic [ref=e59]: folder
+            - region "Markdown split editor and preview" [ref=e60]:
+              - generic [ref=e61]:
+                - generic [ref=e62]: README.md
+                - generic [ref=e63]: Preview
+              - generic [ref=e64]:
+                - generic "Markdown source" [ref=e65]: "# Acme Project A local-first app that demonstrates collaborative work between humans and coding agents. ## Goals - Pure Markdown - Local snapshots - Agent-friendly workflow - macOS native experience ```bash graft-cli snapshot vault README.md graft-cli apply vault README.md --author codex ```"
+                - article [ref=e66]:
+                  - heading "Acme Project" [level=2] [ref=e67]
+                  - paragraph [ref=e68]: A local-first app that demonstrates collaborative work between humans and coding agents.
+                  - heading "Goals" [level=3] [ref=e69]
+                  - list [ref=e70]:
+                    - listitem [ref=e71]: Pure Markdown
+                    - listitem [ref=e72]: Local snapshots
+                    - listitem [ref=e73]: Agent-friendly workflow
+                  - generic [ref=e74]: .graft/history
+            - complementary [ref=e75]:
+              - generic [ref=e76]:
+                - generic [ref=e77]: History
+                - generic [ref=e78]: Share
+                - generic [ref=e79]: Agents
+              - heading "Today" [level=3] [ref=e80]
+              - generic [ref=e83]:
+                - strong [ref=e84]: Agent (Claude Code)
+                - generic [ref=e85]: 10:42 AM - README.md
+              - generic [ref=e88]:
+                - strong [ref=e89]: You
+                - generic [ref=e90]: 9:17 AM - README.md
+              - generic [ref=e93]:
+                - strong [ref=e94]: Agent (Codex)
+                - generic [ref=e95]: 8:05 AM - README.md
+              - generic [ref=e98]:
+                - strong [ref=e99]: Agent (Cursor)
+                - generic [ref=e100]: Yesterday - release.sh
+              - button "Show all history" [ref=e101] [cursor=pointer]
+          - generic [ref=e102]:
+            - generic [ref=e103]: README.md
+            - generic [ref=e104]: .graft local-first
+            - generic [ref=e106]: Markdown
+    - generic [ref=e107]:
+      - generic [ref=e108]:
+        - heading "Open a folder. Let an agent edit. Restore with confidence." [level=2] [ref=e109]
+        - paragraph [ref=e110]: The core loop is local and visible. Markdown stays in the folder you already use; Graft adds a safety layer around the edits.
+      - generic [ref=e111]:
+        - article [ref=e112]:
+          - generic [ref=e113]: "1"
+          - generic "Local folder" [ref=e114]:
+            - strong [ref=e116]: Acme-Project
+            - generic [ref=e117]: ~/Projects/Acme-Project
+          - heading "Open a folder" [level=3] [ref=e118]
+          - paragraph [ref=e119]: Point Graft at any local Markdown directory. The app indexes files, keeps the source readable, and starts tracking local changes.
+        - article [ref=e120]:
+          - generic [ref=e121]: "2"
+          - generic "Agent terminal commands" [ref=e122]:
+            - generic [ref=e123]: $ codex
+            - generic [ref=e124]: $ cursor
+            - generic [ref=e125]: $ ./scripts/release.sh
+          - heading "Let an agent edit" [level=3] [ref=e126]
+          - paragraph [ref=e127]: Codex, Claude Code, Cursor, and shell scripts can edit the same .md files. Graft watches disk and shows agent activity beside your writing.
+        - article [ref=e128]:
+          - generic [ref=e129]: "3"
+          - generic "Snapshot diff" [ref=e130]:
+            - strong [ref=e131]: Agent (Claude Code)
+            - generic [ref=e132]: "- old line"
+            - generic [ref=e133]: + improved line
+          - heading "Restore with confidence" [level=3] [ref=e134]
+          - paragraph [ref=e135]: Snapshot before broad edits, review history, and restore any version without moving your work into a cloud database.
+    - generic [ref=e136]:
+      - generic [ref=e137]:
+        - heading "What stays plain and local." [level=2] [ref=e138]
+        - paragraph [ref=e139]: Graft is useful before a cloud account exists. The v1 stores your writing, history, images, and invite intent beside the files.
+      - table "Graft local file model" [ref=e140]:
+        - row "Item What it is Where it lives Why it matters" [ref=e141]:
+          - columnheader "Item" [ref=e142]
+          - columnheader "What it is" [ref=e143]
+          - columnheader "Where it lives" [ref=e144]
+          - columnheader "Why it matters" [ref=e145]
+        - row ".md files Notes, docs, specs, plans, and prompts. Your folder Plain Markdown stays readable anywhere." [ref=e146]:
+          - cell ".md files" [ref=e147]:
+            - generic [ref=e148]: M
+            - strong [ref=e149]: .md files
+          - cell "Notes, docs, specs, plans, and prompts." [ref=e150]
+          - cell "Your folder" [ref=e151]
+          - cell "Plain Markdown stays readable anywhere." [ref=e152]
+        - row ".graft/history Local snapshots of file changes over time. .graft/history Inspect, diff, and restore without any cloud." [ref=e153]:
+          - cell ".graft/history" [ref=e154]:
+            - generic [ref=e155]: H
+            - strong [ref=e156]: .graft/history
+          - cell "Local snapshots of file changes over time." [ref=e157]
+          - cell ".graft/history" [ref=e158]
+          - cell "Inspect, diff, and restore without any cloud." [ref=e159]
+        - row "CLI workflow Agent-safe status, snapshot, apply, and history commands. Your terminal Works with Codex, Claude Code, Cursor, and scripts." [ref=e160]:
+          - cell "CLI workflow" [ref=e161]:
+            - generic [ref=e162]: $
+            - strong [ref=e163]: CLI workflow
+          - cell "Agent-safe status, snapshot, apply, and history commands." [ref=e164]
+          - cell "Your terminal" [ref=e165]
+          - cell "Works with Codex, Claude Code, Cursor, and scripts." [ref=e166]
+        - row "Image assets Diagrams, screenshots, and other local files. Your folder Stored locally and referenced in Markdown." [ref=e167]:
+          - cell "Image assets" [ref=e168]:
+            - generic [ref=e169]: I
+            - strong [ref=e170]: Image assets
+          - cell "Diagrams, screenshots, and other local files." [ref=e171]
+          - cell "Your folder" [ref=e172]
+          - cell "Stored locally and referenced in Markdown." [ref=e173]
+        - row "Invite intent Email roles saved as local workspace metadata. .graft/shares Honest v1 sharing without pretending a backend exists." [ref=e174]:
+          - cell "Invite intent" [ref=e175]:
+            - generic [ref=e176]: "@"
+            - strong [ref=e177]: Invite intent
+          - cell "Email roles saved as local workspace metadata." [ref=e178]
+          - cell ".graft/shares" [ref=e179]
+          - cell "Honest v1 sharing without pretending a backend exists." [ref=e180]
+    - generic [ref=e183]:
+      - heading "Request early access to Graft." [level=2] [ref=e184]
+      - paragraph [ref=e185]: Be first to try the local-first Markdown editor for macOS.
+      - generic [ref=e186]:
+        - generic [ref=e187]: Join the waitlist
+        - generic [ref=e188]:
+          - textbox "Join the waitlist" [ref=e189]:
+            - /placeholder: name@company.com
+          - button "Request access" [ref=e190] [cursor=pointer]
+        - paragraph [ref=e191]:
+          - generic [ref=e192]: "*"
+          - text: No cloud account required for the local-first v1.
+  - contentinfo [ref=e194]:
+    - paragraph [ref=e195]: Plain Markdown, with a safety layer for agents.
+    - generic [ref=e196]:
+      - link "Graft" [ref=e197] [cursor=pointer]:
+        - /url: "#top"
+        - generic [ref=e198]: Graft
+      - generic [ref=e199]: Local-first macOS editor - waitlist preview

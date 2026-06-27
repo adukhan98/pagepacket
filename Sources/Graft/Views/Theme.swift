@@ -13,6 +13,9 @@ enum GraftTheme {
     static let peach = Color(hex: 0xFFB084)
     static let ochre = Color(hex: 0xE8B94A)
     static let mint = Color(hex: 0xA4D4C5)
+    static let line = Color.black.opacity(0.10)
+    static let controlFill = Color.white.opacity(0.62)
+    static let selectedFill = Color(hex: 0x1A3A3A)
 
     static func accent(_ name: String) -> Color {
         switch name {
@@ -43,9 +46,9 @@ struct CardBackground: ViewModifier {
         content
             .padding(14)
             .background(GraftTheme.surfaceCard)
-            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
             .overlay {
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                RoundedRectangle(cornerRadius: 8, style: .continuous)
                     .stroke(.black.opacity(0.08), lineWidth: 1)
             }
     }
@@ -54,5 +57,54 @@ struct CardBackground: ViewModifier {
 extension View {
     func graftCard() -> some View {
         modifier(CardBackground())
+    }
+
+    func graftPanelBackground() -> some View {
+        background(GraftTheme.surfaceSoft)
+            .foregroundStyle(GraftTheme.body)
+    }
+
+    func graftReadableField() -> some View {
+        padding(.horizontal, 10)
+            .padding(.vertical, 8)
+            .background(GraftTheme.controlFill)
+            .clipShape(RoundedRectangle(cornerRadius: 7, style: .continuous))
+            .overlay {
+                RoundedRectangle(cornerRadius: 7, style: .continuous)
+                    .stroke(GraftTheme.line, lineWidth: 1)
+            }
+    }
+}
+
+struct GraftSegmentedControl<Selection: Hashable>: View {
+    let items: [(Selection, String)]
+    @Binding var selection: Selection
+
+    var body: some View {
+        HStack(spacing: 2) {
+            ForEach(items, id: \.0) { value, title in
+                Button {
+                    selection = value
+                } label: {
+                    Text(title)
+                        .font(.caption.weight(.semibold))
+                        .lineLimit(1)
+                        .frame(maxWidth: .infinity)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 7)
+                        .foregroundStyle(selection == value ? Color.white : GraftTheme.ink)
+                        .background(selection == value ? GraftTheme.selectedFill : Color.clear)
+                        .clipShape(Capsule())
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(3)
+        .background(GraftTheme.surfaceCard)
+        .clipShape(Capsule())
+        .overlay {
+            Capsule()
+                .stroke(GraftTheme.line, lineWidth: 1)
+        }
     }
 }

@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <filter id="grain" x="-20%" y="-20%" width="140%" height="140%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="4" seed="53"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 0.07 0 0 0 0 0.08 0 0 0 0 0.06 0 0 0 0.18 0"/>
+    </filter>
+    <linearGradient id="paper" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#fffbef"/>
+      <stop offset="0.54" stop-color="#f4efdf"/>
+      <stop offset="1" stop-color="#e7dec9"/>
+    </linearGradient>
+    <radialGradient id="halo" cx="42%" cy="52%" r="54%">
+      <stop offset="0" stop-color="#dff7e6" stop-opacity="0.92"/>
+      <stop offset="0.42" stop-color="#f1cdb9" stop-opacity="0.32"/>
+      <stop offset="1" stop-color="#f4efdf" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1920" height="1080" fill="url(#paper)"/>
+  <rect width="1920" height="1080" fill="url(#halo)"/>
+  <g transform="translate(820 562) rotate(-10)" fill="none" stroke-linecap="round">
+    <ellipse rx="226" ry="96" stroke="#08100a" stroke-width="2.5" opacity="0.52"/>
+    <ellipse rx="348" ry="150" stroke="#048c3d" stroke-width="10" opacity="0.34"/>
+    <ellipse rx="478" ry="210" stroke="#08100a" stroke-width="2" opacity="0.36"/>
+    <ellipse rx="626" ry="280" stroke="#048c3d" stroke-width="4" opacity="0.22"/>
+    <ellipse rx="790" ry="356" stroke="#08100a" stroke-width="1.6" opacity="0.26"/>
+    <ellipse rx="954" ry="424" stroke="#08100a" stroke-width="1.2" opacity="0.18"/>
+  </g>
+  <g opacity="0.35" fill="none" stroke="#08100a" stroke-width="2" stroke-linecap="round">
+    <path d="M170 810 C350 720 538 760 700 662 C866 562 1032 600 1234 492 C1398 404 1574 438 1740 362"/>
+    <path d="M142 372 C356 452 538 402 746 488 C944 570 1112 516 1320 608 C1512 694 1684 628 1828 718"/>
+  </g>
+  <g opacity="0.22" fill="#08100a" font-family="IBM Plex Mono, monospace" font-weight="700">
+    <text x="242" y="256" font-size="44">01</text>
+    <text x="1384" y="288" font-size="44">02</text>
+    <text x="1506" y="854" font-size="44">03</text>
+    <text x="440" y="884" font-size="44">04</text>
+  </g>
+  <g fill="#048c3d" opacity="0.72">
+    <circle cx="608" cy="646" r="11"/>
+    <circle cx="1038" cy="598" r="12"/>
+    <circle cx="1368" cy="438" r="10"/>
+    <circle cx="1700" cy="378" r="9"/>
+  </g>
+  <rect width="1920" height="1080" filter="url(#grain)" opacity="0.76"/>
+</svg>

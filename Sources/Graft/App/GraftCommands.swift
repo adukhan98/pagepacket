@@ -24,7 +24,7 @@ struct GraftCommands: Commands {
         CommandMenu("View") {
             Picker("Editor Mode", selection: Binding(
                 get: { workspace.editorMode },
-                set: { workspace.editorMode = $0 }
+                set: { workspace.setEditorMode($0) }
             )) {
                 ForEach(EditorMode.allCases) { mode in
                     Text(mode.title).tag(mode)
@@ -33,7 +33,7 @@ struct GraftCommands: Commands {
             .pickerStyle(.inline)
 
             Button("Toggle Inspector") {
-                workspace.isInspectorVisible.toggle()
+                workspace.toggleInspector()
             }
             .keyboardShortcut("i", modifiers: [.command, .option])
         }
