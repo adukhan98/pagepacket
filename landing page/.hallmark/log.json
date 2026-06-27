@@ -1,0 +1,34 @@
+[
+  {
+    "date": "2026-06-20",
+    "macrostructure": "Narrative Workflow",
+    "theme": "custom",
+    "theme_axes": "light / geometric-sans / chromatic-green",
+    "vibe": "living sketch paper, ink, leaf green",
+    "enrichment": "Tier-B hand-built SVG sketch board with GSAP-drawn paths, Lenis smooth scroll, and typewriter hero",
+    "brief": "Graft landing page motion pass as a living notebook waitlist page"
+  },
+  {
+    "date": "2026-06-20",
+    "macrostructure": "Map / Diagram",
+    "theme": "custom",
+    "theme_axes": "light / geometric-sans / chromatic-green",
+    "vibe": "sketch paper, ink, leaf green",
+    "enrichment": "Tier-B hand-built SVG sketch map and CSS paper texture",
+    "brief": "Graft landing page redesigned as a conceptual sketch waitlist page"
+  },
+  {
+    "date": "2026-06-16",
+    "macrostructure": "Controlled Cinematic Story",
+    "theme": "warm coastal technical editorial",
+    "enrichment": "supplied day and night full-bleed images with restrained GSAP and tokenized WebGL atmosphere",
+    "brief": "Graft landing page Hallmark cleanup for hierarchy, alignment, typography, and motion restraint"
+  },
+  {
+    "date": "2026-06-16",
+    "macrostructure": "Pinned Cinematic WebGL Story",
+    "theme": "light coastal editorial with one night-image chapter",
+    "enrichment": "supplied full-bleed day and night images with GSAP, Lenis, and Three.js atmosphere",
+    "brief": "Graft landing page rebuilt as an unboxed motion-heavy waitlist experience"
+  }
+]

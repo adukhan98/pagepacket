@@ -6,11 +6,14 @@ struct ContentView: View {
     var body: some View {
         NavigationSplitView {
             SidebarView()
-                .navigationSplitViewColumnWidth(min: 220, ideal: 280)
+                .navigationSplitViewColumnWidth(min: 280, ideal: 300, max: 340)
         } detail: {
             VStack(spacing: 0) {
                 ExternalChangeBanner()
-                EditorContainerView()
+                HStack(spacing: 0) {
+                    EditorContainerView()
+                    ReviewRailView()
+                }
                 StatusStrip()
             }
             .background(GraftTheme.canvas)
@@ -29,12 +32,13 @@ struct ContentView: View {
             }
 
             ToolbarItemGroup(placement: .principal) {
-                Picker("Mode", selection: $workspace.editorMode) {
-                    ForEach(EditorMode.allCases) { mode in
-                        Text(mode.title).tag(mode)
-                    }
-                }
-                .pickerStyle(.segmented)
+                GraftSegmentedControl(
+                    items: EditorMode.allCases.map { ($0, $0.title) },
+                    selection: Binding(
+                        get: { workspace.editorMode },
+                        set: { workspace.setEditorMode($0) }
+                    )
+                )
                 .frame(width: 220)
             }
 
@@ -44,24 +48,28 @@ struct ContentView: View {
                 } label: {
                     Label("Save", systemImage: "square.and.arrow.down")
                 }
+                .help("Save")
 
                 Button {
                     workspace.snapshotCurrentDocument(reason: "Manual checkpoint", source: "Graft")
                 } label: {
                     Label("Snapshot", systemImage: "clock.arrow.circlepath")
                 }
+                .help("Create checkpoint")
 
                 Button {
                     workspace.insertImageFromPanel()
                 } label: {
                     Label("Insert Image", systemImage: "photo")
                 }
+                .help("Insert image")
 
                 Button {
-                    workspace.isInspectorVisible.toggle()
+                    workspace.toggleInspector()
                 } label: {
                     Label("Inspector", systemImage: "slider.horizontal.3")
                 }
+                .help("Toggle inspector")
             }
         }
     }
@@ -77,12 +85,15 @@ private struct ExternalChangeBanner: View {
                     .foregroundStyle(GraftTheme.teal)
                 Text(banner)
                     .font(.callout)
+                    .foregroundStyle(GraftTheme.ink)
                 Spacer()
-                Button("Use Disk") {
-                    workspace.reloadSelectedFromDisk()
-                }
-                Button("Keep Mine") {
-                    workspace.keepLocalVersion()
+                if let changeSet = workspace.pendingChangeSets.first(where: { $0.id == workspace.selectedChangeSetID }) {
+                    Button("Reject") {
+                        workspace.reject(changeSet)
+                    }
+                    Button("Accept") {
+                        workspace.accept(changeSet)
+                    }
                 }
                 Button {
                     workspace.externalChangeBanner = nil
@@ -106,22 +117,34 @@ private struct StatusStrip: View {
             Label(workspace.isDirty ? "Unsaved" : "Saved", systemImage: workspace.isDirty ? "circle.fill" : "checkmark.circle")
                 .foregroundStyle(workspace.isDirty ? GraftTheme.pink : GraftTheme.teal)
             Text("\(workspace.editorText.split(whereSeparator: \.isWhitespace).count) words")
+                .foregroundStyle(GraftTheme.body)
             Text(workspace.workspaceURL?.lastPathComponent ?? "No workspace")
+                .foregroundStyle(GraftTheme.body)
             Spacer()
-            ForEach(workspace.agents.prefix(3)) { agent in
+            if let activity = workspace.agents.first {
                 HStack(spacing: 5) {
                     Circle()
-                        .fill(GraftTheme.accent(agent.accentName))
+                        .fill(GraftTheme.accent(activity.accentName))
                         .frame(width: 8, height: 8)
-                    Text(agent.name)
+                    Text(activity.status)
+                        .foregroundStyle(GraftTheme.body)
                 }
+            } else {
+                Text("\(workspace.pendingChangeSets.count) pending reviews")
+                    .foregroundStyle(GraftTheme.muted)
             }
             Text(".graft local-first")
-                .foregroundStyle(.secondary)
+                .foregroundStyle(GraftTheme.muted)
         }
         .font(.caption)
+        .foregroundStyle(GraftTheme.body)
         .padding(.horizontal, 16)
         .frame(height: 30)
-        .background(.regularMaterial)
+        .background(GraftTheme.surfaceSoft)
+        .overlay(alignment: .top) {
+            Rectangle()
+                .fill(GraftTheme.line)
+                .frame(height: 1)
+        }
     }
 }

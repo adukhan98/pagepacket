@@ -7,7 +7,7 @@ struct MarkdownPreviewView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 14) {
-                ForEach(workspace.renderedBlocks) { block in
+                ForEach(Array(workspace.renderedBlocks.enumerated()), id: \.offset) { _, block in
                     blockView(block)
                 }
             }
@@ -15,6 +15,7 @@ struct MarkdownPreviewView: View {
             .padding(32)
         }
         .background(GraftTheme.surfaceSoft)
+        .foregroundStyle(GraftTheme.body)
     }
 
     @ViewBuilder
@@ -29,35 +30,41 @@ struct MarkdownPreviewView: View {
             MarkdownInlineText(text)
                 .font(.body)
                 .lineSpacing(4)
+                .foregroundStyle(GraftTheme.body)
         case let .quote(text):
             HStack(alignment: .top, spacing: 12) {
                 RoundedRectangle(cornerRadius: 2)
                     .fill(GraftTheme.lavender)
                     .frame(width: 4)
                 MarkdownInlineText(text)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(GraftTheme.body)
             }
             .padding(.vertical, 4)
-        case let .unorderedItem(text):
-            Label {
-                MarkdownInlineText(text)
-            } icon: {
+        case let .unorderedItem(depth, text):
+            HStack(alignment: .firstTextBaseline, spacing: 10) {
                 Circle()
                     .fill(GraftTheme.teal)
                     .frame(width: 6, height: 6)
+                    .padding(.top, 2)
+                MarkdownInlineText(text)
             }
-        case let .orderedItem(text):
-            HStack(alignment: .top) {
-                Text("1.")
+            .padding(.leading, CGFloat(depth) * 18)
+        case let .orderedItem(number, depth, text):
+            HStack(alignment: .firstTextBaseline, spacing: 10) {
+                Text("\(number).")
+                    .font(.callout.monospacedDigit().weight(.semibold))
                     .foregroundStyle(GraftTheme.ochre)
+                    .frame(width: 28, alignment: .trailing)
                 MarkdownInlineText(text)
             }
-        case let .task(done, text):
-            HStack {
+            .padding(.leading, CGFloat(depth) * 18)
+        case let .task(done, depth, text):
+            HStack(alignment: .firstTextBaseline, spacing: 10) {
                 Image(systemName: done ? "checkmark.square.fill" : "square")
-                    .foregroundStyle(done ? GraftTheme.teal : .secondary)
+                    .foregroundStyle(done ? GraftTheme.teal : GraftTheme.muted)
                 MarkdownInlineText(text)
             }
+            .padding(.leading, CGFloat(depth) * 18)
         case let .code(language, text):
             VStack(alignment: .leading, spacing: 8) {
                 if let language {
@@ -65,31 +72,42 @@ struct MarkdownPreviewView: View {
                         .font(.caption.weight(.semibold))
                         .foregroundStyle(GraftTheme.muted)
                 }
-                Text(text)
-                    .font(.system(.body, design: .monospaced))
-                    .textSelection(.enabled)
+                ScrollView(.horizontal) {
+                    Text(text)
+                        .font(.system(size: 13, design: .monospaced))
+                        .foregroundStyle(GraftTheme.ink)
+                        .lineSpacing(3)
+                        .textSelection(.enabled)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(12)
+                }
+                .background(Color.white.opacity(0.45))
+                .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .graftCard()
         case let .table(headers, rows):
-            VStack(alignment: .leading, spacing: 0) {
-                HStack(spacing: 0) {
-                    ForEach(Array(headers.enumerated()), id: \.offset) { _, header in
-                        Text(header)
-                            .font(.caption.weight(.semibold))
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(8)
-                            .background(GraftTheme.ochre.opacity(0.28))
-                    }
-                }
-                ForEach(Array(rows.enumerated()), id: \.offset) { rowIndex, row in
+            ScrollView(.horizontal) {
+                VStack(alignment: .leading, spacing: 0) {
                     HStack(spacing: 0) {
-                        ForEach(Array(normalized(row, width: headers.count).enumerated()), id: \.offset) { _, cell in
-                            MarkdownInlineText(cell)
-                                .font(.callout)
-                                .frame(maxWidth: .infinity, alignment: .leading)
+                        ForEach(Array(headers.enumerated()), id: \.offset) { _, header in
+                            Text(header)
+                                .font(.caption.weight(.semibold))
+                                .foregroundStyle(GraftTheme.ink)
+                                .frame(minWidth: 150, alignment: .leading)
                                 .padding(8)
-                                .background(rowIndex.isMultiple(of: 2) ? Color.black.opacity(0.025) : Color.clear)
+                                .background(GraftTheme.ochre.opacity(0.28))
+                        }
+                    }
+                    ForEach(Array(rows.enumerated()), id: \.offset) { rowIndex, row in
+                        HStack(spacing: 0) {
+                            ForEach(Array(normalized(row, width: headers.count).enumerated()), id: \.offset) { _, cell in
+                                MarkdownInlineText(cell)
+                                    .font(.callout)
+                                    .frame(minWidth: 150, alignment: .leading)
+                                    .padding(8)
+                                    .background(rowIndex.isMultiple(of: 2) ? Color.black.opacity(0.025) : Color.clear)
+                            }
                         }
                     }
                 }
@@ -117,27 +135,46 @@ struct MarkdownPreviewView: View {
                 Image(nsImage: image)
                     .resizable()
                     .scaledToFit()
+                    .frame(maxHeight: 420)
                     .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-                HStack {
-                    Label(alt.isEmpty ? "Image" : alt, systemImage: "text.below.photo")
-                    Spacer()
+                VStack(alignment: .leading, spacing: 4) {
+                    Label {
+                        Text(alt.isEmpty ? "No alt text" : alt)
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(GraftTheme.ink)
+                    } icon: {
+                        Image(systemName: "text.below.photo")
+                            .foregroundStyle(GraftTheme.teal)
+                    }
                     Text(path)
-                        .lineLimit(1)
+                        .font(.caption2)
+                        .foregroundStyle(GraftTheme.muted)
+                        .textSelection(.enabled)
                 }
-                .font(.caption)
-                .foregroundStyle(.secondary)
             }
             .graftCard()
         } else {
-            Label("Missing image: \(path)", systemImage: "photo")
-                .foregroundStyle(GraftTheme.pink)
-                .graftCard()
+            VStack(alignment: .leading, spacing: 6) {
+                Label {
+                    Text(alt.isEmpty ? "Missing image" : alt)
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(GraftTheme.ink)
+                } icon: {
+                    Image(systemName: "photo")
+                        .foregroundStyle(GraftTheme.pink)
+                }
+                Text(path)
+                    .font(.caption2.monospaced())
+                    .foregroundStyle(GraftTheme.muted)
+                    .textSelection(.enabled)
+            }
+            .graftCard()
         }
     }
 
     private func image(for path: String) -> NSImage? {
         guard let file = workspace.selectedFile else { return nil }
-        let url = file.url.deletingLastPathComponent().appendingPathComponent(path)
+        let url = file.url.deletingLastPathComponent().appendingPathComponent(path).standardizedFileURL
         return NSImage(contentsOf: url)
     }
 
@@ -166,10 +203,27 @@ private struct MarkdownInlineText: View {
     }
 
     var body: some View {
-        if let attributed = try? AttributedString(markdown: text) {
-            Text(attributed)
-        } else {
-            Text(text)
+        markdownText
+            .tint(GraftTheme.teal)
+    }
+
+    private var markdownText: Text {
+        if var attributed = try? AttributedString(markdown: text) {
+            for run in attributed.runs {
+                if run.link != nil {
+                    attributed[run.range].foregroundColor = GraftTheme.teal
+                    attributed[run.range].underlineStyle = .single
+                }
+                if run.inlinePresentationIntent?.contains(.code) == true {
+                    attributed[run.range].foregroundColor = GraftTheme.teal
+                    attributed[run.range].backgroundColor = GraftTheme.mint.opacity(0.24)
+                    attributed[run.range].font = .system(.body, design: .monospaced)
+                }
+            }
+            return Text(attributed)
+                .foregroundColor(GraftTheme.body)
         }
+        return Text(text)
+            .foregroundColor(GraftTheme.body)
     }
 }

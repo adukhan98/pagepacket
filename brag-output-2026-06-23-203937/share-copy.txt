@@ -1,0 +1,1 @@
+Graft is a local Markdown editor for writing with agents: plain files, reviewable edits, and a visible trail before changes land.

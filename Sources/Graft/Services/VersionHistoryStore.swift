@@ -100,7 +100,7 @@ struct VersionHistoryStore {
 
     private static let snapshotIDFormatter: DateFormatter = {
         let formatter = DateFormatter()
-        formatter.dateFormat = "yyyyMMdd-HHmmss"
+        formatter.dateFormat = "yyyyMMdd-HHmmss-SSS"
         return formatter
     }()
 }
