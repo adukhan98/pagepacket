@@ -8,7 +8,7 @@ struct ShareView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
             SectionHeader(title: "Email Invites", icon: "person.2")
-            Text("V1 writes invite intent to `.graft/shares/invites.json`. A cloud backend can later turn these same records into real memberships.")
+            Text("V1 writes invite intent to `.pagepacket/shares/invites.json`. A cloud backend can later turn these same records into real memberships.")
                 .font(.callout)
                 .foregroundStyle(.secondary)
 

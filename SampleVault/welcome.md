@@ -1,17 +1,17 @@
-# Welcome to Graft
+# Welcome to pagepacket
 
-Graft is a local-first Markdown editor for people and coding agents.
+pagepacket is a local-first Markdown editor for people and coding agents.
 
 - Edit plain `.md` files in the app.
 - Let Codex, Claude Code, Cursor, Hermes, or shell scripts edit the same files.
-- Use local snapshots in `.graft/history` before broad changes.
+- Use local snapshots in `.pagepacket/history` before broad changes.
 - Keep images portable with relative Markdown links.
 
 ## Obsidian-style workflow
 
 Switch between **Edit**, **Split**, and **Preview** modes. The editor writes real Markdown, and the preview renders headings, lists, tasks, code, quotes, links, and local images.
 
-> The file system is the source of truth. Graft adds history and collaboration metadata beside it.
+> The file system is the source of truth. pagepacket adds history and collaboration metadata beside it.
 
 ## Tasks
 
@@ -23,19 +23,19 @@ Switch between **Edit**, **Split**, and **Preview** modes. The editor writes rea
 
 | Agent | Works today | Recommended command |
 |---|---:|---|
-| Codex | yes | `graft-cli snapshot` |
-| Claude Code | yes | `graft-cli apply` |
+| Codex | yes | `pagepacket-cli snapshot` |
+| Claude Code | yes | `pagepacket-cli apply` |
 | Cursor | yes | edit `.md` directly |
-| Hermes | yes | check `graft-cli status` |
+| Hermes | yes | check `pagepacket-cli status` |
 
 ## Agent CLI
 
 ```bash
-graft-cli status SampleVault
-graft-cli snapshot SampleVault welcome.md --message "Before Codex edits"
-graft-cli apply SampleVault welcome.md --author codex
+pagepacket-cli status SampleVault
+pagepacket-cli snapshot SampleVault welcome.md --message "Before Codex edits"
+pagepacket-cli apply SampleVault welcome.md --author codex
 ```
 
 ## Image support
 
-![Graft sample image](assets/welcome/graft-sample.ppm)
+![pagepacket sample image](assets/welcome/graft-sample.ppm)

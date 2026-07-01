@@ -40,7 +40,7 @@ private struct AgentsPanel: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             SectionHeader(title: "Agent-Safe Editing", icon: "wand.and.sparkles")
-            Text("Graft keeps Markdown files writable by coding agents. External changes are detected from disk and protected by local snapshots.")
+            Text("Pagepacket keeps Markdown files writable by coding agents. External changes are detected from disk and protected by local snapshots.")
                 .font(.callout)
                 .foregroundStyle(.secondary)
 
@@ -70,9 +70,9 @@ private struct AgentsPanel: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text("CLI sync contract")
                     .font(.headline)
-                MonospaceLine("graft-cli status <vault>")
-                MonospaceLine("graft-cli snapshot <vault> <file> --message \"Before edits\"")
-                MonospaceLine("graft-cli apply <vault> <file> --author codex")
+                MonospaceLine("pagepacket-cli status <vault>")
+                MonospaceLine("pagepacket-cli snapshot <vault> <file> --message \"Before edits\"")
+                MonospaceLine("pagepacket-cli apply <vault> <file> --author codex")
                 MonospaceLine("Use skills/graft-sync/SKILL.md for agent workflow")
             }
             .graftCard()

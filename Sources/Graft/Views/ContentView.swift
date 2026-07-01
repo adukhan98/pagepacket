@@ -46,7 +46,7 @@ struct ContentView: View {
                 }
 
                 Button {
-                    workspace.snapshotCurrentDocument(reason: "Manual checkpoint", source: "Graft")
+                    workspace.snapshotCurrentDocument(reason: "Manual checkpoint", source: "Pagepacket")
                 } label: {
                     Label("Snapshot", systemImage: "clock.arrow.circlepath")
                 }
@@ -116,7 +116,7 @@ private struct StatusStrip: View {
                     Text(agent.name)
                 }
             }
-            Text(".graft local-first")
+            Text(".pagepacket local-first")
                 .foregroundStyle(.secondary)
         }
         .font(.caption)

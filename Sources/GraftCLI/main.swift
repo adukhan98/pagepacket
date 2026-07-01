@@ -1,6 +1,6 @@
 import Foundation
 
-struct GraftCLI {
+struct PagepacketCLI {
     static func main() {
         let args = Array(CommandLine.arguments.dropFirst())
         guard let command = args.first else {
@@ -12,7 +12,7 @@ struct GraftCLI {
         case "status":
             status(args: Array(args.dropFirst()))
         case "snapshot":
-            snapshot(args: Array(args.dropFirst()), source: "graft-cli")
+            snapshot(args: Array(args.dropFirst()), source: "pagepacket-cli")
         case "apply":
             apply(args: Array(args.dropFirst()))
         case "history":
@@ -28,15 +28,15 @@ struct GraftCLI {
             return
         }
         let files = markdownFiles(in: vault)
-        print("Graft vault: \(vault.path)")
+        print("Pagepacket vault: \(vault.path)")
         print("Markdown files: \(files.count)")
-        print("Sidecar: \(vault.appendingPathComponent(".graft").path)")
+        print("Sidecar: \(vault.appendingPathComponent(".pagepacket").path)")
         files.prefix(12).forEach { print("- \($0.path.replacingOccurrences(of: vault.path + "/", with: ""))") }
     }
 
     private static func snapshot(args: [String], source: String) {
         guard args.count >= 2 else {
-            print("usage: graft-cli snapshot <vault> <file> --message \"Before edits\"")
+            print("usage: pagepacket-cli snapshot <vault> <file> --message \"Before edits\"")
             return
         }
         let vault = URL(fileURLWithPath: args[0])
@@ -47,7 +47,7 @@ struct GraftCLI {
 
     private static func apply(args: [String]) {
         guard args.count >= 2 else {
-            print("usage: graft-cli apply <vault> <file> --author codex")
+            print("usage: pagepacket-cli apply <vault> <file> --author codex")
             return
         }
         let vault = URL(fileURLWithPath: args[0])
@@ -58,12 +58,12 @@ struct GraftCLI {
 
     private static func history(args: [String]) {
         guard args.count >= 2 else {
-            print("usage: graft-cli history <vault> <file>")
+            print("usage: pagepacket-cli history <vault> <file>")
             return
         }
         let vault = URL(fileURLWithPath: args[0])
         let safe = safeName(args[1])
-        let folder = vault.appendingPathComponent(".graft/history/\(safe)", isDirectory: true)
+        let folder = vault.appendingPathComponent(".pagepacket/history/\(safe)", isDirectory: true)
         guard let snapshots = try? FileManager.default.contentsOfDirectory(at: folder, includingPropertiesForKeys: [.contentModificationDateKey]) else {
             print("No snapshots for \(args[1])")
             return
@@ -79,19 +79,20 @@ struct GraftCLI {
             return
         }
         let relative = file.path.replacingOccurrences(of: vault.path + "/", with: "")
-        let folder = vault.appendingPathComponent(".graft/history/\(safeName(relative))", isDirectory: true)
+        let folder = vault.appendingPathComponent(".pagepacket/history/\(safeName(relative))", isDirectory: true)
         try? FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
 
         let formatter = DateFormatter()
-        formatter.dateFormat = "yyyyMMdd-HHmmss"
-        let id = formatter.string(from: Date())
+        formatter.dateFormat = "yyyyMMdd-HHmmss-SSS"
+        let timestamp = Date()
+        let id = formatter.string(from: timestamp)
         let snapshotURL = folder.appendingPathComponent("\(id).md")
         let header = """
         ---
-        graft_document: \(relative)
-        graft_source: \(source)
-        graft_reason: \(reason)
-        graft_created_at: \(ISO8601DateFormatter().string(from: Date()))
+        pagepacket_document: \(relative)
+        pagepacket_source: \(source)
+        pagepacket_reason: \(reason)
+        pagepacket_created_at: \(ISO8601DateFormatter().string(from: timestamp))
         ---
 
         """
@@ -110,7 +111,7 @@ struct GraftCLI {
         return enumerator
             .compactMap { $0 as? URL }
             .filter { $0.pathExtension.lowercased() == "md" }
-            .filter { !$0.path.contains("/.graft/") }
+            .filter { !$0.path.contains("/.pagepacket/") && !$0.path.contains("/.graft/") }
             .sorted { $0.path < $1.path }
     }
 
@@ -129,15 +130,15 @@ struct GraftCLI {
 
     private static func printUsage() {
         print("""
-        Graft CLI
+        Pagepacket CLI
 
         Commands:
-          graft-cli status <vault>
-          graft-cli snapshot <vault> <file> --message "Before edits"
-          graft-cli apply <vault> <file> --author codex
-          graft-cli history <vault> <file>
+          pagepacket-cli status <vault>
+          pagepacket-cli snapshot <vault> <file> --message "Before edits"
+          pagepacket-cli apply <vault> <file> --author codex
+          pagepacket-cli history <vault> <file>
         """)
     }
 }
 
-GraftCLI.main()
+PagepacketCLI.main()

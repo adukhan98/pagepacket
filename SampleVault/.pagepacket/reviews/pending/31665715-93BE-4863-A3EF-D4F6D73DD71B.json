@@ -1,0 +1,35 @@
+{
+  "authorKind" : "agent",
+  "authorName" : "codex",
+  "baseText" : "# Welcome to pagepacket\n\nGraft is a local-first Markdown editor for people and coding agents.\n\n- Edit plain `.md` files in the app.\n- Let Codex, Claude Code, Cursor, Hermes, or shell scripts edit the same files.\n- Use local snapshots in `.pagepacket\/history` before broad changes.\n- Keep images portable with relative Markdown links.\n\n## Obsidian-style workflow\n\nSwitch between **Edit**, **Split**, and **Preview** modes. The editor writes real Markdown, and the preview renders headings, lists, tasks, code, quotes, links, and local images.\n\n> The file system is the source of truth. pagepacket adds history and collaboration metadata beside it.\n\n## Tasks\n\n- [x] Keep Markdown portable\n- [x] Watch for external agent edits\n- [x] Save local invite intent and compose email from Mail\n\n## Agent support matrix\n\n| Agent | Works today | Recommended command |\n|---|---:|---|\n| Codex | yes | `pagepacket-cli snapshot` |\n| Claude Code | yes | `pagepacket-cli apply` |\n| Cursor | yes | edit `.md` directly |\n| Hermes | yes | check `pagepacket-cli status` |\n\n## Agent CLI\n\n```bash\npagepacket-cli status SampleVault\npagepacket-cli snapshot SampleVault welcome.md --message \"Before Codex edits\"\npagepacket-cli apply SampleVault welcome.md --author codex\n```\n\n## Image support\n\n![pagepacket sample image](assets\/welcome\/pagepacket-sample.ppm)\n",
+  "createdAt" : "2026-06-20T04:21:55Z",
+  "filePath" : "welcome.md",
+  "id" : "31665715-93BE-4863-A3EF-D4F6D73DD71B",
+  "proposedText" : "# Welcome to pagepacket\n\nGraft is a local-first Markdown editor for people and coding agents.\n\n- Edit plain `.md` files in the app.\n- Let Codex, Claude Code, Cursor, Hermes, or shell scripts edit the same files.\n- Use local snapshots in `.pagepacket\/history` before broad changes.\n- Keep images portable with relative Markdown links.\n\n## Review-first workflow\n\nSwitch between **Edit**, **Split**, and **Preview** modes. The editor writes real Markdown, and the preview renders headings, lists, tasks, code, quotes, links, and local images.\n\n> The file system is the source of truth. pagepacket adds history and collaboration metadata beside it.\n\n## Tasks\n\n- [x] Keep Markdown portable\n- [x] Watch for external agent edits\n- [x] Review agent edits before accepting them\n\n## Agent support matrix\n\n| Agent | Works today | Recommended command |\n|---|---:|---|\n| Codex | yes | `pagepacket-cli snapshot` |\n| Claude Code | yes | `pagepacket-cli apply` |\n| Cursor | yes | edit `.md` directly |\n| Hermes | yes | check `pagepacket-cli status` |\n\n## Agent CLI\n\n```bash\npagepacket-cli status SampleVault\npagepacket-cli snapshot SampleVault welcome.md --message \"Before Codex edits\"\npagepacket-cli apply SampleVault welcome.md --author codex\n```\n\n## Image support\n\n![pagepacket sample image](assets\/welcome\/pagepacket-sample.ppm)\n",
+  "ranges" : [
+    {
+      "after" : "## Review-first workflow",
+      "before" : "## Obsidian-style workflow",
+      "id" : "C8951176-0A99-4FBF-ADDF-24E287430C6A",
+      "isConflict" : false,
+      "kind" : "heading",
+      "newEndLine" : 10,
+      "newStartLine" : 10,
+      "oldEndLine" : 10,
+      "oldStartLine" : 10
+    },
+    {
+      "after" : "- [x] Keep Markdown portable\n- [x] Watch for external agent edits\n- [x] Review agent edits before accepting them",
+      "before" : "- [x] Keep Markdown portable\n- [x] Watch for external agent edits\n- [x] Save local invite intent and compose email from Mail",
+      "id" : "8D934589-362F-4321-BC97-E669F985A2B3",
+      "isConflict" : false,
+      "kind" : "task",
+      "newEndLine" : 20,
+      "newStartLine" : 18,
+      "oldEndLine" : 20,
+      "oldStartLine" : 18
+    }
+  ],
+  "status" : "pending",
+  "summary" : "Verify review bridge"
+}

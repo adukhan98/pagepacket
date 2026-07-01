@@ -4,7 +4,7 @@ struct VersionHistoryStore {
     let workspaceURL: URL
 
     var sidecarURL: URL {
-        workspaceURL.appendingPathComponent(".graft", isDirectory: true)
+        workspaceURL.appendingPathComponent(".pagepacket", isDirectory: true)
     }
 
     var historyURL: URL {
@@ -27,10 +27,10 @@ struct VersionHistoryStore {
         let snapshotURL = folderURL.appendingPathComponent("\(id).md")
         let header = """
         ---
-        graft_document: \(file.relativePath)
-        graft_source: \(source)
-        graft_reason: \(reason)
-        graft_created_at: \(ISO8601DateFormatter().string(from: timestamp))
+        pagepacket_document: \(file.relativePath)
+        pagepacket_source: \(source)
+        pagepacket_reason: \(reason)
+        pagepacket_created_at: \(ISO8601DateFormatter().string(from: timestamp))
         ---
 
         """
@@ -61,8 +61,12 @@ struct VersionHistoryStore {
             .compactMap { url in
                 let date = (try? url.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate) ?? Date()
                 let content = (try? String(contentsOf: url, encoding: .utf8)) ?? ""
-                let reason = frontMatterValue("graft_reason", in: content) ?? "Checkpoint"
-                let source = frontMatterValue("graft_source", in: content) ?? "Graft"
+                let reason = frontMatterValue("pagepacket_reason", in: content)
+                    ?? frontMatterValue("graft_reason", in: content)
+                    ?? "Checkpoint"
+                let source = frontMatterValue("pagepacket_source", in: content)
+                    ?? frontMatterValue("graft_source", in: content)
+                    ?? "Pagepacket"
                 return VersionSnapshot(
                     id: url.deletingPathExtension().lastPathComponent,
                     documentPath: file.relativePath,
@@ -100,7 +104,7 @@ struct VersionHistoryStore {
 
     private static let snapshotIDFormatter: DateFormatter = {
         let formatter = DateFormatter()
-        formatter.dateFormat = "yyyyMMdd-HHmmss"
+        formatter.dateFormat = "yyyyMMdd-HHmmss-SSS"
         return formatter
     }()
 }

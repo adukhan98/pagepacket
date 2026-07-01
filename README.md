@@ -1,23 +1,23 @@
-# Graft
+# pagepacket
 
-![Graft logo](Assets/Brand/graft-logo-lockup.png)
+![pagepacket logo](Assets/Brand/graft-logo-lockup.png)
 
-Graft is a premium local-first Markdown editor for macOS. It keeps Markdown files as plain files on disk so people and coding agents can work in the same workspace.
+pagepacket is a premium local-first Markdown editor for macOS. It keeps Markdown files as plain files on disk so people and coding agents can work in the same workspace.
 
 ## What is implemented
 
 - SwiftUI macOS app with native sidebar, toolbar, inspector, and settings.
-- Custom Graft app icon and logo assets in `Assets/Brand/`.
+- Custom pagepacket app icon and logo assets in `Assets/Brand/`.
 - Edit, Preview, and Split modes for Markdown files.
 - Folder-based workspace loading from real `.md` files.
 - Markdown preview for headings, paragraphs, lists, tasks, quotes, tables, code fences, links, horizontal rules, and local images.
 - Local image import into an `assets/` folder with relative Markdown insertion.
 - External file-change detection for agent edits.
-- Local version snapshots in `.graft/history/`.
+- Local version snapshots in `.pagepacket/history/`.
 - Restore from previous snapshots.
-- Email invite intent UI saved to `.graft/shares/invites.json`, with mail-client compose actions for invites.
+- Email invite intent UI saved to `.pagepacket/shares/invites.json`, with mail-client compose actions for invites.
 - Agent activity and CLI sync contract surfaced in the inspector.
-- `graft-cli` commands for vault status, snapshots, apply checkpoints, and history.
+- `pagepacket-cli` commands for vault status, snapshots, apply checkpoints, and history.
 - Repo-local agent skill at `skills/graft-sync/SKILL.md`.
 - Build/run integration for Codex Desktop through `.codex/environments/environment.toml`.
 
@@ -36,21 +36,21 @@ Verify launch:
 ## CLI
 
 ```bash
-swift run graft-cli status SampleVault
-swift run graft-cli snapshot SampleVault welcome.md --message "Before agent edits"
-swift run graft-cli apply SampleVault welcome.md --author codex
-swift run graft-cli history SampleVault welcome.md
+swift run pagepacket-cli status SampleVault
+swift run pagepacket-cli snapshot SampleVault welcome.md --message "Before agent edits"
+swift run pagepacket-cli apply SampleVault welcome.md --author codex
+swift run pagepacket-cli history SampleVault welcome.md
 ```
 
 ## Architecture
 
-Plain Markdown files remain canonical. Graft adds a sidecar folder:
+Plain Markdown files remain canonical. pagepacket adds a sidecar folder:
 
 ```text
 vault/
   welcome.md
   assets/
-  .graft/
+  .pagepacket/
     history/
     shares/
 ```

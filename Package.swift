@@ -2,13 +2,13 @@
 import PackageDescription
 
 let package = Package(
-    name: "Graft",
+    name: "Pagepacket",
     platforms: [
         .macOS(.v14)
     ],
     products: [
-        .executable(name: "Graft", targets: ["Graft"]),
-        .executable(name: "graft-cli", targets: ["GraftCLI"])
+        .executable(name: "Pagepacket", targets: ["Graft"]),
+        .executable(name: "pagepacket-cli", targets: ["GraftCLI"])
     ],
     targets: [
         .executableTarget(

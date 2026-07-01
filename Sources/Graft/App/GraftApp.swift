@@ -14,7 +14,7 @@ struct GraftApp: App {
     @StateObject private var workspace = WorkspaceStore()
 
     var body: some Scene {
-        WindowGroup("Graft") {
+        WindowGroup("Pagepacket") {
             ContentView()
                 .environmentObject(workspace)
                 .frame(minWidth: 1120, minHeight: 720)

@@ -1,0 +1,12 @@
+{
+  "agent" : "codex",
+  "authorKind" : "agent",
+  "authorName" : "codex",
+  "createdAt" : "2026-06-20T04:14:29Z",
+  "filePath" : "welcome.md",
+  "id" : "18C8957D-BFD0-4BDB-9B56-E8BC38900418",
+  "metadataVersion" : 1,
+  "source" : "pagepacket-cli",
+  "status" : "pending",
+  "summary" : "Verify review bridge"
+}

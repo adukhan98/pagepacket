@@ -34,6 +34,10 @@ struct MarkdownEditorView: View {
                 .scrollContentBackground(.hidden)
                 .padding(18)
                 .background(GraftTheme.canvas)
+                .onChange(of: workspace.editorText) { _, _ in
+                    guard workspace.autosaveEnabled, workspace.isDirty else { return }
+                    workspace.saveCurrentDocument()
+                }
         }
     }
 }

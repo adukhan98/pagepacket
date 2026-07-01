@@ -12,7 +12,7 @@ struct SettingsView: View {
             }
 
             Section("Workspace") {
-                LabeledContent("Sidecar folder", value: ".graft")
+                LabeledContent("Sidecar folder", value: ".pagepacket")
                 LabeledContent("Asset folder", value: "assets")
             }
         }

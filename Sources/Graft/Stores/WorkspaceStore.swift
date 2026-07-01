@@ -89,7 +89,7 @@ final class WorkspaceStore: ObservableObject {
         files = enumerator
             .compactMap { $0 as? URL }
             .filter { $0.pathExtension.lowercased() == "md" }
-            .filter { !$0.path.contains("/.graft/") }
+            .filter { !$0.path.contains("/.pagepacket/") && !$0.path.contains("/.graft/") }
             .map { MarkdownFile(url: $0, workspaceURL: workspaceURL) }
             .sorted { $0.relativePath.localizedStandardCompare($1.relativePath) == .orderedAscending }
         watcher.update(files: files)
@@ -97,7 +97,7 @@ final class WorkspaceStore: ObservableObject {
 
     func load(file: MarkdownFile) {
         if isDirty {
-            snapshotCurrentDocument(reason: "Before switching documents", source: "Graft")
+            snapshotCurrentDocument(reason: "Before switching documents", source: "Pagepacket")
         }
         selectedFile = file
         let content = (try? String(contentsOf: file.url, encoding: .utf8)) ?? ""
@@ -109,7 +109,7 @@ final class WorkspaceStore: ObservableObject {
 
     func saveCurrentDocument() {
         guard let selectedFile else { return }
-        snapshotCurrentDocument(reason: "Before save", source: "Graft")
+        snapshotCurrentDocument(reason: "Before save", source: "Pagepacket")
         do {
             try editorText.write(to: selectedFile.url, atomically: true, encoding: .utf8)
             lastLoadedText = editorText
@@ -124,7 +124,7 @@ final class WorkspaceStore: ObservableObject {
     func reloadSelectedFromDisk() {
         guard let selectedFile else { return }
         let content = (try? String(contentsOf: selectedFile.url, encoding: .utf8)) ?? ""
-        snapshotCurrentDocument(reason: "Before accepting external change", source: "Graft")
+        snapshotCurrentDocument(reason: "Before accepting external change", source: "Pagepacket")
         editorText = content
         lastLoadedText = content
         externalChangeBanner = nil
@@ -148,7 +148,7 @@ final class WorkspaceStore: ObservableObject {
         guard let workspaceURL, let selectedFile else { return }
         let store = VersionHistoryStore(workspaceURL: workspaceURL)
         guard let content = store.restoreContent(from: snapshot) else { return }
-        self.snapshotCurrentDocument(reason: "Before restore", source: "Graft")
+        self.snapshotCurrentDocument(reason: "Before restore", source: "Pagepacket")
         editorText = content
         do {
             try content.write(to: selectedFile.url, atomically: true, encoding: .utf8)
@@ -181,7 +181,7 @@ final class WorkspaceStore: ObservableObject {
             let importer = ImageImportService(workspaceURL: workspaceURL)
             if let markdown = importer.importImage(from: url, for: selectedFile) {
                 editorText += editorText.hasSuffix("\n") ? "\n\(markdown)\n" : "\n\n\(markdown)\n"
-                snapshotCurrentDocument(reason: "Inserted image", source: "Graft")
+                snapshotCurrentDocument(reason: "Inserted image", source: "Pagepacket")
             }
         }
     }
@@ -200,14 +200,14 @@ final class WorkspaceStore: ObservableObject {
     func composeEmail(for invite: Invite) {
         guard let workspaceURL else { return }
         writeInviteManifest()
-        let subject = "Invitation to collaborate in Graft"
+        let subject = "Invitation to collaborate in Pagepacket"
         let body = """
-        You have been invited as \(invite.role.title.lowercased()) to the Graft workspace "\(workspaceURL.lastPathComponent)".
+        You have been invited as \(invite.role.title.lowercased()) to the Pagepacket workspace "\(workspaceURL.lastPathComponent)".
 
         Workspace path:
         \(workspaceURL.path)
 
-        Graft keeps Markdown files local-first. Open this folder in Graft or edit the .md files directly with your coding agent, then use graft-cli snapshot/apply to register changes.
+        Pagepacket keeps Markdown files local-first. Open this folder in Pagepacket or edit the .md files directly with your coding agent, then use pagepacket-cli snapshot/apply to register changes.
         """
 
         var components = URLComponents()
@@ -235,7 +235,7 @@ final class WorkspaceStore: ObservableObject {
         guard diskText != lastLoadedText else { return }
 
         if isDirty {
-            snapshotCurrentDocument(reason: "External change conflict base", source: "Graft")
+            snapshotCurrentDocument(reason: "External change conflict base", source: "Pagepacket")
             externalChangeBanner = "External edit detected in \(selectedFile.relativePath). Review before overwriting."
             agents[0].status = "Conflict"
             agents[0].detail = "An agent or tool changed this file while local edits are unsaved"
@@ -252,7 +252,7 @@ final class WorkspaceStore: ObservableObject {
     private func writeInviteManifest() {
         guard let workspaceURL else { return }
         let sharesURL = workspaceURL
-            .appendingPathComponent(".graft", isDirectory: true)
+            .appendingPathComponent(".pagepacket", isDirectory: true)
             .appendingPathComponent("shares", isDirectory: true)
         try? FileManager.default.createDirectory(at: sharesURL, withIntermediateDirectories: true)
         let manifestURL = sharesURL.appendingPathComponent("invites.json")

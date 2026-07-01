@@ -16,7 +16,7 @@ struct GraftCommands: Commands {
             .keyboardShortcut("s", modifiers: .command)
 
             Button("Snapshot Version") {
-                workspace.snapshotCurrentDocument(reason: "Manual checkpoint", source: "Graft")
+                workspace.snapshotCurrentDocument(reason: "Manual checkpoint", source: "Pagepacket")
             }
             .keyboardShortcut("s", modifiers: [.command, .shift])
         }
