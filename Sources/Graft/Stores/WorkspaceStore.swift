@@ -10,14 +10,11 @@ final class WorkspaceStore: ObservableObject {
     @Published var selectedFile: MarkdownFile?
     @Published var editorText = ""
     @Published var lastLoadedText = ""
-    @Published var editorMode: EditorMode = .split
-    @Published var isInspectorVisible = true
+    @Published var editorMode: EditorMode = .edit
+    @Published var isInspectorVisible = false
     @Published var externalChangeBanner: String?
     @Published var snapshots: [VersionSnapshot] = []
-    @Published var invites: [Invite] = [
-        Invite(email: "maya@example.com", role: .editor),
-        Invite(email: "reviewer@example.com", role: .commenter)
-    ]
+    @Published var invites: [Invite] = []
     @Published var agents: [AgentActivity] = [
         AgentActivity(name: "Codex", status: "Watching", detail: "Ready to edit plain files", accentName: "pink"),
         AgentActivity(name: "Claude Code", status: "Idle", detail: "Use CLI snapshot before broad edits", accentName: "teal"),
@@ -60,8 +57,10 @@ final class WorkspaceStore: ObservableObject {
     }
 
     func openWorkspace(_ url: URL) {
-        workspaceURL = url
-        VersionHistoryStore(workspaceURL: url).prepare()
+        let normalizedURL = PathUtilities.normalized(url)
+        workspaceURL = normalizedURL
+        VersionHistoryStore(workspaceURL: normalizedURL).prepare()
+        loadInviteManifest()
         reloadFileList()
         selectedFile = files.first
         if let selectedFile {
@@ -109,7 +108,7 @@ final class WorkspaceStore: ObservableObject {
 
     func saveCurrentDocument() {
         guard let selectedFile else { return }
-        snapshotCurrentDocument(reason: "Before save", source: "Pagepacket")
+        snapshotCurrentDocument(reason: "Before save", source: "Pagepacket", content: lastLoadedText)
         do {
             try editorText.write(to: selectedFile.url, atomically: true, encoding: .utf8)
             lastLoadedText = editorText
@@ -136,10 +135,10 @@ final class WorkspaceStore: ObservableObject {
         externalChangeBanner = nil
     }
 
-    func snapshotCurrentDocument(reason: String, source: String) {
+    func snapshotCurrentDocument(reason: String, source: String, content: String? = nil) {
         guard let workspaceURL, let selectedFile else { return }
         if let snapshot = VersionHistoryStore(workspaceURL: workspaceURL)
-            .snapshot(file: selectedFile, content: editorText, reason: reason, source: source) {
+            .snapshot(file: selectedFile, content: content ?? editorText, reason: reason, source: source) {
             snapshots.insert(snapshot, at: 0)
         }
     }
@@ -186,10 +185,16 @@ final class WorkspaceStore: ObservableObject {
         }
     }
 
-    func addInvite(email: String, role: InviteRole) {
-        guard !email.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
-        invites.append(Invite(email: email, role: role))
+    @discardableResult
+    func addInvite(email: String, role: InviteRole) -> InviteAddResult {
+        let normalizedEmail = normalizedInviteEmail(email)
+        guard isValidInviteEmail(normalizedEmail) else { return .invalidEmail }
+        guard !invites.contains(where: { normalizedInviteEmail($0.email) == normalizedEmail }) else {
+            return .duplicate
+        }
+        invites.append(Invite(email: normalizedEmail, role: role))
         writeInviteManifest()
+        return .added
     }
 
     func removeInvite(_ invite: Invite) {
@@ -250,16 +255,58 @@ final class WorkspaceStore: ObservableObject {
     }
 
     private func writeInviteManifest() {
-        guard let workspaceURL else { return }
-        let sharesURL = workspaceURL
-            .appendingPathComponent(".pagepacket", isDirectory: true)
-            .appendingPathComponent("shares", isDirectory: true)
+        guard let manifestURL = inviteManifestURL() else { return }
+        let sharesURL = manifestURL.deletingLastPathComponent()
         try? FileManager.default.createDirectory(at: sharesURL, withIntermediateDirectories: true)
-        let manifestURL = sharesURL.appendingPathComponent("invites.json")
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
         if let data = try? encoder.encode(invites) {
             try? data.write(to: manifestURL, options: .atomic)
         }
+    }
+
+    private func loadInviteManifest() {
+        guard let manifestURL = inviteManifestURL(),
+              let data = try? Data(contentsOf: manifestURL),
+              let decoded = try? JSONDecoder().decode([Invite].self, from: data) else {
+            invites = []
+            return
+        }
+
+        var seen = Set<String>()
+        invites = decoded.compactMap { invite in
+            let normalizedEmail = normalizedInviteEmail(invite.email)
+            guard isValidInviteEmail(normalizedEmail), !seen.contains(normalizedEmail) else {
+                return nil
+            }
+            seen.insert(normalizedEmail)
+            var normalizedInvite = invite
+            normalizedInvite.email = normalizedEmail
+            return normalizedInvite
+        }
+    }
+
+    private func inviteManifestURL() -> URL? {
+        workspaceURL?
+            .appendingPathComponent(".pagepacket", isDirectory: true)
+            .appendingPathComponent("shares", isDirectory: true)
+            .appendingPathComponent("invites.json")
+    }
+
+    private func normalizedInviteEmail(_ email: String) -> String {
+        email.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+    }
+
+    private func isValidInviteEmail(_ email: String) -> Bool {
+        let parts = email.split(separator: "@", omittingEmptySubsequences: false)
+        guard parts.count == 2,
+              let local = parts.first,
+              let domain = parts.last,
+              !local.isEmpty,
+              domain.contains("."),
+              !email.contains(where: \.isWhitespace) else {
+            return false
+        }
+        return true
     }
 }

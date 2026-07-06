@@ -18,3 +18,9 @@ struct Invite: Identifiable, Hashable, Codable {
     var role: InviteRole
     var createdAt: Date = Date()
 }
+
+enum InviteAddResult: Equatable {
+    case added
+    case invalidEmail
+    case duplicate
+}

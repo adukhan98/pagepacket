@@ -23,7 +23,7 @@ struct PagepacketCLI {
     }
 
     private static func status(args: [String]) {
-        guard let vault = args.first.map(URL.init(fileURLWithPath:)) else {
+        guard let vault = args.first.map({ normalized(URL(fileURLWithPath: $0)) }) else {
             print("missing vault path")
             return
         }
@@ -31,7 +31,7 @@ struct PagepacketCLI {
         print("Pagepacket vault: \(vault.path)")
         print("Markdown files: \(files.count)")
         print("Sidecar: \(vault.appendingPathComponent(".pagepacket").path)")
-        files.prefix(12).forEach { print("- \($0.path.replacingOccurrences(of: vault.path + "/", with: ""))") }
+        files.prefix(12).forEach { print("- \(relativePath(from: vault, to: $0))") }
     }
 
     private static func snapshot(args: [String], source: String) {
@@ -39,8 +39,8 @@ struct PagepacketCLI {
             print("usage: pagepacket-cli snapshot <vault> <file> --message \"Before edits\"")
             return
         }
-        let vault = URL(fileURLWithPath: args[0])
-        let file = vault.appendingPathComponent(args[1])
+        let vault = normalized(URL(fileURLWithPath: args[0]))
+        let file = normalized(vault.appendingPathComponent(args[1]))
         let message = option("--message", in: args) ?? "CLI checkpoint"
         writeSnapshot(vault: vault, file: file, reason: message, source: source)
     }
@@ -50,8 +50,8 @@ struct PagepacketCLI {
             print("usage: pagepacket-cli apply <vault> <file> --author codex")
             return
         }
-        let vault = URL(fileURLWithPath: args[0])
-        let file = vault.appendingPathComponent(args[1])
+        let vault = normalized(URL(fileURLWithPath: args[0]))
+        let file = normalized(vault.appendingPathComponent(args[1]))
         let author = option("--author", in: args) ?? "agent"
         writeSnapshot(vault: vault, file: file, reason: "Applied external edit by \(author)", source: author)
     }
@@ -61,10 +61,18 @@ struct PagepacketCLI {
             print("usage: pagepacket-cli history <vault> <file>")
             return
         }
-        let vault = URL(fileURLWithPath: args[0])
-        let safe = safeName(args[1])
-        let folder = vault.appendingPathComponent(".pagepacket/history/\(safe)", isDirectory: true)
-        guard let snapshots = try? FileManager.default.contentsOfDirectory(at: folder, includingPropertiesForKeys: [.contentModificationDateKey]) else {
+        let vault = normalized(URL(fileURLWithPath: args[0]))
+        let folders = [
+            vault.appendingPathComponent(".pagepacket/history/\(historyFolderName(for: args[1]))", isDirectory: true),
+            vault.appendingPathComponent(".pagepacket/history/\(legacyHistoryFolderName(for: args[1]))", isDirectory: true)
+        ]
+        let snapshots = folders.flatMap { folder in
+            (try? FileManager.default.contentsOfDirectory(
+                at: folder,
+                includingPropertiesForKeys: [.contentModificationDateKey]
+            )) ?? []
+        }
+        guard !snapshots.isEmpty else {
             print("No snapshots for \(args[1])")
             return
         }
@@ -78,8 +86,8 @@ struct PagepacketCLI {
             print("could not read \(file.path)")
             return
         }
-        let relative = file.path.replacingOccurrences(of: vault.path + "/", with: "")
-        let folder = vault.appendingPathComponent(".pagepacket/history/\(safeName(relative))", isDirectory: true)
+        let relative = relativePath(from: vault, to: file)
+        let folder = vault.appendingPathComponent(".pagepacket/history/\(historyFolderName(for: relative))", isDirectory: true)
         try? FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
 
         let formatter = DateFormatter()
@@ -110,6 +118,7 @@ struct PagepacketCLI {
         }
         return enumerator
             .compactMap { $0 as? URL }
+            .map(normalized)
             .filter { $0.pathExtension.lowercased() == "md" }
             .filter { !$0.path.contains("/.pagepacket/") && !$0.path.contains("/.graft/") }
             .sorted { $0.path < $1.path }
@@ -122,10 +131,39 @@ struct PagepacketCLI {
         return args[index + 1]
     }
 
-    private static func safeName(_ path: String) -> String {
+    private static func normalized(_ url: URL) -> URL {
+        url.standardizedFileURL.resolvingSymlinksInPath()
+    }
+
+    private static func relativePath(from baseDirectory: URL, to target: URL) -> String {
+        let baseComponents = normalized(baseDirectory).pathComponents
+        let targetComponents = normalized(target).pathComponents
+        var sharedCount = 0
+
+        while sharedCount < baseComponents.count,
+              sharedCount < targetComponents.count,
+              baseComponents[sharedCount] == targetComponents[sharedCount] {
+            sharedCount += 1
+        }
+
+        let parentSteps = Array(repeating: "..", count: baseComponents.count - sharedCount)
+        let childSteps = Array(targetComponents.dropFirst(sharedCount))
+        let relativeComponents = parentSteps + childSteps
+        return relativeComponents.isEmpty ? "." : relativeComponents.joined(separator: "/")
+    }
+
+    private static func historyFolderName(for path: String) -> String {
+        "\(legacyHistoryFolderName(for: path))__\(hexEncoded(path))"
+    }
+
+    private static func legacyHistoryFolderName(for path: String) -> String {
         path.replacingOccurrences(of: "/", with: "__")
             .replacingOccurrences(of: " ", with: "_")
             .replacingOccurrences(of: ".", with: "_")
+    }
+
+    private static func hexEncoded(_ path: String) -> String {
+        path.utf8.map { String(format: "%02x", $0) }.joined()
     }
 
     private static func printUsage() {

@@ -1,247 +1,257 @@
 ## Overview
 
-Clay.com is the most playful B2B SaaS interface in the GTM-data category. The base atmosphere is **cream-tinted white canvas** (`{colors.canvas}` — #fffaf0) holding dark-navy ink type and **3D-rendered claymation illustrations** (mountains, mascot characters, peach/ochre/lavender landscapes) as the dominant brand voltage. Where most data-platform brands play it cool with grids and gradients, Clay leans hard into hand-crafted-looking 3D illustrations and saturated single-color feature cards.
-
-Type voice runs **Plain Black** (or substituted with Inter weight 500-600) — a custom rounded display face used at very large sizes (72px hero) with negative letter-spacing. Body type uses Inter at standard weights. The display weight stays at 500, never bolder — the rounded character of the typeface gives it warmth without needing weight.
-
-Component voltage comes from **saturated single-color feature cards** in a 6-color palette: hot pink, deep teal, lavender, peach, ochre, and cream-card. Each card shows product UI fragments at small scale — Claygent agent runs, sequencer flows, CRM enrichment outputs. The colored card IS the primary visual element on every long-scroll page.
+pagepacket speaks the visual language of a creative studio's moodboard: warm cream paper, a single deep forest green that does the heavy lifting for text and primary actions, and a vivid school-bus yellow that acts as both highlight marker and playful punctuation. Type is deliberately split-personality — Bricolage Grotesque at extrabold for display headlines with positive tracking that gives the words a sticker-book chunkiness, paired with Inter's clean humanist sans for everything functional. The landing page is waitlist-first: the first screen sells one concrete idea, shows a review packet artifact, and asks for an email address. The overall feel is approachable, hand-made, and slightly rebellious: rounded 6px corners everywhere, minimal shadows, scattered pastel accents that feel like sticky notes rather than generic SaaS cards.
 
 **Key Characteristics:**
-- Cream-tinted white canvas (`{colors.canvas}` — #fffaf0). The warmth differentiates Clay from cool-gray competitor sites.
-- Dark navy/black primary CTAs (`{colors.primary}` — #0a0a0a). Buttons rounded `{rounded.md}` (12px) — friendly modern but not pill.
-- 6-color saturated feature card palette: `{colors.brand-pink}`, `{colors.brand-teal}`, `{colors.brand-lavender}`, `{colors.brand-peach}`, `{colors.brand-ochre}`, `{colors.surface-card}` (cream).
-- 3D claymation illustrations (mountains, characters, abstract shapes) as full-bleed hero artifacts — the brand's most-recognized visual element.
-- Custom rounded Plain Black display typeface at 500 weight with -1 to -2.5px letter-spacing on display sizes.
-- Border radius is generous: `{rounded.md}` (12px) for buttons + inputs, `{rounded.lg}` (16px) for content cards, `{rounded.xl}` (24px) for feature cards. The bigger radius matches the rounded display type's character.
-- Product UI fragments embedded inside colored cards at small scale — agent run logs, sequencer flows, enrichment results.
-- Section rhythm `{spacing.section}` (96px) between major bands.
-- Footer is cream-tinted (`{colors.surface-soft}`) — Clay does NOT use a dark footer. Even the closing band stays warm-light.
+- Cream Paper (`#fcfaf5`) canvas throughout — warm off-white, slightly yellow-shifted to feel like aged paper. Never use pure white or cool-gray.
+- Forest Ink (`#1a3300`) is the single chromatic workhorse — primary text, filled CTAs, links, borders. Never use pure black (`#000000`) for text.
+- Highlighter Yellow (`#ffe95c`) as a background wash behind individual words in headlines (marker-pen effect), never as a CTA fill or full surface.
+- Bricolage Grotesque 800 with positive letter-spacing (0.04–0.05em) for all display headlines — the signature voice. Never use below 40px.
+- Inter for everything functional: body, nav, buttons, cards, subheadings.
+- Roboto Mono for micro-labels, tags, and technical metadata.
+- 6px radius for buttons, 12px for cards, 16px for nav — never mix sharp 0px corners with the rounded system.
+- Minimal shadows — separate layers with color fills and 1px borders. Shadows reserved for nav glow and button lift only.
+- Page is 95% cream + forest green. Pastel accents (Mint, Blush, Teal) appear as individual card or button fills, never as large surfaces.
+- Waitlist conversion is the primary action. Use email forms above the fold and near the close; secondary links should only support product understanding.
 
 ## Colors
 
 ### Brand & Accent
-- **Primary** (`{colors.primary}` — #0a0a0a): All primary CTAs, h1/h2 ink type. Near-black with slight warmth.
-- **Brand Pink** (`{colors.brand-pink}` — #ff4d8b): Hot-pink feature card surface. Sequencer / outbound feature pages.
-- **Brand Teal** (`{colors.brand-teal}` — #1a3a3a): Deep teal-green feature card. Often the featured pricing tier.
-- **Brand Lavender** (`{colors.brand-lavender}` — #b8a4ed): Soft lavender feature card.
-- **Brand Peach** (`{colors.brand-peach}` — #ffb084): Warm peach feature card.
-- **Brand Ochre** (`{colors.brand-ochre}` — #e8b94a): Mustard / ochre feature card and illustration accents.
-- **Brand Mint** (`{colors.brand-mint}` — #a4d4c5): Mint accent on illustrations and small badges.
-- **Brand Coral** (`{colors.brand-coral}` — #ff6b5a): Coral accent for highlights.
+- **Forest Ink** (`--color-forest-ink` — `#1a3300`): Primary text, filled CTA buttons, link text, nav borders, card borders — the structural backbone. This near-black green carries 90% of the interface weight.
+- **Highlighter Yellow** (`--color-highlighter-yellow` — `#ffe95c`): Text highlight wash (behind keywords in headlines), badge backgrounds, accent fills. Always reads as a marker stroke, never as a CTA.
 
 ### Surface
-- **Canvas** (`{colors.canvas}` — #fffaf0): The default page floor. Cream-tinted white.
-- **Surface Soft** (`{colors.surface-soft}` — #faf5e8): Footer and CTA-band background.
-- **Surface Card** (`{colors.surface-card}` — #f5f0e0): Cream feature cards, testimonial cards.
-- **Surface Strong** (`{colors.surface-strong}` — #ebe6d6): Stronger cream for emphasized bands.
-- **Surface Dark** (`{colors.surface-dark}` — #0a1a1a): Dark teal-tinted near-black for occasional dark cards (rare).
-- **Surface Dark Elevated** (`{colors.surface-dark-elevated}` — #1a2a2a): Elevated dark cards.
-- **Hairline** (`{colors.hairline}` — #e5e5e5): 1px borders on cards and inputs.
+- **Cream Paper** (`--color-cream-paper` — `#fcfaf5`): Page canvas, card surfaces, nav background — the warm off-white everything sits on.
+- **Sticky Note Mint** (`--color-sticky-note-mint` — `#d5f5c2`): Green action color for filled buttons, selected navigation states, feature card surface.
+- **Sticky Note Teal** (`--color-sticky-note-teal` — `#a8e5e5`): Teal action color for filled buttons, selected navigation states, decorative card surface.
+- **Sticky Note Blush** (`--color-sticky-note-blush` — `#f6d0ff`): Decorative button/card fill. Sprinkle use only.
+- **Highlighter Yellow** (`--surface-highlighter-yellow` — `#ffe95c`): Accent card or highlighted callout surface.
 
-### Text
-- **Ink** (`{colors.ink}` — #0a0a0a): Headlines and primary text.
-- **Body Strong** (`{colors.body-strong}` — #1a1a1a): Emphasized body, lead paragraphs.
-- **Body** (`{colors.body}` — #3a3a3a): Default running-text.
-- **Muted** (`{colors.muted}` — #6a6a6a): Sub-headings, breadcrumbs, footer body.
-- **Muted Soft** (`{colors.muted-soft}` — #9a9a9a): Captions, fine-print.
-- **On Primary / On Dark** (`{colors.on-primary}` — #ffffff): Text on primary buttons + dark feature cards (teal).
+### Neutral
+- **Pencil Gray** (`--color-pencil-gray` — `#b6b6b6`): Nav and divider borders — a single mid-gray for hairlines that should recede.
+- **Whisper Gray** (`--color-whisper-gray` — `#f1f1f1`): Muted helper text, secondary labels — disappears into the cream canvas.
+- **Terracotta** (`--color-terracotta` — `#cb5521`): Decorative card accent — warm counterpoint to the green/yellow palette.
 
-### Semantic
-- **Success** (`{colors.success}` — #22c55e): Success states.
-- **Warning** (`{colors.warning}` — #f59e0b): Warning callouts.
-- **Error** (`{colors.error}` — #ef4444): Validation errors.
+### Surfaces (levels)
+| Level | Name | Value | Purpose |
+|-------|------|-------|---------|
+| 1 | Cream Paper | `#fcfaf5` | Page canvas and nav background |
+| 2 | Sticky Note Mint | `#d5f5c2` | Soft feature card surface |
+| 3 | Highlighter Yellow | `#ffe95c` | Accent card or highlighted callout surface |
+| 4 | Sticky Note Blush | `#f6d0ff` | Decorative card surface |
+| 5 | Sticky Note Teal | `#a8e5e5` | Decorative card surface |
 
 ## Typography
 
-### Font Family
-The system runs **Plain Black** (a custom rounded display face) for headlines and **Inter** for body, navigation, and UI. Plain Black at weight 500 with negative letter-spacing handles every display headline; Inter handles the rest. The fallback stack walks `Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif` for both.
+### Font Families
 
-### Hierarchy
+**Bricolage Grotesque** (`--font-bricolage-grotesque`) — Display headlines only. Custom variable font with positive tracking (0.04–0.05em) that makes characters feel chunky and sticker-like. This is the signature voice — never use for body or UI.
+- **Substitute:** Archivo Black, or Mulish 900 as fallback
+- **Weights:** 800
+- **Sizes:** 55px, 66px, 90px
+- **Line height:** 1.00–1.20
+- **Letter spacing:** 0.04em at 55px, 0.05em at 66–90px
 
-| Token | Size | Weight | Line Height | Letter Spacing | Use |
-|---|---|---|---|---|---|
-| `{typography.display-xl}` | 72px | 500 | 1.0 | -2.5px | Homepage h1 ("Go to market with unique data") — Plain Black |
-| `{typography.display-lg}` | 56px | 500 | 1.05 | -2px | Section heads — Plain Black |
-| `{typography.display-md}` | 40px | 500 | 1.1 | -1px | Sub-section heads, product names |
-| `{typography.display-sm}` | 32px | 500 | 1.15 | -0.5px | CTA-band heads, feature card titles |
-| `{typography.title-lg}` | 24px | 600 | 1.3 | -0.3px | Pricing plan names, larger feature titles |
-| `{typography.title-md}` | 18px | 600 | 1.4 | 0 | Card titles, intro paragraphs |
-| `{typography.title-sm}` | 16px | 600 | 1.4 | 0 | Small card titles, list labels |
-| `{typography.body-md}` | 16px | 400 | 1.55 | 0 | Default running-text |
-| `{typography.body-sm}` | 14px | 400 | 1.55 | 0 | Footer body, fine-print |
-| `{typography.caption}` | 13px | 500 | 1.4 | 0 | Badge labels, captions |
-| `{typography.caption-uppercase}` | 12px | 600 | 1.4 | 1.5px | Section labels, "FEATURED" badges |
-| `{typography.button}` | 14px | 600 | 1.0 | 0 | Standard button labels |
-| `{typography.nav-link}` | 14px | 500 | 1.4 | 0 | Top-nav menu items |
+**Inter** (`--font-inter`) — Everything functional: body copy, nav, buttons, cards, subheadings. Weight 400 for body, 500–600 for labels and subheads, 700 for section headings. Clean humanist sans that lets the Bricolage display type stay loud.
+- **Substitute:** system-ui, -apple-system, Segoe UI
+- **Weights:** 300, 400, 500, 600, 700
+- **Sizes:** 11px, 12px, 14px, 16px, 17px, 18px, 20px, 24px, 28px, 30px, 32px, 36px, 38px, 40px, 64px
+- **Line height:** 1.20–1.63
+
+**Roboto Mono** (`--font-roboto-mono`) — Micro-labels in nav, small caps-style tags, and technical metadata. Mono signals 'tool/utility' context within the otherwise rounded typographic system.
+- **Substitute:** JetBrains Mono, IBM Plex Mono
+- **Weights:** 400
+- **Sizes:** 12px, 15px, 16px
+- **Line height:** 1.00–1.38
+
+### Type Scale
+
+| Role | Size | Line Height | Letter Spacing | Token |
+|------|------|-------------|----------------|-------|
+| micro | 11px | 1.3 | — | `--text-micro` |
+| caption | 14px | 1.5 | — | `--text-caption` |
+| body-sm | 16px | 1.5 | — | `--text-body-sm` |
+| body | 18px | 1.5 | — | `--text-body` |
+| body-lg | 20px | 1.38 | — | `--text-body-lg` |
+| subheading | 28px | 1.25 | — | `--text-subheading` |
+| heading-sm | 40px | 1.1 | — | `--text-heading-sm` |
+| heading | 55px | 1 | 2.2px | `--text-heading` |
+| heading-lg | 66px | 1 | 3.3px | `--text-heading-lg` |
+| display | 90px | 1 | 4.5px | `--text-display` |
 
 ### Principles
-Plain Black at weight 500 + negative letter-spacing IS the brand voice. Going to weight 700 reads as bombastic; the rounded character of the typeface adds warmth that bolder weight would flatten.
+- Bricolage Grotesque at 800 weight + positive letter-spacing IS the brand voice. Going below 800 weight or below 40px is a system violation.
+- The body-vs-display split is functional: Bricolage for headlines, Inter for everything else. Mixing them is a system violation.
+- Body copy sits at 18–20px Inter 400 with 1.5 line-height — comfortable-density reading experience.
 
-The body-vs-display split is functional: Plain Black for Plain Black moments (headlines), Inter for everything else (running text, UI, buttons). Mixing them is a system violation.
+## Spacing & Shapes
 
-### Note on Font Substitutes
-If Plain Black is unavailable, **Inter** at weight 500 with -0.05em letter-spacing is a usable approximation. **Söhne Breit** at weight Buch is an alternative if licensed. **Recoleta** at weight 500 carries similar rounded-display warmth.
+**Base unit:** 8px
+**Density:** comfortable
+
+### Spacing Scale
+
+| Name | Value | Token |
+|------|-------|-------|
+| 8 | 8px | `--spacing-8` |
+| 16 | 16px | `--spacing-16` |
+| 24 | 24px | `--spacing-24` |
+| 32 | 32px | `--spacing-32` |
+| 40 | 40px | `--spacing-40` |
+| 48 | 48px | `--spacing-48` |
+| 56 | 56px | `--spacing-56` |
+| 64 | 64px | `--spacing-64` |
+| 80 | 80px | `--spacing-80` |
+| 96 | 96px | `--spacing-96` |
+| 120 | 120px | `--spacing-120` |
+
+### Border Radius
+
+| Element | Value |
+|---------|-------|
+| nav | 16px |
+| tags | 9999px |
+| cards | 12px |
+| buttons | 6px |
+
+### Shadows
+
+| Name | Value | Token |
+|------|-------|-------|
+| subtle | `rgba(0, 0, 0, 0.05) 0px 1px 2px 0px` | `--shadow-subtle` |
+| subtle-2 | `rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.1) 0px 1px 2px -1px` | `--shadow-subtle-2` |
+| xl | `rgba(255, 235, 90, 0.01) 0px 527px 211px 0px, rgba(255, 235, 90, 0.05) 0px 297px 178px 0px, rgba(255, 235, 90, 0.09) 0px 132px 132px 0px, rgba(255, 235, 90, 0.1) 0px 33px 72px 0px` | `--shadow-xl` |
 
 ## Layout
 
-### Spacing System
-- **Base unit:** 4px.
-- **Tokens:** `{spacing.xxs}` 4px · `{spacing.xs}` 8px · `{spacing.sm}` 12px · `{spacing.md}` 16px · `{spacing.lg}` 24px · `{spacing.xl}` 32px · `{spacing.xxl}` 48px · `{spacing.section}` 96px.
-- **Section padding:** `{spacing.section}` (96px) between major editorial bands.
-- **Card internal padding:** `{spacing.xl}` (32px) for feature cards and pricing tiers; `{spacing.lg}` (24px) for testimonial and product mockup cards.
+- **Page max-width:** 1200px
+- **Section gap:** 64px
+- **Card padding:** 24px
+- **Element gap:** 16px
 
-### Grid & Container
-- **Max content width:** ~1280px centered.
-- **Editorial body:** Single 12-column grid; hero often uses 7/5 split (h1 left, illustration right).
-- **Feature card grids:** 3-up at desktop, 2-up at tablet, 1-up at mobile.
-- **Pricing grid:** 3-4 up at desktop, 1-up at mobile.
+Page layout is max-width 1200px with generous side padding and a workbench macrostructure. The hero is asymmetric: a left-biased waitlist pitch and email form paired with a right-side review packet artifact. The packet mockup is the visual proof, not decoration. Sections stack vertically without alternating dark/light bands; the cream canvas is consistent throughout. Feature sections use varied spans, rows, and tabular flow instead of a generic 3-card row. The navigation sits in a floating rounded container with an inline command/search pill, not a full-width bar. The overall rhythm is spacious, but conversion remains close: above-fold waitlist form, product proof, final waitlist form.
 
-### Whitespace Philosophy
-Clay uses generous whitespace around big rounded display headlines and saturated feature cards. The cream canvas + colored cards + 3D illustrations create a playful warmth that competing data-platform sites lack.
+## Elevation
 
-## Elevation & Depth
+- **Primary CTA Button:** `rgba(0, 0, 0, 0.05) 0px 1px 2px 0px`
+- **Secondary Button (hover/active):** `rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.1) 0px 1px 2px -1px`
+- **Nav bar:** The unusual multi-layer yellow shadow glow (`--shadow-xl`) that bleeds beyond the nav edges.
 
-| Level | Treatment | Use |
-|---|---|---|
-| Flat | No shadow, no border | Body sections, top nav, hero |
-| Soft hairline | 1px `{colors.hairline}` border | Inputs, small content cards |
-| Saturated card | Brand pink/teal/lavender/peach/ochre fill — no shadow | Feature cards |
-| Cream card | `{colors.surface-card}` background — no shadow | Testimonial, secondary cards |
-| Subtle drop shadow | Faint shadow at low alpha | Hover-elevated states (rare) |
+The system uses no heavy shadows. Depth comes from color fills and 1px borders, not drop shadows. Shadows above 2px blur break the flat aesthetic.
 
-The system uses no heavy shadows. Depth comes from the saturated color contrast between cream canvas and bright feature cards.
+## Imagery
 
-### Decorative Depth
-- **3D claymation illustrations** — mountains, characters, mascots rendered in a hand-crafted 3D style. The brand's most-recognized depth element. Not a token — these are illustrated assets.
-- **Mascot characters** appear as inline figures in feature cards and CTAs.
-
-## Shapes
-
-### Border Radius Scale
-
-| Token | Value | Use |
-|---|---|---|
-| `{rounded.xs}` | 6px | Small badges, dropdown items |
-| `{rounded.sm}` | 8px | Small buttons, hairline-border accent |
-| `{rounded.md}` | 12px | Standard CTA buttons, text inputs |
-| `{rounded.lg}` | 16px | Content cards, testimonial cards, pricing tiers |
-| `{rounded.xl}` | 24px | Feature cards (the saturated brand-color cards) |
-| `{rounded.pill}` | 9999px | Category tabs, badge pills |
-| `{rounded.full}` | 9999px / 50% | Avatars, icon buttons |
+Imagery is minimal and hand-crafted rather than photographic. The system uses black-line sketch illustrations at reduced opacity (~15%) as atmospheric background elements — abstract shapes, partial drawings, and gestural marks that feel like a designer's notebook scribbles bleeding off the page. There is no product photography, no stock imagery, no 3D renders. Decorative elements are monoline (1–2px stroke), unfilled, and deliberately imperfect. The logo mark itself is hand-drawn. Iconography in the interface is small and functional, appearing mostly in the tagline badge and feature card contexts. The overall image density is low — the page is text-dominant with illustration serving as texture rather than content.
 
 ## Components
 
-### Top Navigation
+### Primary CTA Button
+**Role:** Conversion action
 
-**`top-nav`** — Cream nav bar pinned to top. 64px tall, `{colors.canvas}` background. Carries the Clay logo + wordmark at left, primary horizontal menu (Product, Solutions, Resources, Pricing, Customers) center, right-side cluster with "Sign in" + "Try free" `{component.button-primary}`. Menu items in `{typography.nav-link}` (Inter 14px / 500).
+Filled Forest Ink (`#1a3300`) background, Cream Paper (`#fcfaf5`) text, 6px radius, padding 14px 22px (or 10px 16px for compact). Inter 700 at 14–16px. Subtle shadow only. Primary labels should be waitlist verbs: `Join waitlist`, `Request access`, or `Get early access`.
 
-### Buttons
+### Waitlist Form
+**Role:** Primary conversion surface
 
-**`button-primary`** — Background `{colors.primary}` (near-black), text `{colors.on-primary}` (white), type `{typography.button}` (Inter 14px / 600), padding 12px × 20px, height 44px, rounded `{rounded.md}` (12px).
+One labelled email field and one one-line submit button. Label sits above the input. Helper text sits below the row and should be concrete, e.g. `Early macOS build. No newsletter churn.` Error text appears below helper text and names the fix: `Enter a valid email address to join the waitlist.` Success text is quiet and factual. The form has all states: default, focus, active submit, loading, error, success, and disabled-ready styling. The current static landing page uses `/waitlist` as the replaceable action endpoint.
 
-**`button-secondary`** — Cream button with hairline outline. Background `{colors.canvas}`, text `{colors.ink}`, 1px hairline border.
+### Outline Nav Button
+**Role:** Secondary nav action
 
-**`button-on-color`** — White button used over saturated brand-color feature cards. Same shape as primary but inverted (white background, ink text).
+Transparent fill, 1px Forest Ink border, 6px radius, padding 8px 16px. Inter 500 at 14px in Forest Ink. Used for 'Log In' in nav.
 
-**`button-text-link`** — Inline text button, no background. Used for "Sign in" and inline link CTAs.
+### Pastel Accent Button
+**Role:** Playful secondary action
 
-**`text-link`** — Inline body links in `{colors.ink}` with underline.
+Filled with one of the sticky-note pastels (Blush, Teal, Mint), Forest Ink text at 14–16px Inter 500, 6px radius. Used for demo/secondary paths where a green CTA would feel too committed.
 
-### Cards & Containers
+### Highlighted Word
+**Role:** Editorial emphasis within display text
 
-**`hero-band`** — Cream-canvas hero with 7-5 grid: h1 + sub-headline + button row on the left, 3D claymation illustration on the right. Vertical padding `{spacing.section}` (96px).
+Individual words or short phrases in a Bricolage Grotesque headline wrapped in a Highlighter Yellow (`#ffe95c`) background. The highlight is a rectangular wash behind the text, not a border. Creates a marker-pen effect.
 
-**`hero-illustration-card`** — Right-side artifact holding 3D claymation illustration (mountains, mascot character, abstract shapes). Background `{colors.surface-soft}`, rounded `{rounded.xl}` (24px). The illustration IS the artifact.
+### Logo Mark
+**Role:** Brand identity
 
-**`feature-card-pink`** / **`feature-card-teal`** / **`feature-card-lavender`** / **`feature-card-peach`** / **`feature-card-ochre`** — Saturated single-color feature cards. Background varies per variant; rounded `{rounded.xl}` (24px); padding `{spacing.xl}` (32px). Each card carries an h3 in `{typography.title-md}`, a body description, and a product UI fragment or mascot illustration. Text color flips to `{colors.on-dark}` (white) on pink and teal cards, `{colors.ink}` (dark) on lavender/peach/ochre cards (the lighter saturations have enough contrast for dark text).
+Two-part lockup: a 40x40 square in Highlighter Yellow containing a hand-drawn folded-packet illustration in Forest Ink (rounded, slightly imperfect strokes), followed by 'pagepacket' wordmark in Inter 700 at 20px in Forest Ink.
 
-**`feature-card-cream`** — Lower-key feature card variant on `{colors.surface-card}`. Used for less-emphasized features that don't warrant a saturated color.
+### Sticky Note Card
+**Role:** Feature or decorative surface
 
-**`product-mockup-card`** — Card showing actual Clay product UI (Claygent agent runs, sequencer flows, CRM enrichment tables). Background `{colors.canvas}` with hairline border, rounded `{rounded.lg}`, padding `{spacing.lg}` (24px).
+12–16px radius, 24–28px padding, filled with one of the pastel accents (Mint, Blush, Teal, Terracotta) or Cream Paper. Forest Ink text. Optional 1px Forest Ink border. No shadow — the color fill does the separation work.
 
-**`testimonial-card`** — Customer quote cards. Background `{colors.surface-card}` (cream), rounded `{rounded.lg}`, padding `{spacing.lg}` (24px). Top row has avatar + name + role; below sits the testimonial in `{typography.body-md}`.
+### Top Navigation Bar
+**Role:** Primary site navigation
 
-**`pricing-tier-card`** — Standard tier card. Background `{colors.canvas}` with hairline, rounded `{rounded.lg}`, padding `{spacing.xl}` (32px).
+Cream Paper background, 16px radius container (pill-shaped), 1px Pencil Gray border. Logo left, centered nav links (Inter 500, 14px), auth buttons right. Padding 8–12px vertical. Contains the unusual multi-layer yellow shadow glow that bleeds beyond the nav edges. Floating — centered at top with margin, not full-width bar.
 
-**`pricing-tier-card-featured`** — The featured tier flips to `{colors.brand-teal}` (deep teal-green). The teal surface IS the featured signal.
+### Tagline Badge
+**Role:** Eyebrow label above headline
 
-**`expert-card`** — Used on /experts page. Background `{colors.canvas}` with hairline, rounded `{rounded.lg}`, padding `{spacing.lg}`. Carries an avatar at top, expert name, specialization, and a "Book session" link.
+Small pill or rounded rectangle with a tiny icon (lightbulb/star), Highlighter Yellow background, Forest Ink text at 12–14px Inter 500. Sits centered above the display headline as a 'category marker'.
 
-### Inputs & Forms
+### Review Packet Artifact
+**Role:** Product proof
 
-**`text-input`** — Background `{colors.canvas}`, text `{colors.ink}`, type `{typography.body-md}`, rounded `{rounded.md}` (12px), padding 12px × 16px, height 44px. 1px hairline border.
+The hero visual is a code-native review packet: file title, status chip, Markdown hunk lines, added/removed/conflict states, and review actions. It should never use fake browser chrome. It is a product artifact, not an illustration. Use Forest Ink borders, Cream Paper surfaces, Mint for additions, Terracotta for removals, and Highlighter Yellow for conflicts.
 
-**`text-input-focused`** — Border thickens to ink for emphasis.
+### Display Hero Headline
+**Role:** Page-level title
 
-### Tabs / Badges
+Bricolage Grotesque 800 at 66–90px, Forest Ink color, line-height 1.0, letter-spacing 0.04–0.05em. One or two words within the headline get the Highlighter Yellow background treatment.
 
-**`category-tab`** + **`category-tab-active`** — Pill-shaped tabs in sub-nav. Inactive: transparent + muted text. Active: cream-card background + ink text. Padding 8px × 16px.
+### Subhead Paragraph
+**Role:** Hero supporting copy
 
-**`badge-pill`** — Small cream-fill pill labels in `{typography.caption}` (13px / 500), rounded `{rounded.pill}`.
+Inter 400 at 18–20px, Forest Ink color, line-height 1.5, max-width ~620px, left-aligned in the hero. The subhead must state the waitlist value and the product boundary: plain Markdown files, local review packets, human decision before agent edits land.
 
-### CTA / Footer
+### Reassurance Caption
+**Role:** Microcopy below CTA
 
-**`cta-band-illustrated`** — Pre-footer "Turn your growth ideas into reality today" band. Background `{colors.surface-soft}`, rounded `{rounded.xl}`, padding 80px. Carries an h2 in `{typography.display-md}`, a sub-line, and a `{component.button-primary}` — usually paired with a 3D illustration of a mascot or scene.
+Inter 400 at 12–14px, Whisper Gray (`#f1f1f1`) or Pencil Gray. Examples: 'no credit card required.' Sits 8–12px below the primary button.
 
-**`footer`** — Cream-tinted footer (NOT dark navy unlike most SaaS sites). Background `{colors.surface-soft}`, text `{colors.body}`. 4-column link list. Vertical padding 80px. Often features a horizon-style 3D mountain illustration at the very bottom — Clay's signature footer mountain.
+### Decorative Sketch Element
+**Role:** Atmospheric illustration
+
+Hand-drawn line illustrations in Forest Ink at ~15% opacity, placed as background atmosphere in hero/transition zones. Sharp 1–2px strokes, no fill, slight imperfection in line quality. Not icons — mood.
 
 ## Do's and Don'ts
 
 ### Do
-- Anchor every page on the cream canvas (`{colors.canvas}` — #fffaf0). The warm tint differentiates Clay from cool-gray data sites.
-- Use 3D claymation illustrations as hero artifacts. Hand-crafted 3D characters and mountains ARE the brand.
-- Cycle saturated feature cards across the page — pink → teal → lavender → peach → ochre → cream. Repeating the same color twice in a row reads as off-rhythm.
-- Use Plain Black at weight 500 with negative letter-spacing on every display headline.
-- Show product UI fragments inside saturated feature cards. The brand voltage is product-driven, not abstract.
-- Use cream footer (NOT dark). Clay deliberately closes pages with warm cream rather than the standard dark-footer SaaS template.
-- Anchor every band with `{spacing.section}` (96px) vertical rhythm.
+- Use Forest Ink (`#1a3300`) for all primary text, links, and CTA buttons — it is the single chromatic workhorse.
+- Set display headlines in Bricolage Grotesque 800 with positive letter-spacing (0.04–0.05em); let it breathe at line-height 1.0.
+- Apply Highlighter Yellow (`#ffe95c`) as a background wash behind individual words in headlines, not as a button fill or full surface.
+- Use 6px radius for all buttons and 12px for cards — never mix sharp 0px corners with the rounded system.
+- Set body copy at 18–20px Inter 400 with 1.5 line-height; this is a comfortable-density reading experience.
+- Separate layers with color fills and 1px borders, not shadows. Shadows are reserved for the nav glow and button lift only.
+- Keep the page 95% cream + forest green. Pastel accents (Mint, Blush, Teal) appear as individual card or button fills, never as large surfaces.
+- Keep the waitlist form above the fold and repeat it once at the close.
+- Show concrete product proof beside the first form: a review packet, a CLI command, or a real app capture.
 
 ### Don't
-- Don't use cool grays for canvas. The cream tint is non-negotiable.
-- Don't use a 7th brand-color card. The 6-color palette is saturated enough.
-- Don't bold display weight beyond 500. Plain Black at 700 reads as bombastic.
-- Don't repeat the same brand-color card twice in a row.
-- Don't replace claymation illustrations with flat vector art. The hand-crafted 3D character IS the brand voice.
-- Don't use a dark footer. The cream footer is part of the system's warm-throughout pacing.
-- Don't add hover state styling beyond what the system already encodes.
+- Don't use Bricolage Grotesque for body text, nav, buttons, or anything below 40px — its 800 weight is too heavy for small sizes.
+- Don't introduce a second primary brand color. Forest Ink is the only chromatic authority; everything else is accent or neutral.
+- Don't apply heavy drop shadows. The system relies on color and borders for hierarchy; box-shadows above 2px blur break the flat aesthetic.
+- Don't use pure black (`#000000`) for text. Forest Ink is the text color — pure black should only appear as SVG fill/stroke in decorative elements.
+- Don't center-align body paragraphs wider than 640px. Headlines and subheads center, but reading copy should be left-aligned or constrained.
+- Don't use Highlighter Yellow as a CTA background. It reads as a marker, not an action — reserve it for text highlight washes.
+- Don't combine multiple pastel accent cards in the same row. Each pastel card should be separated by cream space to maintain the sticky-note rhythm.
+- Don't split the main conversion between download, docs, GitHub, and waitlist. Until launch, waitlist is the only primary CTA.
+- Don't fake social proof, waitlist counts, or launch dates. If a metric is unknown, omit it.
 
-## Responsive Behavior
+## Quick Reference
 
-### Breakpoints
+**Quick Color Reference**
+- text: `#1a3300` (Forest Ink)
+- background: `#fcfaf5` (Cream Paper)
+- border: `#b6b6b6` (Pencil Gray)
+- accent: `#ffe95c` (Highlighter Yellow)
+- muted text: `#f1f1f1` (Whisper Gray)
+- primary action: `#1a3300` (filled action)
 
-| Name | Width | Key Changes |
-|---|---|---|
-| Mobile | < 768px | Hamburger nav; hero h1 72→36px; hero-illustration-card stacks below; feature grids 1-up; pricing 1-up |
-| Tablet | 768–1024px | Top nav tightens; feature cards 2-up; pricing 2-up |
-| Desktop | 1024–1440px | Full top-nav; 3-up feature cards; 3-up pricing tiers |
-| Wide | > 1440px | Same as desktop with more breathing room; max content 1280px |
+## Similar Brands
 
-### Touch Targets
-- `{component.button-primary}` at minimum 44 × 44px (matches WCAG AAA).
-- `{component.text-input}` height is 44px.
-
-### Collapsing Strategy
-- Top nav collapses to hamburger at < 768px.
-- Hero 7-5 grid → single-column on mobile.
-- Feature card grids reduce columns rather than scaling.
-- Saturated feature cards retain their colored fill at every breakpoint.
-- Pricing tier cards collapse 4 → 2 → 1.
-
-## Iteration Guide
-
-1. Focus on ONE component at a time. Reference its YAML key (`{component.feature-card-pink}`, `{component.pricing-tier-card-featured}`).
-2. Pick the right brand-color card for the feature: pink for outbound/sequencer, teal for enterprise/featured, lavender for AI-agent products, peach for general SaaS warmth, ochre for community / experts.
-3. Variants of an existing component (`-active`, `-disabled`) live as separate entries.
-4. Use `{token.refs}` everywhere — never inline hex.
-5. Never document hover.
-6. Display headlines stay Plain Black 500 with negative letter-spacing. Body stays Inter 400.
-7. The cream-throughout palette is a system contract — don't add a dark footer.
-
-## Known Gaps
-
-- Plain Black is licensed to Clay and not available as a public web font; Inter weight 500 with negative letter-spacing is the closest substitute.
-- 3D claymation illustrations are commissioned assets, not system tokens — they're rendered per-page.
-- The mascot characters (named characters that recur across the site) are illustrated assets; their exact lineage and naming are not formalized in tokens.
-- Animation and transition timings (3D illustration parallax on scroll, feature card entrance animations) are not in scope.
-- Form validation states beyond `{component.text-input-focused}` are not extracted.
-- The actual Clay product surface (in-app data tables, formula editor, agent builder) shares some tokens with the marketing site but adds many product-specific components that are out of scope.
+- **Notion** — Same warm minimal canvas with a single near-black color carrying all structural weight, and intentional use of black-line illustration for atmospheric texture.
+- **Linear** — Restrained chromatic palette, generous whitespace, and the confidence to let one bold display typeface carry the brand voice while keeping UI type quiet.
+- **Framer** — Playful creative-tool aesthetic with rounded corners, yellow as an editorial highlight accent, and sketch-style illustration elements.
+- **Pitch** — Same studio-moodboard visual language: cream/warm canvas, bold display type, pastel accent cards scattered like sticky notes, minimal shadow hierarchy.

@@ -1,0 +1,9 @@
+{
+  "date": "2026-06-28",
+  "framework": "vanilla-html",
+  "font_stack": "Google Fonts: Bricolage Grotesque, Inter, Roboto Mono",
+  "palette": "cream paper, forest ink, highlighter yellow, sticky-note accents",
+  "motion": "vanilla IntersectionObserver; no motion library",
+  "spacing": "8px inherited design scale plus Hallmark 4pt token aliases",
+  "preserve": ["DESIGN.md locked visual system", "pagepacket naming", "plain Markdown positioning"]
+}

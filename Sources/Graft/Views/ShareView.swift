@@ -4,6 +4,7 @@ struct ShareView: View {
     @EnvironmentObject private var workspace: WorkspaceStore
     @State private var email = ""
     @State private var role: InviteRole = .editor
+    @State private var feedback: String?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
@@ -22,15 +23,35 @@ struct ShareView: View {
                 }
                 .pickerStyle(.segmented)
                 Button {
-                    workspace.addInvite(email: email, role: role)
-                    email = ""
+                    switch workspace.addInvite(email: email, role: role) {
+                    case .added:
+                        email = ""
+                        feedback = nil
+                    case .invalidEmail:
+                        feedback = "Enter a valid email address."
+                    case .duplicate:
+                        feedback = "That invite is already listed."
+                    }
                 } label: {
                     Label("Add Invite", systemImage: "paperplane")
                 }
                 .buttonStyle(.borderedProminent)
                 .frame(maxWidth: .infinity, alignment: .trailing)
+                if let feedback {
+                    Text(feedback)
+                        .font(.caption)
+                        .foregroundStyle(GraftTheme.pink)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
             }
             .graftCard()
+
+            if workspace.invites.isEmpty {
+                Text("No invite intents saved yet.")
+                    .font(.callout)
+                    .foregroundStyle(GraftTheme.muted)
+                    .graftCard()
+            }
 
             ForEach(workspace.invites) { invite in
                 HStack(spacing: 10) {

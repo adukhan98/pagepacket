@@ -18,7 +18,7 @@ struct VersionHistoryStore {
 
     func snapshot(file: MarkdownFile, content: String, reason: String, source: String) -> VersionSnapshot? {
         prepare()
-        let folderName = safeName(file.relativePath)
+        let folderName = PathUtilities.historyFolderName(for: file.relativePath)
         let folderURL = historyURL.appendingPathComponent(folderName, isDirectory: true)
         try? FileManager.default.createDirectory(at: folderURL, withIntermediateDirectories: true)
 
@@ -51,9 +51,15 @@ struct VersionHistoryStore {
     }
 
     func snapshots(for file: MarkdownFile) -> [VersionSnapshot] {
-        let folderURL = historyURL.appendingPathComponent(safeName(file.relativePath), isDirectory: true)
-        guard let urls = try? FileManager.default.contentsOfDirectory(at: folderURL, includingPropertiesForKeys: [.contentModificationDateKey]) else {
-            return []
+        let folderURLs = [
+            historyURL.appendingPathComponent(PathUtilities.historyFolderName(for: file.relativePath), isDirectory: true),
+            historyURL.appendingPathComponent(PathUtilities.legacyHistoryFolderName(for: file.relativePath), isDirectory: true)
+        ]
+        let urls = folderURLs.flatMap { folderURL in
+            (try? FileManager.default.contentsOfDirectory(
+                at: folderURL,
+                includingPropertiesForKeys: [.contentModificationDateKey]
+            )) ?? []
         }
 
         return urls
@@ -84,16 +90,14 @@ struct VersionHistoryStore {
         guard let raw = try? String(contentsOf: snapshot.snapshotURL, encoding: .utf8) else {
             return nil
         }
-        if raw.hasPrefix("---"), let range = raw.range(of: "\n---\n\n") {
-            return String(raw[range.upperBound...])
+        if raw.hasPrefix("---\n"), let range = raw.dropFirst(4).range(of: "\n---") {
+            var contentStart = range.upperBound
+            while contentStart < raw.endIndex, raw[contentStart].isNewline {
+                contentStart = raw.index(after: contentStart)
+            }
+            return String(raw[contentStart...])
         }
         return raw
-    }
-
-    private func safeName(_ path: String) -> String {
-        path.replacingOccurrences(of: "/", with: "__")
-            .replacingOccurrences(of: " ", with: "_")
-            .replacingOccurrences(of: ".", with: "_")
     }
 
     private func frontMatterValue(_ key: String, in content: String) -> String? {

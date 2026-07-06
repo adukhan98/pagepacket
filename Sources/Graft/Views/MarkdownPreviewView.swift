@@ -19,7 +19,7 @@ struct MarkdownPreviewView: View {
 
     @ViewBuilder
     private func blockView(_ block: MarkdownBlock) -> some View {
-        switch block {
+        switch block.kind {
         case let .heading(level, text):
             Text(text)
                 .font(.system(size: headingSize(level), weight: .medium, design: .rounded))
@@ -28,6 +28,7 @@ struct MarkdownPreviewView: View {
         case let .paragraph(text):
             MarkdownInlineText(text)
                 .font(.body)
+                .foregroundStyle(GraftTheme.body)
                 .lineSpacing(4)
         case let .quote(text):
             HStack(alignment: .top, spacing: 12) {
@@ -35,7 +36,7 @@ struct MarkdownPreviewView: View {
                     .fill(GraftTheme.lavender)
                     .frame(width: 4)
                 MarkdownInlineText(text)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(GraftTheme.muted)
             }
             .padding(.vertical, 4)
         case let .unorderedItem(text):
@@ -46,17 +47,20 @@ struct MarkdownPreviewView: View {
                     .fill(GraftTheme.teal)
                     .frame(width: 6, height: 6)
             }
-        case let .orderedItem(text):
+            .foregroundStyle(GraftTheme.body)
+        case let .orderedItem(number, text):
             HStack(alignment: .top) {
-                Text("1.")
+                Text("\(number).")
                     .foregroundStyle(GraftTheme.ochre)
                 MarkdownInlineText(text)
+                    .foregroundStyle(GraftTheme.body)
             }
         case let .task(done, text):
             HStack {
                 Image(systemName: done ? "checkmark.square.fill" : "square")
-                    .foregroundStyle(done ? GraftTheme.teal : .secondary)
+                    .foregroundStyle(done ? GraftTheme.teal : GraftTheme.muted)
                 MarkdownInlineText(text)
+                    .foregroundStyle(GraftTheme.body)
             }
         case let .code(language, text):
             VStack(alignment: .leading, spacing: 8) {
@@ -67,6 +71,7 @@ struct MarkdownPreviewView: View {
                 }
                 Text(text)
                     .font(.system(.body, design: .monospaced))
+                    .foregroundStyle(GraftTheme.body)
                     .textSelection(.enabled)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -87,6 +92,7 @@ struct MarkdownPreviewView: View {
                         ForEach(Array(normalized(row, width: headers.count).enumerated()), id: \.offset) { _, cell in
                             MarkdownInlineText(cell)
                                 .font(.callout)
+                                .foregroundStyle(GraftTheme.body)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .padding(8)
                                 .background(rowIndex.isMultiple(of: 2) ? Color.black.opacity(0.025) : Color.clear)
