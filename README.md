@@ -1,13 +1,13 @@
-# Graft
+# pagepacket
 
-![Graft logo](Assets/Brand/graft-logo-lockup.png)
+![pagepacket logo](Assets/Brand/graft-logo-lockup.png)
 
-Graft is a premium local Markdown editor for macOS built around agent review. Humans edit Markdown directly. External coding agents edit the same files on disk. Graft turns those agent edits into reviewable inline diffs, conflicts, and checkpoints before they land.
+pagepacket is a premium local Markdown editor for macOS built around agent review. Humans edit Markdown directly. External coding agents edit the same files on disk. pagepacket turns those agent edits into reviewable inline diffs, conflicts, and checkpoints before they land.
 
 ## What is implemented
 
 - SwiftUI macOS app with native file tree, toolbar, document review surface, review rail, and settings.
-- Custom Graft app icon and logo assets in `Assets/Brand/`.
+- Custom pagepacket app icon and logo assets in `Assets/Brand/`.
 - Native Markdown editor bridge with syntax highlighting and line selection state.
 - Edit, Preview, and Split modes for Markdown files.
 - Folder-based workspace loading from real `.md` files.
@@ -17,11 +17,11 @@ Graft is a premium local Markdown editor for macOS built around agent review. Hu
 - Reviewable change sets for agent edits, including inline diffs, hunk-level accept/reject controls, and conflict states.
 - Explicit conflict resolution view that keeps the human draft visible beside the agent proposal.
 - Local image block metadata for alt text and selectable relative paths.
-- Local version snapshots in `.graft/history/`.
+- Local version snapshots in `.pagepacket/history/`.
 - Restore from previous snapshots.
-- Review packet metadata under `.graft/changes/` and `.graft/reviews/`.
+- Review packet metadata under `.pagepacket/changes/` and `.pagepacket/reviews/`.
 - Agent activity and CLI sync contract surfaced around pending changes.
-- `graft-cli` commands for vault status, snapshots, submitted change metadata, and history.
+- `pagepacket-cli` commands for vault status, snapshots, submitted change metadata, apply checkpoints, and history.
 - Repo-local agent skill at `skills/graft-sync/SKILL.md`.
 - Build/run integration for Codex Desktop through `.codex/environments/environment.toml`.
 
@@ -40,25 +40,26 @@ Verify launch:
 ## CLI
 
 ```bash
-swift run graft-cli status SampleVault
-swift run graft-cli snapshot SampleVault welcome.md --message "Before agent edits"
-swift run graft-cli submit-change SampleVault welcome.md --agent codex --summary "Edited welcome copy"
-swift run graft-cli history SampleVault welcome.md
+swift run pagepacket-cli status SampleVault
+swift run pagepacket-cli snapshot SampleVault welcome.md --message "Before agent edits"
+swift run pagepacket-cli submit-change SampleVault welcome.md --agent codex --summary "Edited welcome copy"
+swift run pagepacket-cli apply SampleVault welcome.md --author codex
+swift run pagepacket-cli history SampleVault welcome.md
 ```
 
 ## Architecture
 
-Plain Markdown files remain canonical. Graft adds a sidecar folder:
+Plain Markdown files remain canonical. pagepacket adds a sidecar folder:
 
 ```text
 vault/
   welcome.md
   assets/
     welcome/
-  .graft/
+  .pagepacket/
     changes/
     history/
     reviews/
 ```
 
-This keeps Graft agent-compatible without a backend. The product boundary is plain local Markdown plus reviewable agent edits: no account system, no cloud handoff, and no proprietary document store.
+This keeps pagepacket agent-compatible without a backend. The product boundary is plain local Markdown plus reviewable agent edits: no account system, no cloud handoff, and no proprietary document store.

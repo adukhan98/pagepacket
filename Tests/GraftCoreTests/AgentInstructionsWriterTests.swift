@@ -11,7 +11,7 @@ final class AgentInstructionsWriterTests: XCTestCase {
 
         XCTAssertEqual(url.lastPathComponent, "AGENTS.md")
         XCTAssertTrue(text.contains("Keep Markdown files as plain text."))
-        XCTAssertTrue(text.contains(".graft/changes"))
+        XCTAssertTrue(text.contains(".pagepacket/changes"))
         XCTAssertTrue(text.contains("Do not rewrite unrelated sections."))
     }
 }
