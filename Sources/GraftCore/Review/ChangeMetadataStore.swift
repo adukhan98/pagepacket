@@ -20,7 +20,7 @@ public struct ChangeMetadataStore {
     }
 
     public func metadata(for filePath: String) -> ChangeMetadata? {
-        let folder = workspaceURL.appendingPathComponent(".graft/changes", isDirectory: true)
+        let folder = workspaceURL.appendingPathComponent(".pagepacket/changes", isDirectory: true)
         guard let urls = try? FileManager.default.contentsOfDirectory(at: folder, includingPropertiesForKeys: nil) else {
             return nil
         }

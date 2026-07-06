@@ -4,3 +4,4 @@ dist/
 .DS_Store
 *.xcuserdata/
 SampleVault/.graft/
+outputs/**/node_modules

@@ -7,6 +7,7 @@ struct MarkdownRenderer {
         var index = 0
 
         while index < lines.count {
+            let startLine = index
             let line = lines[index]
             let trimmed = line.trimmingCharacters(in: .whitespaces)
 
@@ -23,7 +24,7 @@ struct MarkdownRenderer {
                     codeLines.append(lines[index])
                     index += 1
                 }
-                blocks.append(.code(language: language, text: codeLines.joined(separator: "\n")))
+                blocks.append(block(startLine: startLine, kind: .code(language: language, text: codeLines.joined(separator: "\n"))))
                 index += 1
                 continue
             }
@@ -40,39 +41,39 @@ struct MarkdownRenderer {
                     rows.append(parseTableCells(row))
                     index += 1
                 }
-                blocks.append(.table(headers: headers, rows: rows))
+                blocks.append(block(startLine: startLine, kind: .table(headers: headers, rows: rows)))
                 continue
             }
 
             if let image = parseImage(trimmed) {
-                blocks.append(image)
+                blocks.append(block(startLine: startLine, kind: image))
             } else if trimmed == "---" || trimmed == "***" {
-                blocks.append(.horizontalRule)
+                blocks.append(block(startLine: startLine, kind: .horizontalRule))
             } else if trimmed.hasPrefix("#") {
                 let level = min(trimmed.prefix(while: { $0 == "#" }).count, 6)
                 let text = trimmed.dropFirst(level).trimmingCharacters(in: .whitespaces)
-                blocks.append(.heading(level: level, text: String(text)))
+                blocks.append(block(startLine: startLine, kind: .heading(level: level, text: String(text))))
             } else if trimmed.hasPrefix(">") {
-                blocks.append(.quote(String(trimmed.dropFirst()).trimmingCharacters(in: .whitespaces)))
+                blocks.append(block(startLine: startLine, kind: .quote(String(trimmed.dropFirst()).trimmingCharacters(in: .whitespaces))))
             } else if trimmed.hasPrefix("- [ ] ") || trimmed.hasPrefix("* [ ] ") {
-                blocks.append(.task(done: false, depth: listDepth(for: line), text: String(trimmed.dropFirst(6))))
+                blocks.append(block(startLine: startLine, kind: .task(done: false, text: String(trimmed.dropFirst(6)))))
             } else if trimmed.hasPrefix("- [x] ") || trimmed.hasPrefix("* [x] ") || trimmed.hasPrefix("- [X] ") || trimmed.hasPrefix("* [X] ") {
-                blocks.append(.task(done: true, depth: listDepth(for: line), text: String(trimmed.dropFirst(6))))
+                blocks.append(block(startLine: startLine, kind: .task(done: true, text: String(trimmed.dropFirst(6)))))
             } else if trimmed.hasPrefix("- ") || trimmed.hasPrefix("* ") {
-                blocks.append(.unorderedItem(depth: listDepth(for: line), text: String(trimmed.dropFirst(2))))
+                blocks.append(block(startLine: startLine, kind: .unorderedItem(String(trimmed.dropFirst(2)))))
             } else if let ordered = orderedItem(trimmed) {
-                blocks.append(.orderedItem(number: ordered.number, depth: listDepth(for: line), text: ordered.text))
+                blocks.append(block(startLine: startLine, kind: .orderedItem(number: ordered.number, text: ordered.text)))
             } else {
                 var paragraphLines = [trimmed]
                 index += 1
                 while index < lines.count {
                     let nextLine = lines[index]
                     let next = nextLine.trimmingCharacters(in: .whitespaces)
-                    guard !next.isEmpty, !startsBlock(next, original: nextLine) else { break }
+                    guard !next.isEmpty, !startsBlock(next) else { break }
                     paragraphLines.append(next)
                     index += 1
                 }
-                blocks.append(.paragraph(paragraphLines.joined(separator: " ")))
+                blocks.append(block(startLine: startLine, kind: .paragraph(paragraphLines.joined(separator: " "))))
                 continue
             }
 
@@ -82,7 +83,11 @@ struct MarkdownRenderer {
         return blocks
     }
 
-    private func parseImage(_ line: String) -> MarkdownBlock? {
+    private func block(startLine: Int, kind: MarkdownPreviewBlockKind) -> MarkdownBlock {
+        MarkdownBlock(id: "line-\(startLine)-\(kind.identityPrefix)", kind: kind)
+    }
+
+    private func parseImage(_ line: String) -> MarkdownPreviewBlockKind? {
         guard line.hasPrefix("!["),
               let closeAlt = line.firstIndex(of: "]"),
               line[line.index(after: closeAlt)...].hasPrefix("("),
@@ -131,7 +136,7 @@ struct MarkdownRenderer {
         return (number, text)
     }
 
-    private func startsBlock(_ trimmed: String, original: String) -> Bool {
+    private func startsBlock(_ trimmed: String) -> Bool {
         trimmed.hasPrefix("```")
             || trimmed.hasPrefix("#")
             || trimmed.hasPrefix(">")
@@ -148,11 +153,6 @@ struct MarkdownRenderer {
             || trimmed == "---"
             || trimmed == "***"
             || isTableRow(trimmed)
-    }
-
-    private func listDepth(for line: String) -> Int {
-        let leadingSpaces = line.prefix { $0 == " " }.count
-        return min(leadingSpaces / 2, 4)
     }
 
     private func isTableRow(_ line: String) -> Bool {
@@ -184,5 +184,22 @@ struct MarkdownRenderer {
 private extension String {
     var nilIfEmpty: String? {
         isEmpty ? nil : self
+    }
+}
+
+private extension MarkdownPreviewBlockKind {
+    var identityPrefix: String {
+        switch self {
+        case .heading: "heading"
+        case .paragraph: "paragraph"
+        case .quote: "quote"
+        case .unorderedItem: "ul"
+        case .orderedItem: "ol"
+        case .task: "task"
+        case .code: "code"
+        case .table: "table"
+        case .image: "image"
+        case .horizontalRule: "hr"
+        }
     }
 }

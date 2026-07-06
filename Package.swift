@@ -2,15 +2,15 @@
 import PackageDescription
 
 let package = Package(
-    name: "Graft",
+    name: "Pagepacket",
     platforms: [
         .macOS(.v14)
     ],
     products: [
         .library(name: "GraftCore", targets: ["GraftCore"]),
-        .executable(name: "Graft", targets: ["Graft"]),
-        .executable(name: "graft-cli", targets: ["GraftCLI"]),
-        .executable(name: "graft-behavior-harness", targets: ["GraftBehaviorHarness"])
+        .executable(name: "Pagepacket", targets: ["Graft"]),
+        .executable(name: "pagepacket-cli", targets: ["GraftCLI"]),
+        .executable(name: "pagepacket-behavior-harness", targets: ["GraftBehaviorHarness"])
     ],
     targets: [
         .target(

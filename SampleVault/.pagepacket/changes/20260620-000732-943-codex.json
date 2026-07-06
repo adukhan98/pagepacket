@@ -1,0 +1,12 @@
+{
+  "agent" : "codex",
+  "authorKind" : "agent",
+  "authorName" : "codex",
+  "createdAt" : "2026-06-20T04:07:32Z",
+  "filePath" : "welcome.md",
+  "id" : "57E0F721-8C68-42D6-95CA-CB57F267A4D8",
+  "metadataVersion" : 1,
+  "source" : "pagepacket-cli",
+  "status" : "pending",
+  "summary" : "Tightened welcome copy"
+}

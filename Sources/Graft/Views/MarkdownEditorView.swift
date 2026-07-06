@@ -1,5 +1,5 @@
-import GraftCore
 import AppKit
+import GraftCore
 import SwiftUI
 
 struct MarkdownEditorView: View {
@@ -18,6 +18,16 @@ struct MarkdownEditorView: View {
                         .foregroundStyle(GraftTheme.muted)
                 }
                 Spacer()
+                Button {
+                    workspace.insertImageFromPanel()
+                } label: {
+                    Label("Image", systemImage: "photo.badge.plus")
+                }
+                Button {
+                    workspace.saveCurrentDocument()
+                } label: {
+                    Label("Save", systemImage: "square.and.arrow.down")
+                }
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 14)
@@ -53,7 +63,7 @@ struct MarkdownEditorView: View {
                 font: .monospacedSystemFont(ofSize: workspace.editorFontSize, weight: .regular),
                 isEditable: workspace.selectedFile != nil
             )
-                .background(GraftTheme.canvas)
+            .background(GraftTheme.canvas)
         }
     }
 

@@ -2,8 +2,8 @@
 set -euo pipefail
 
 MODE="${1:-run}"
-APP_NAME="Graft"
-BUNDLE_ID="com.adnaankhan.Graft"
+APP_NAME="Pagepacket"
+BUNDLE_ID="com.adnaankhan.Pagepacket"
 MIN_SYSTEM_VERSION="14.0"
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -28,7 +28,7 @@ mkdir -p "$APP_MACOS" "$APP_RESOURCES"
 cp "$BUILD_BINARY" "$APP_BINARY"
 chmod +x "$APP_BINARY"
 if [[ -f "$ICON_SOURCE" ]]; then
-  cp "$ICON_SOURCE" "$APP_RESOURCES/Graft.icns"
+  cp "$ICON_SOURCE" "$APP_RESOURCES/Pagepacket.icns"
 fi
 
 cat >"$INFO_PLIST" <<PLIST
@@ -43,13 +43,17 @@ cat >"$INFO_PLIST" <<PLIST
   <key>CFBundleName</key>
   <string>$APP_NAME</string>
   <key>CFBundleIconFile</key>
-  <string>Graft</string>
+  <string>Pagepacket</string>
   <key>CFBundlePackageType</key>
   <string>APPL</string>
   <key>LSMinimumSystemVersion</key>
   <string>$MIN_SYSTEM_VERSION</string>
+  <key>NSApplicationSupportsSecureRestorableState</key>
+  <false/>
   <key>NSPrincipalClass</key>
   <string>NSApplication</string>
+  <key>NSQuitAlwaysKeepsWindows</key>
+  <false/>
 </dict>
 </plist>
 PLIST

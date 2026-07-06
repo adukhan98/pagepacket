@@ -14,7 +14,7 @@ struct ImageImportService {
 
         do {
             try FileManager.default.copyItem(at: sourceURL, to: destination)
-            let relative = relativePath(from: file.url.deletingLastPathComponent(), to: destination)
+            let relative = PathUtilities.relativePath(from: file.url.deletingLastPathComponent(), to: destination)
             return "![\(baseName)](\(relative))"
         } catch {
             return nil
@@ -27,7 +27,7 @@ struct ImageImportService {
             .split(separator: "/")
             .map { sanitizedName(String($0)) }
 
-        return documentPath.reduce(workspaceURL.appendingPathComponent("assets", isDirectory: true)) { folder, component in
+        return documentPath.reduce(PathUtilities.normalized(workspaceURL).appendingPathComponent("assets", isDirectory: true)) { folder, component in
             folder.appendingPathComponent(component, isDirectory: true)
         }
     }
@@ -59,14 +59,5 @@ struct ImageImportService {
             .replacingOccurrences(of: "-+", with: "-", options: .regularExpression)
             .trimmingCharacters(in: CharacterSet(charactersIn: "-"))
         return collapsed.isEmpty ? "image" : collapsed
-    }
-
-    private func relativePath(from folder: URL, to destination: URL) -> String {
-        let fromComponents = folder.standardizedFileURL.pathComponents
-        let toComponents = destination.standardizedFileURL.pathComponents
-        let commonCount = zip(fromComponents, toComponents).prefix { $0 == $1 }.count
-        let up = Array(repeating: "..", count: max(0, fromComponents.count - commonCount))
-        let down = Array(toComponents.dropFirst(commonCount))
-        return (up + down).joined(separator: "/")
     }
 }

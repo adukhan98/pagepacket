@@ -4,7 +4,7 @@ struct VersionHistoryStore {
     let workspaceURL: URL
 
     var sidecarURL: URL {
-        workspaceURL.appendingPathComponent(".graft", isDirectory: true)
+        workspaceURL.appendingPathComponent(".pagepacket", isDirectory: true)
     }
 
     var historyURL: URL {
@@ -18,7 +18,7 @@ struct VersionHistoryStore {
 
     func snapshot(file: MarkdownFile, content: String, reason: String, source: String) -> VersionSnapshot? {
         prepare()
-        let folderName = safeName(file.relativePath)
+        let folderName = PathUtilities.historyFolderName(for: file.relativePath)
         let folderURL = historyURL.appendingPathComponent(folderName, isDirectory: true)
         try? FileManager.default.createDirectory(at: folderURL, withIntermediateDirectories: true)
 
@@ -27,10 +27,10 @@ struct VersionHistoryStore {
         let snapshotURL = folderURL.appendingPathComponent("\(id).md")
         let header = """
         ---
-        graft_document: \(file.relativePath)
-        graft_source: \(source)
-        graft_reason: \(reason)
-        graft_created_at: \(ISO8601DateFormatter().string(from: timestamp))
+        pagepacket_document: \(file.relativePath)
+        pagepacket_source: \(source)
+        pagepacket_reason: \(reason)
+        pagepacket_created_at: \(ISO8601DateFormatter().string(from: timestamp))
         ---
 
         """
@@ -51,9 +51,15 @@ struct VersionHistoryStore {
     }
 
     func snapshots(for file: MarkdownFile) -> [VersionSnapshot] {
-        let folderURL = historyURL.appendingPathComponent(safeName(file.relativePath), isDirectory: true)
-        guard let urls = try? FileManager.default.contentsOfDirectory(at: folderURL, includingPropertiesForKeys: [.contentModificationDateKey]) else {
-            return []
+        let folderURLs = [
+            historyURL.appendingPathComponent(PathUtilities.historyFolderName(for: file.relativePath), isDirectory: true),
+            historyURL.appendingPathComponent(PathUtilities.legacyHistoryFolderName(for: file.relativePath), isDirectory: true)
+        ]
+        let urls = folderURLs.flatMap { folderURL in
+            (try? FileManager.default.contentsOfDirectory(
+                at: folderURL,
+                includingPropertiesForKeys: [.contentModificationDateKey]
+            )) ?? []
         }
 
         return urls
@@ -61,8 +67,12 @@ struct VersionHistoryStore {
             .compactMap { url in
                 let date = (try? url.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate) ?? Date()
                 let content = (try? String(contentsOf: url, encoding: .utf8)) ?? ""
-                let reason = frontMatterValue("graft_reason", in: content) ?? "Checkpoint"
-                let source = frontMatterValue("graft_source", in: content) ?? "Graft"
+                let reason = frontMatterValue("pagepacket_reason", in: content)
+                    ?? frontMatterValue("graft_reason", in: content)
+                    ?? "Checkpoint"
+                let source = frontMatterValue("pagepacket_source", in: content)
+                    ?? frontMatterValue("graft_source", in: content)
+                    ?? "Pagepacket"
                 return VersionSnapshot(
                     id: url.deletingPathExtension().lastPathComponent,
                     documentPath: file.relativePath,
@@ -80,16 +90,14 @@ struct VersionHistoryStore {
         guard let raw = try? String(contentsOf: snapshot.snapshotURL, encoding: .utf8) else {
             return nil
         }
-        if raw.hasPrefix("---"), let range = raw.range(of: "\n---\n\n") {
-            return String(raw[range.upperBound...])
+        if raw.hasPrefix("---\n"), let range = raw.dropFirst(4).range(of: "\n---") {
+            var contentStart = range.upperBound
+            while contentStart < raw.endIndex, raw[contentStart].isNewline {
+                contentStart = raw.index(after: contentStart)
+            }
+            return String(raw[contentStart...])
         }
         return raw
-    }
-
-    private func safeName(_ path: String) -> String {
-        path.replacingOccurrences(of: "/", with: "__")
-            .replacingOccurrences(of: " ", with: "_")
-            .replacingOccurrences(of: ".", with: "_")
     }
 
     private func frontMatterValue(_ key: String, in content: String) -> String? {

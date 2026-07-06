@@ -47,7 +47,7 @@ private struct EmptyWorkspaceView: View {
             Text("Open a Markdown workspace")
                 .font(.system(size: 36, weight: .medium, design: .rounded))
                 .foregroundStyle(GraftTheme.ink)
-            Text("Graft keeps your Markdown as plain files so people, Codex, Claude Code, Cursor, Hermes, and shell tools can edit the same workspace.")
+            Text("Pagepacket keeps your Markdown as plain files so people, Codex, Claude Code, Cursor, Hermes, and shell tools can edit the same workspace.")
                 .font(.title3)
                 .foregroundStyle(GraftTheme.body)
                 .multilineTextAlignment(.center)

@@ -8,7 +8,7 @@ public struct ChangeSetStore {
     }
 
     public var reviewsURL: URL {
-        workspaceURL.appendingPathComponent(".graft/reviews", isDirectory: true)
+        workspaceURL.appendingPathComponent(".pagepacket/reviews", isDirectory: true)
     }
 
     public func write(_ changeSet: ChangeSet) throws {

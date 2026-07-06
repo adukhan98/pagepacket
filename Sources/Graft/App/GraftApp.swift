@@ -34,15 +34,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 }
 
 @main
-struct GraftApp: App {
+struct PagepacketApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     @StateObject private var workspace = WorkspaceStore()
 
     var body: some Scene {
-        WindowGroup("Graft") {
+        WindowGroup("Pagepacket") {
             ContentView()
                 .environmentObject(workspace)
                 .frame(minWidth: 1120, minHeight: 720)
+                .preferredColorScheme(.light)
                 .onAppear {
                     workspace.bootstrap()
                 }
@@ -56,6 +57,7 @@ struct GraftApp: App {
                 .environmentObject(workspace)
                 .frame(width: 520)
                 .padding(24)
+                .preferredColorScheme(.light)
         }
     }
 }

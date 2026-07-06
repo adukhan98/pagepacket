@@ -11,7 +11,7 @@ final class WorkspaceStore: ObservableObject {
     @Published var selectedFile: MarkdownFile?
     @Published var editorText = ""
     @Published var lastLoadedText = ""
-    @Published var editorMode: EditorMode = .split
+    @Published var editorMode: EditorMode = .edit
     @Published var isInspectorVisible = false
     @Published var externalChangeBanner: String?
     @Published var pendingChangeSets: [ChangeSet] = []
@@ -38,13 +38,11 @@ final class WorkspaceStore: ObservableObject {
     func bootstrap() {
         guard workspaceURL == nil else { return }
         #if DEBUG
-        guard ProcessInfo.processInfo.environment["GRAFT_OPEN_SAMPLE_ON_LAUNCH"] == "1" else {
+        guard ProcessInfo.processInfo.environment["PAGEPACKET_OPEN_SAMPLE_ON_LAUNCH"] == "1" else {
             return
         }
-        let sample = Bundle.main.bundleURL
-            .deletingLastPathComponent()
-            .deletingLastPathComponent()
-            .appendingPathComponent("SampleVault", isDirectory: true)
+        let sample = FileManager.default.homeDirectoryForCurrentUser
+            .appendingPathComponent("Desktop/markdown/SampleVault", isDirectory: true)
         if FileManager.default.fileExists(atPath: sample.path) {
             openWorkspace(sample)
         }
@@ -80,15 +78,18 @@ final class WorkspaceStore: ObservableObject {
     }
 
     func openWorkspace(_ url: URL) {
-        workspaceURL = url
-        VersionHistoryStore(workspaceURL: url).prepare()
-        _ = try? AgentInstructionsWriter(workspaceURL: url).writeIfMissing()
+        let normalizedURL = PathUtilities.normalized(url)
+        workspaceURL = normalizedURL
+        fileBaselines = [:]
+        VersionHistoryStore(workspaceURL: normalizedURL).prepare()
         loadInviteManifest()
         loadReviewQueue()
         reloadFileList()
         selectedFile = files.first
         if let selectedFile {
             load(file: selectedFile)
+        } else {
+            clearDocumentState()
         }
         watcher.start(watching: files) { [weak self] changedURL in
             Task { @MainActor in
@@ -111,8 +112,9 @@ final class WorkspaceStore: ObservableObject {
 
         files = enumerator
             .compactMap { $0 as? URL }
+            .map(PathUtilities.normalized)
             .filter { $0.pathExtension.lowercased() == "md" }
-            .filter { !$0.path.contains("/.graft/") }
+            .filter { !$0.path.contains("/.pagepacket/") && !$0.path.contains("/.graft/") }
             .filter { $0.lastPathComponent != "AGENTS.md" }
             .map { MarkdownFile(url: $0, workspaceURL: workspaceURL) }
             .sorted { $0.relativePath.localizedStandardCompare($1.relativePath) == .orderedAscending }
@@ -124,7 +126,7 @@ final class WorkspaceStore: ObservableObject {
 
     func load(file: MarkdownFile) {
         if isDirty {
-            saveCurrentDocument()
+            snapshotCurrentDocument(reason: "Before switching documents", source: "Pagepacket")
         }
         selectedFile = file
         let content = (try? String(contentsOf: file.url, encoding: .utf8)) ?? ""
@@ -138,7 +140,7 @@ final class WorkspaceStore: ObservableObject {
 
     func saveCurrentDocument() {
         guard let selectedFile else { return }
-        snapshotCurrentDocument(reason: "Before save", source: "Graft")
+        snapshotCurrentDocument(reason: "Before save", source: "Pagepacket", content: lastLoadedText)
         do {
             try editorText.write(to: selectedFile.url, atomically: true, encoding: .utf8)
             lastLoadedText = editorText
@@ -167,7 +169,7 @@ final class WorkspaceStore: ObservableObject {
     func reloadSelectedFromDisk() {
         guard let selectedFile else { return }
         let content = (try? String(contentsOf: selectedFile.url, encoding: .utf8)) ?? ""
-        snapshotCurrentDocument(reason: "Before accepting external change", source: "Graft")
+        snapshotCurrentDocument(reason: "Before accepting external change", source: "Pagepacket")
         editorText = content
         lastLoadedText = content
         fileBaselines[selectedFile.url] = content
@@ -187,6 +189,7 @@ final class WorkspaceStore: ObservableObject {
             externalChangeBanner = "This proposal now conflicts with your current draft. Review it as a conflict before accepting."
             return
         }
+
         var acceptedText = editorText
         do {
             for range in changeSet.ranges {
@@ -200,7 +203,8 @@ final class WorkspaceStore: ObservableObject {
             externalChangeBanner = "Could not accept edit: \(error.localizedDescription)"
             return
         }
-        snapshotCurrentDocument(reason: "Before accepting \(changeSet.authorName) edit", source: "Graft")
+
+        snapshotCurrentDocument(reason: "Before accepting \(changeSet.authorName) edit", source: "Pagepacket")
         editorText = acceptedText
         do {
             try acceptedText.write(to: selectedFile.url, atomically: true, encoding: .utf8)
@@ -224,7 +228,7 @@ final class WorkspaceStore: ObservableObject {
         }
         do {
             let patched = try MarkdownPatchEngine().apply(range, to: editorText)
-            snapshotCurrentDocument(reason: "Before accepting hunk from \(changeSet.authorName)", source: "Graft")
+            snapshotCurrentDocument(reason: "Before accepting hunk from \(changeSet.authorName)", source: "Pagepacket")
             editorText = patched
             try patched.write(to: selectedFile.url, atomically: true, encoding: .utf8)
             lastLoadedText = patched
@@ -267,14 +271,14 @@ final class WorkspaceStore: ObservableObject {
 
     func createReviewPacket() {
         guard let selectedFile else { return }
-        snapshotCurrentDocument(reason: "Review packet checkpoint", source: "Graft")
+        snapshotCurrentDocument(reason: "Review packet checkpoint", source: "Pagepacket")
         externalChangeBanner = "Review packet checkpoint created for \(selectedFile.relativePath)."
     }
 
-    func snapshotCurrentDocument(reason: String, source: String) {
+    func snapshotCurrentDocument(reason: String, source: String, content: String? = nil) {
         guard let workspaceURL, let selectedFile else { return }
         if let snapshot = VersionHistoryStore(workspaceURL: workspaceURL)
-            .snapshot(file: selectedFile, content: editorText, reason: reason, source: source) {
+            .snapshot(file: selectedFile, content: content ?? editorText, reason: reason, source: source) {
             snapshots.insert(snapshot, at: 0)
         }
     }
@@ -283,7 +287,7 @@ final class WorkspaceStore: ObservableObject {
         guard let workspaceURL, let selectedFile else { return }
         let store = VersionHistoryStore(workspaceURL: workspaceURL)
         guard let content = store.restoreContent(from: snapshot) else { return }
-        self.snapshotCurrentDocument(reason: "Before restore", source: "Graft")
+        snapshotCurrentDocument(reason: "Before restore", source: "Pagepacket")
         editorText = content
         do {
             try content.write(to: selectedFile.url, atomically: true, encoding: .utf8)
@@ -317,17 +321,21 @@ final class WorkspaceStore: ObservableObject {
             let importer = ImageImportService(workspaceURL: workspaceURL)
             if let markdown = importer.importImage(from: url, for: selectedFile) {
                 editorText += editorText.hasSuffix("\n") ? "\n\(markdown)\n" : "\n\n\(markdown)\n"
-                snapshotCurrentDocument(reason: "Inserted image", source: "Graft")
+                snapshotCurrentDocument(reason: "Inserted image", source: "Pagepacket")
             }
         }
     }
 
-    func addInvite(email: String, role: InviteRole) {
-        let trimmedEmail = email.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmedEmail.isEmpty else { return }
-        invites.removeAll { $0.email.localizedCaseInsensitiveCompare(trimmedEmail) == .orderedSame }
-        invites.insert(Invite(email: trimmedEmail, role: role), at: 0)
+    @discardableResult
+    func addInvite(email: String, role: InviteRole) -> InviteAddResult {
+        let normalizedEmail = normalizedInviteEmail(email)
+        guard isValidInviteEmail(normalizedEmail) else { return .invalidEmail }
+        guard !invites.contains(where: { normalizedInviteEmail($0.email) == normalizedEmail }) else {
+            return .duplicate
+        }
+        invites.append(Invite(email: normalizedEmail, role: role))
         writeInviteManifest()
+        return .added
     }
 
     func removeInvite(_ invite: Invite) {
@@ -338,14 +346,14 @@ final class WorkspaceStore: ObservableObject {
     func composeEmail(for invite: Invite) {
         guard let workspaceURL else { return }
         writeInviteManifest()
-        let subject = "Graft workspace details"
+        let subject = "Invitation to collaborate in Pagepacket"
         let body = """
-        I saved you as a \(invite.role.title.lowercased()) in my local Graft workspace "\(workspaceURL.lastPathComponent)".
+        You have been invited as \(invite.role.title.lowercased()) to the Pagepacket workspace "\(workspaceURL.lastPathComponent)".
 
         Workspace path:
         \(workspaceURL.path)
 
-        Graft does not grant cloud access yet, so you will need folder access separately. Once you have the folder, open it in Graft or edit the Markdown files directly with your coding agent.
+        Pagepacket keeps Markdown files local-first. Open this folder in Pagepacket or edit the .md files directly with your coding agent, then use pagepacket-cli snapshot/submit-change to register changes.
         """
 
         var components = URLComponents()
@@ -389,13 +397,15 @@ final class WorkspaceStore: ObservableObject {
     private func createReview(from diskText: String, for file: MarkdownFile, baseText: String, isConflict: Bool) -> Bool {
         guard let workspaceURL else { return false }
         if isConflict, selectedFile?.url == file.url {
-            snapshotCurrentDocument(reason: "External change conflict base", source: "Graft")
+            snapshotCurrentDocument(reason: "External change conflict base", source: "Pagepacket")
         }
+
+        let ranges = MarkdownDiffEngine().changedRanges(before: baseText, after: diskText)
+        guard !ranges.isEmpty else { return false }
 
         let metadataStore = ChangeMetadataStore(workspaceURL: workspaceURL)
         let metadata = metadataStore.metadata(for: file.relativePath)
             ?? metadataStore.fallbackMetadata(for: file.relativePath)
-        let ranges = MarkdownDiffEngine().changedRanges(before: baseText, after: diskText)
         let status: ChangeReviewStatus = isConflict ? .conflict : .pending
         let changeSet = ChangeSet(
             filePath: file.relativePath,
@@ -405,28 +415,43 @@ final class WorkspaceStore: ObservableObject {
             summary: metadata.summary,
             baseText: baseText,
             proposedText: diskText,
-            ranges: ranges
+            ranges: ranges.map { range in
+                ChangeRange(
+                    id: range.id,
+                    oldStartLine: range.oldStartLine,
+                    oldEndLine: range.oldEndLine,
+                    newStartLine: range.newStartLine,
+                    newEndLine: range.newEndLine,
+                    kind: range.kind,
+                    before: range.before,
+                    after: range.after,
+                    isConflict: isConflict || range.isConflict
+                )
+            }
         )
 
-        let store = ChangeSetStore(workspaceURL: workspaceURL)
         do {
-            let supersededReviews = try ChangeReviewStatus.allCases
-                .filter { [.pending, .conflict].contains($0) }
-                .flatMap { try store.load(status: $0) }
-                .filter { $0.filePath == changeSet.filePath }
-            try store.write(changeSet)
+            let store = ChangeSetStore(workspaceURL: workspaceURL)
+            var supersededReviews: [ChangeSet] = []
+            for reviewStatus in ChangeReviewStatus.allCases {
+                let reviews = try store.load(status: reviewStatus)
+                supersededReviews.append(contentsOf: reviews.filter { review in
+                    review.filePath == file.relativePath && (review.status == .pending || review.status == .conflict)
+                })
+            }
             for supersededReview in supersededReviews {
                 try store.delete(supersededReview)
             }
+            try store.write(changeSet)
+            loadReviewQueue()
+            selectedChangeSetID = changeSet.id
         } catch {
-            externalChangeBanner = "Could not save review for \(file.relativePath): \(error.localizedDescription)"
+            externalChangeBanner = "Could not create review packet: \(error.localizedDescription)"
             return false
         }
-        pendingChangeSets.removeAll { $0.filePath == changeSet.filePath }
-        pendingChangeSets.insert(changeSet, at: 0)
-        selectedChangeSetID = changeSet.id
-        externalChangeBanner = status == .conflict
-            ? "External edit conflicts with your unsaved draft. Your text is still active."
+
+        externalChangeBanner = isConflict
+            ? "External edit detected in \(file.relativePath). Review the packet before accepting."
             : "External edit is ready for review."
         recordAgentActivity(
             status: status == .conflict ? "Conflict" : "Pending review",
@@ -516,8 +541,8 @@ final class WorkspaceStore: ObservableObject {
         var updated = changeSet
         updated.status = status
         let store = ChangeSetStore(workspaceURL: workspaceURL)
-        try? store.write(updated)
         try? store.delete(changeSet)
+        try? store.write(updated)
         pendingChangeSets.removeAll { $0.id == changeSet.id }
         selectedChangeSetID = pendingChangeSets.first?.id
     }
@@ -547,34 +572,68 @@ final class WorkspaceStore: ObservableObject {
         }
     }
 
-    private func loadInviteManifest() {
-        guard let workspaceURL else {
-            invites = []
-            return
-        }
-        let manifestURL = workspaceURL
-            .appendingPathComponent(".graft", isDirectory: true)
+    private func clearDocumentState() {
+        selectedFile = nil
+        editorText = ""
+        lastLoadedText = ""
+        externalChangeBanner = nil
+        snapshots = []
+        selectedChangeSetID = nil
+    }
+
+    private func inviteManifestURL() -> URL? {
+        workspaceURL?
+            .appendingPathComponent(".pagepacket", isDirectory: true)
             .appendingPathComponent("shares", isDirectory: true)
             .appendingPathComponent("invites.json")
-        guard let data = try? Data(contentsOf: manifestURL),
+    }
+
+    private func loadInviteManifest() {
+        guard let manifestURL = inviteManifestURL(),
+              let data = try? Data(contentsOf: manifestURL),
               let decoded = try? JSONDecoder().decode([Invite].self, from: data) else {
             invites = []
             return
         }
-        invites = decoded
+
+        var seen = Set<String>()
+        invites = decoded.compactMap { invite in
+            let normalizedEmail = normalizedInviteEmail(invite.email)
+            guard isValidInviteEmail(normalizedEmail), !seen.contains(normalizedEmail) else {
+                return nil
+            }
+            seen.insert(normalizedEmail)
+            var normalizedInvite = invite
+            normalizedInvite.email = normalizedEmail
+            return normalizedInvite
+        }
     }
 
     private func writeInviteManifest() {
-        guard let workspaceURL else { return }
-        let sharesURL = workspaceURL
-            .appendingPathComponent(".graft", isDirectory: true)
-            .appendingPathComponent("shares", isDirectory: true)
+        guard let manifestURL = inviteManifestURL() else { return }
+        let sharesURL = manifestURL.deletingLastPathComponent()
         try? FileManager.default.createDirectory(at: sharesURL, withIntermediateDirectories: true)
-        let manifestURL = sharesURL.appendingPathComponent("invites.json")
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
         if let data = try? encoder.encode(invites) {
             try? data.write(to: manifestURL, options: .atomic)
         }
+    }
+
+    private func normalizedInviteEmail(_ email: String) -> String {
+        email.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+    }
+
+    private func isValidInviteEmail(_ email: String) -> Bool {
+        let parts = email.split(separator: "@", omittingEmptySubsequences: false)
+        guard parts.count == 2,
+              let local = parts.first,
+              let domain = parts.last,
+              !local.isEmpty,
+              domain.contains("."),
+              !email.contains(where: \.isWhitespace) else {
+            return false
+        }
+        return true
     }
 }

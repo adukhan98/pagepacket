@@ -6,7 +6,7 @@ struct SidebarView: View {
     var body: some View {
         VStack(spacing: 0) {
             VStack(alignment: .leading, spacing: 8) {
-                Text("Graft")
+                Text("pagepacket")
                     .font(.system(size: 28, weight: .medium, design: .rounded))
                     .foregroundStyle(GraftTheme.ink)
                 Text("Local-first Markdown for humans and agents")

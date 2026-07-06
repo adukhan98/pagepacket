@@ -44,7 +44,10 @@ private struct AgentsPanel: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            SectionHeader(title: "Activity", icon: "arrow.triangle.2.circlepath")
+            SectionHeader(title: "Agent-Safe Editing", icon: "wand.and.sparkles")
+            Text("Pagepacket keeps Markdown files writable by coding agents. External changes are converted into local review packets before they replace your draft.")
+                .font(.callout)
+                .foregroundStyle(GraftTheme.body)
 
             if workspace.agents.isEmpty {
                 Text("No external edits detected in this session.")
@@ -82,9 +85,9 @@ private struct AgentsPanel: View {
                 Text("Agent workflow")
                     .font(.headline)
                     .foregroundStyle(GraftTheme.ink)
-                CommandLineRow(label: "Status", command: "graft-cli status <vault>")
-                CommandLineRow(label: "Checkpoint", command: "graft-cli snapshot <vault> <file> --message \"Before edits\"")
-                CommandLineRow(label: "Submit", command: "graft-cli submit-change <vault> <file> --agent codex --summary \"Edited draft\"")
+                CommandLineRow(label: "Status", command: "pagepacket-cli status <vault>")
+                CommandLineRow(label: "Checkpoint", command: "pagepacket-cli snapshot <vault> <file> --message \"Before edits\"")
+                CommandLineRow(label: "Submit", command: "pagepacket-cli submit-change <vault> <file> --agent codex --summary \"Edited draft\"")
             }
             .graftCard()
         }

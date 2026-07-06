@@ -25,13 +25,13 @@ public struct AgentInstructionsWriter {
     }
 
     public static let contents = """
-    # Graft Editing Contract
+    # Pagepacket Editing Contract
 
     Keep Markdown files as plain text.
     Make the smallest scoped edit that satisfies the request.
     Do not rewrite unrelated sections.
     Preserve the user's wording unless the request asks for a rewrite.
-    When possible, describe your edit in `.graft/changes/<timestamp>-<agent>.json`.
+    When possible, describe your edit in `.pagepacket/changes/<timestamp>-<agent>.json`.
 
     Metadata JSON shape:
 

@@ -51,7 +51,7 @@ struct ContentView: View {
                 .help("Save")
 
                 Button {
-                    workspace.snapshotCurrentDocument(reason: "Manual checkpoint", source: "Graft")
+                    workspace.snapshotCurrentDocument(reason: "Manual checkpoint", source: "Pagepacket")
                 } label: {
                     Label("Snapshot", systemImage: "clock.arrow.circlepath")
                 }
@@ -133,7 +133,7 @@ private struct StatusStrip: View {
                 Text("\(workspace.pendingChangeSets.count) pending reviews")
                     .foregroundStyle(GraftTheme.muted)
             }
-            Text(".graft local-first")
+            Text(".pagepacket local-first")
                 .foregroundStyle(GraftTheme.muted)
         }
         .font(.caption)

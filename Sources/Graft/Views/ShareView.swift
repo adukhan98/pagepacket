@@ -2,11 +2,14 @@ import SwiftUI
 
 struct ShareView: View {
     @EnvironmentObject private var workspace: WorkspaceStore
+    @State private var email = ""
+    @State private var role: InviteRole = .editor
+    @State private var feedback: String?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
             SectionHeader(title: "Review Packet", icon: "shippingbox")
-            Text("Create a local checkpoint for the current Markdown file before sending the folder, file, or diff context to another reviewer.")
+            Text("Create a local checkpoint and manage invite intents for this Pagepacket workspace. Invite records stay in `.pagepacket/shares/invites.json`; no email is sent by Pagepacket.")
                 .font(.callout)
                 .foregroundStyle(GraftTheme.body)
 
@@ -26,7 +29,37 @@ struct ShareView: View {
                     Label("Create Packet Checkpoint", systemImage: "archivebox")
                 }
                 .buttonStyle(.borderedProminent)
+            }
+            .graftCard()
+
+            VStack(spacing: 10) {
+                TextField("teammate@example.com", text: $email)
+                    .textFieldStyle(.roundedBorder)
+                GraftSegmentedControl(
+                    items: InviteRole.allCases.map { ($0, $0.title) },
+                    selection: $role
+                )
+                Button {
+                    switch workspace.addInvite(email: email, role: role) {
+                    case .added:
+                        email = ""
+                        feedback = nil
+                    case .invalidEmail:
+                        feedback = "Enter a valid email address."
+                    case .duplicate:
+                        feedback = "That invite is already listed."
+                    }
+                } label: {
+                    Label("Add Invite", systemImage: "paperplane")
+                }
+                .buttonStyle(.borderedProminent)
                 .frame(maxWidth: .infinity, alignment: .trailing)
+                if let feedback {
+                    Text(feedback)
+                        .font(.caption)
+                        .foregroundStyle(GraftTheme.pink)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
             }
             .graftCard()
 
@@ -44,7 +77,7 @@ struct ShareView: View {
                         VStack(alignment: .leading, spacing: 2) {
                             Text(changeSet.summary)
                                 .foregroundStyle(GraftTheme.ink)
-                            Text("\(changeSet.authorName) · \(changeSet.filePath)")
+                            Text("\(changeSet.authorName) - \(changeSet.filePath)")
                                 .font(.caption)
                                 .foregroundStyle(GraftTheme.muted)
                         }
@@ -62,6 +95,55 @@ struct ShareView: View {
                     .graftCard()
                 }
             }
+
+            if workspace.invites.isEmpty {
+                Text("No invite intents saved yet.")
+                    .font(.callout)
+                    .foregroundStyle(GraftTheme.muted)
+                    .graftCard()
+            } else {
+                ForEach(workspace.invites) { invite in
+                    HStack(spacing: 10) {
+                        Circle()
+                            .fill(roleColor(invite.role))
+                            .frame(width: 28, height: 28)
+                            .overlay {
+                                Text(String(invite.email.prefix(1)).uppercased())
+                                    .font(.caption.weight(.bold))
+                            }
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(invite.email)
+                                .foregroundStyle(GraftTheme.ink)
+                            Text(invite.role.title)
+                                .font(.caption)
+                                .foregroundStyle(GraftTheme.muted)
+                        }
+                        Spacer()
+                        Button {
+                            workspace.composeEmail(for: invite)
+                        } label: {
+                            Image(systemName: "envelope")
+                        }
+                        .buttonStyle(.plain)
+                        .help("Compose email invite")
+                        Button {
+                            workspace.removeInvite(invite)
+                        } label: {
+                            Image(systemName: "xmark")
+                        }
+                        .buttonStyle(.plain)
+                    }
+                    .graftCard()
+                }
+            }
+        }
+    }
+
+    private func roleColor(_ role: InviteRole) -> Color {
+        switch role {
+        case .viewer: GraftTheme.lavender
+        case .commenter: GraftTheme.ochre
+        case .editor: GraftTheme.mint
         }
     }
 }

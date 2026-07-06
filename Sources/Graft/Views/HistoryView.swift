@@ -8,7 +8,7 @@ struct HistoryView: View {
             HStack {
                 SectionHeader(title: "Version History", icon: "clock.arrow.circlepath")
                 Button {
-                    workspace.snapshotCurrentDocument(reason: "Manual checkpoint", source: "Graft")
+                    workspace.snapshotCurrentDocument(reason: "Manual checkpoint", source: "Pagepacket")
                 } label: {
                     Image(systemName: "plus")
                 }
