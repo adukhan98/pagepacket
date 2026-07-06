@@ -1,9 +1,10 @@
 {
-  "date": "2026-06-28",
-  "framework": "vanilla-html",
-  "font_stack": "Google Fonts: Bricolage Grotesque, Inter, Roboto Mono",
-  "palette": "cream paper, forest ink, highlighter yellow, sticky-note accents",
-  "motion": "vanilla IntersectionObserver; no motion library",
-  "spacing": "8px inherited design scale plus Hallmark 4pt token aliases",
-  "preserve": ["DESIGN.md locked visual system", "pagepacket naming", "plain Markdown positioning"]
+  "date": "2026-06-16",
+  "project": "Graft",
+  "target": "landing page",
+  "fontStack": "design.md specifies SF Pro/system for product; landing page uses Newsreader, IBM Plex Sans, and JetBrains Mono as web equivalents",
+  "palette": "warm cream, dark ink, hot pink, deep teal, lavender, peach, ochre, mint",
+  "motion": "motion-cut with button/input state transitions and one page-load reveal",
+  "framework": "standalone React + Vite",
+  "sourceFiles": ["design.md", "product_brief.md"]
 }

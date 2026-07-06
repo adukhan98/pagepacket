@@ -1,23 +1,27 @@
-# pagepacket
+# Graft
 
-![pagepacket logo](Assets/Brand/graft-logo-lockup.png)
+![Graft logo](Assets/Brand/graft-logo-lockup.png)
 
-pagepacket is a premium local-first Markdown editor for macOS. It keeps Markdown files as plain files on disk so people and coding agents can work in the same workspace.
+Graft is a premium local Markdown editor for macOS built around agent review. Humans edit Markdown directly. External coding agents edit the same files on disk. Graft turns those agent edits into reviewable inline diffs, conflicts, and checkpoints before they land.
 
 ## What is implemented
 
-- SwiftUI macOS app with native sidebar, toolbar, inspector, and settings.
-- Custom pagepacket app icon and logo assets in `Assets/Brand/`.
+- SwiftUI macOS app with native file tree, toolbar, document review surface, review rail, and settings.
+- Custom Graft app icon and logo assets in `Assets/Brand/`.
+- Native Markdown editor bridge with syntax highlighting and line selection state.
 - Edit, Preview, and Split modes for Markdown files.
 - Folder-based workspace loading from real `.md` files.
 - Markdown preview for headings, paragraphs, lists, tasks, quotes, tables, code fences, links, horizontal rules, and local images.
-- Local image import into an `assets/` folder with relative Markdown insertion.
+- Local image import into deterministic per-document `assets/` folders with collision-safe relative Markdown insertion.
 - External file-change detection for agent edits.
-- Local version snapshots in `.pagepacket/history/`.
+- Reviewable change sets for agent edits, including inline diffs, hunk-level accept/reject controls, and conflict states.
+- Explicit conflict resolution view that keeps the human draft visible beside the agent proposal.
+- Local image block metadata for alt text and selectable relative paths.
+- Local version snapshots in `.graft/history/`.
 - Restore from previous snapshots.
-- Email invite intent UI saved to `.pagepacket/shares/invites.json`, with mail-client compose actions for invites.
-- Agent activity and CLI sync contract surfaced in the inspector.
-- `pagepacket-cli` commands for vault status, snapshots, apply checkpoints, and history.
+- Review packet metadata under `.graft/changes/` and `.graft/reviews/`.
+- Agent activity and CLI sync contract surfaced around pending changes.
+- `graft-cli` commands for vault status, snapshots, submitted change metadata, and history.
 - Repo-local agent skill at `skills/graft-sync/SKILL.md`.
 - Build/run integration for Codex Desktop through `.codex/environments/environment.toml`.
 
@@ -36,23 +40,25 @@ Verify launch:
 ## CLI
 
 ```bash
-swift run pagepacket-cli status SampleVault
-swift run pagepacket-cli snapshot SampleVault welcome.md --message "Before agent edits"
-swift run pagepacket-cli apply SampleVault welcome.md --author codex
-swift run pagepacket-cli history SampleVault welcome.md
+swift run graft-cli status SampleVault
+swift run graft-cli snapshot SampleVault welcome.md --message "Before agent edits"
+swift run graft-cli submit-change SampleVault welcome.md --agent codex --summary "Edited welcome copy"
+swift run graft-cli history SampleVault welcome.md
 ```
 
 ## Architecture
 
-Plain Markdown files remain canonical. pagepacket adds a sidecar folder:
+Plain Markdown files remain canonical. Graft adds a sidecar folder:
 
 ```text
 vault/
   welcome.md
   assets/
-  .pagepacket/
+    welcome/
+  .graft/
+    changes/
     history/
-    shares/
+    reviews/
 ```
 
-This makes v1 agent-compatible without a backend. Real-time multiplayer, cloud sync, auth, and actual email delivery can layer onto the same document and revision model later.
+This keeps Graft agent-compatible without a backend. The product boundary is plain local Markdown plus reviewable agent edits: no account system, no cloud handoff, and no proprietary document store.

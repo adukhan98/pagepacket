@@ -1,0 +1,1 @@
+i’m building graft: a local markdown editor where agents can edit your files, but you review every change before it touches the draft.

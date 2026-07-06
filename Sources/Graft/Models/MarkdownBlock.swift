@@ -2,10 +2,10 @@ import Foundation
 
 struct MarkdownBlock: Identifiable, Hashable {
     let id: String
-    let kind: MarkdownBlockKind
+    let kind: MarkdownPreviewBlockKind
 }
 
-enum MarkdownBlockKind: Hashable {
+enum MarkdownPreviewBlockKind: Hashable {
     case heading(level: Int, text: String)
     case paragraph(String)
     case quote(String)

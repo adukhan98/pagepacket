@@ -75,7 +75,7 @@ func testNestedDocumentReceivesRelativeImagePath() throws {
     }
 
     try expect(!markdown.contains(vault.path), "Image Markdown should not contain the absolute vault path")
-    try expect(markdown.hasPrefix("![source](../assets/entry/source-"), "Image Markdown should be relative to the nested document")
+    try expect(markdown.hasPrefix("![source](../assets/notes/entry/source"), "Image Markdown should be relative to the nested document")
     try expect(markdown.hasSuffix(".png)"), "Image Markdown should preserve the extension")
 }
 
@@ -129,6 +129,30 @@ func testWorkspaceDiscoversMarkdownFilesAndExcludesSidecars() throws {
 
     try expectEqual(store.files.map(\.relativePath), ["docs/nested.md", "root.md"], "Workspace Markdown file list")
     try expectEqual(store.selectedFile?.relativePath, "docs/nested.md", "Workspace should select the first sorted Markdown file")
+}
+
+@MainActor
+func testOpeningWorkspaceWithNoMarkdownClearsSelectedDocumentState() throws {
+    let firstVault = try temporaryVault()
+    let firstFile = firstVault.appendingPathComponent("welcome.md")
+    try "Original".write(to: firstFile, atomically: true, encoding: .utf8)
+
+    let emptyVault = try temporaryVault()
+
+    let store = WorkspaceStore()
+    store.openWorkspace(firstVault)
+    store.editorText = "Unsaved text that must not leak"
+    store.externalChangeBanner = "Stale banner"
+    store.snapshotCurrentDocument(reason: "Stale snapshot", source: "test")
+
+    store.openWorkspace(emptyVault)
+
+    try expectEqual(store.files, [], "Empty workspace should have no Markdown files")
+    try expectEqual(store.selectedFile, nil, "Empty workspace should clear selected file")
+    try expectEqual(store.editorText, "", "Empty workspace should clear editor text")
+    try expectEqual(store.lastLoadedText, "", "Empty workspace should clear last loaded text")
+    try expectEqual(store.externalChangeBanner, nil, "Empty workspace should clear stale external-change banner")
+    try expectEqual(store.snapshots, [], "Empty workspace should clear stale snapshots")
 }
 
 @MainActor
@@ -197,6 +221,7 @@ struct RegressionCheck {
             try testSimilarRelativePathsUseDifferentHistoryFolders()
             try await MainActor.run {
                 try testWorkspaceDiscoversMarkdownFilesAndExcludesSidecars()
+                try testOpeningWorkspaceWithNoMarkdownClearsSelectedDocumentState()
                 try testWorkspaceSaveSnapshotAndRestore()
                 try testOpenWorkspaceLoadsPersistedInvitesWithoutExampleSeedData()
                 try testAddInviteRejectsInvalidAndDuplicateEmails()

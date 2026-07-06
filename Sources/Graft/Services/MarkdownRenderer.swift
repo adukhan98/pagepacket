@@ -61,10 +61,20 @@ struct MarkdownRenderer {
                 blocks.append(block(startLine: startLine, kind: .task(done: true, text: String(trimmed.dropFirst(6)))))
             } else if trimmed.hasPrefix("- ") || trimmed.hasPrefix("* ") {
                 blocks.append(block(startLine: startLine, kind: .unorderedItem(String(trimmed.dropFirst(2)))))
-            } else if let ordered = parseOrderedItem(trimmed) {
+            } else if let ordered = orderedItem(trimmed) {
                 blocks.append(block(startLine: startLine, kind: .orderedItem(number: ordered.number, text: ordered.text)))
             } else {
-                blocks.append(block(startLine: startLine, kind: .paragraph(trimmed)))
+                var paragraphLines = [trimmed]
+                index += 1
+                while index < lines.count {
+                    let nextLine = lines[index]
+                    let next = nextLine.trimmingCharacters(in: .whitespaces)
+                    guard !next.isEmpty, !startsBlock(next) else { break }
+                    paragraphLines.append(next)
+                    index += 1
+                }
+                blocks.append(block(startLine: startLine, kind: .paragraph(paragraphLines.joined(separator: " "))))
+                continue
             }
 
             index += 1
@@ -73,11 +83,11 @@ struct MarkdownRenderer {
         return blocks
     }
 
-    private func block(startLine: Int, kind: MarkdownBlockKind) -> MarkdownBlock {
+    private func block(startLine: Int, kind: MarkdownPreviewBlockKind) -> MarkdownBlock {
         MarkdownBlock(id: "line-\(startLine)-\(kind.identityPrefix)", kind: kind)
     }
 
-    private func parseImage(_ line: String) -> MarkdownBlockKind? {
+    private func parseImage(_ line: String) -> MarkdownPreviewBlockKind? {
         guard line.hasPrefix("!["),
               let closeAlt = line.firstIndex(of: "]"),
               line[line.index(after: closeAlt)...].hasPrefix("("),
@@ -88,17 +98,61 @@ struct MarkdownRenderer {
         let alt = String(line[line.index(line.startIndex, offsetBy: 2)..<closeAlt])
         let pathStart = line.index(closeAlt, offsetBy: 2)
         let pathEnd = line.index(before: line.endIndex)
-        return .image(alt: alt, path: String(line[pathStart..<pathEnd]))
+        let rawDestination = String(line[pathStart..<pathEnd])
+        let path = normalizedImagePath(rawDestination)
+        guard !path.isEmpty else { return nil }
+        return .image(alt: alt, path: path)
     }
 
-    private func parseOrderedItem(_ line: String) -> (number: Int, text: String)? {
+    private func normalizedImagePath(_ rawDestination: String) -> String {
+        var destination = rawDestination.trimmingCharacters(in: .whitespacesAndNewlines)
+        if let quoteRange = destination.range(of: #"[\s]+"[^"]*"\s*$"#, options: .regularExpression) {
+            destination.removeSubrange(quoteRange)
+        }
+        if let titleRange = destination.range(of: #"\s+'[^']*'\s*$"#, options: .regularExpression) {
+            destination.removeSubrange(titleRange)
+        }
+        destination = destination.trimmingCharacters(in: .whitespacesAndNewlines)
+        if destination.hasPrefix("<"), destination.hasSuffix(">") {
+            destination.removeFirst()
+            destination.removeLast()
+        }
+        if destination.hasPrefix("./") {
+            destination.removeFirst(2)
+        }
+        return destination.removingPercentEncoding ?? destination
+    }
+
+    private func orderedItem(_ line: String) -> (number: Int, text: String)? {
         guard let dot = line.firstIndex(of: ".") else { return nil }
         let prefix = line[..<dot]
-        guard !prefix.isEmpty, prefix.allSatisfy(\.isNumber), let number = Int(prefix) else {
+        guard !prefix.isEmpty,
+              prefix.allSatisfy(\.isNumber),
+              let number = Int(prefix) else {
             return nil
         }
         let text = line[line.index(after: dot)...].trimmingCharacters(in: .whitespaces)
+        guard !text.isEmpty else { return nil }
         return (number, text)
+    }
+
+    private func startsBlock(_ trimmed: String) -> Bool {
+        trimmed.hasPrefix("```")
+            || trimmed.hasPrefix("#")
+            || trimmed.hasPrefix(">")
+            || trimmed.hasPrefix("- ")
+            || trimmed.hasPrefix("* ")
+            || trimmed.hasPrefix("- [ ] ")
+            || trimmed.hasPrefix("* [ ] ")
+            || trimmed.hasPrefix("- [x] ")
+            || trimmed.hasPrefix("* [x] ")
+            || trimmed.hasPrefix("- [X] ")
+            || trimmed.hasPrefix("* [X] ")
+            || orderedItem(trimmed) != nil
+            || parseImage(trimmed) != nil
+            || trimmed == "---"
+            || trimmed == "***"
+            || isTableRow(trimmed)
     }
 
     private func isTableRow(_ line: String) -> Bool {
@@ -133,7 +187,7 @@ private extension String {
     }
 }
 
-private extension MarkdownBlockKind {
+private extension MarkdownPreviewBlockKind {
     var identityPrefix: String {
         switch self {
         case .heading: "heading"

@@ -17,7 +17,7 @@ struct HistoryView: View {
             if workspace.snapshots.isEmpty {
                 Text("No snapshots yet. Save or create a checkpoint to start local history.")
                     .font(.callout)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(GraftTheme.muted)
                     .graftCard()
             } else {
                 ForEach(workspace.snapshots) { snapshot in
@@ -28,17 +28,19 @@ struct HistoryView: View {
                                 .frame(width: 9, height: 9)
                             Text(snapshot.displayTitle)
                                 .font(.headline)
+                                .foregroundStyle(GraftTheme.ink)
                             Spacer()
                         }
                         Text(snapshot.reason)
                             .font(.callout)
+                            .foregroundStyle(GraftTheme.body)
                         Text(snapshot.timestamp.formatted(date: .abbreviated, time: .shortened))
                             .font(.caption)
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(GraftTheme.muted)
                         HStack {
                             Text("\(snapshot.byteCount) bytes")
                                 .font(.caption2)
-                                .foregroundStyle(.secondary)
+                                .foregroundStyle(GraftTheme.muted)
                             Spacer()
                             Button("Restore") {
                                 workspace.restore(snapshot)

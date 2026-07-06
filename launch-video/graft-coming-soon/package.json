@@ -1,0 +1,11 @@
+{
+  "name": "graft-coming-soon",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "npx --yes hyperframes@0.6.101 preview",
+    "check": "npx --yes hyperframes@0.6.101 lint && npx --yes hyperframes@0.6.101 validate && npx --yes hyperframes@0.6.101 inspect",
+    "render": "npx --yes hyperframes@0.6.101 render",
+    "publish": "npx --yes hyperframes@0.6.101 publish"
+  }
+}

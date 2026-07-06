@@ -1,0 +1,3436 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Project Name Availability Sheet</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #1f2420;
+      --muted: #687168;
+      --line: #d8ded4;
+      --paper: #fbfaf4;
+      --panel: #ffffff;
+      --green-bg: #dff3e4;
+      --green-ink: #155c2d;
+      --red-bg: #f8d8d4;
+      --red-ink: #84261f;
+      --amber-bg: #f6ecd0;
+      --amber-ink: #765316;
+      --blank-bg: #f3f1ea;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.35;
+    }
+    main {
+      width: min(1500px, calc(100vw - 32px));
+      margin: 24px auto 40px;
+    }
+    header {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      align-items: end;
+      margin-bottom: 16px;
+    }
+    h1 {
+      margin: 0 0 4px;
+      font-size: clamp(24px, 4vw, 42px);
+      letter-spacing: 0;
+    }
+    p {
+      margin: 0;
+      color: var(--muted);
+      max-width: 920px;
+    }
+    .meta {
+      text-align: right;
+      font-size: 13px;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+    .toolbar {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin: 14px 0;
+    }
+    input {
+      width: min(420px, 100%);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px 12px;
+      background: var(--panel);
+      color: var(--ink);
+      font: inherit;
+    }
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-left: auto;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .chip {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 5px 8px;
+      background: var(--panel);
+    }
+    .wrap {
+      overflow: auto;
+      border: 1px solid var(--line);
+      background: var(--panel);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 1060px;
+    }
+    th, td {
+      border-bottom: 1px solid var(--line);
+      border-right: 1px solid var(--line);
+      padding: 10px 12px;
+      text-align: left;
+      font-size: 14px;
+      vertical-align: middle;
+    }
+    th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      background: #eeefe7;
+      color: #2f352f;
+      cursor: pointer;
+      user-select: none;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0;
+    }
+    tr:hover td { background-image: linear-gradient(rgba(0,0,0,0.025), rgba(0,0,0,0.025)); }
+    td.name span {
+      display: block;
+      font-weight: 750;
+      font-size: 15px;
+    }
+    td.name small {
+      display: block;
+      color: var(--muted);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12px;
+      margin-top: 2px;
+    }
+    td.free { background: var(--green-bg); color: var(--green-ink); font-weight: 700; }
+    td.taken { background: var(--red-bg); color: var(--red-ink); font-weight: 700; }
+    td.low { background-image: repeating-linear-gradient(135deg, rgba(255,255,255,0.35) 0 6px, rgba(255,255,255,0) 6px 12px); }
+    td.manual { background: var(--amber-bg); color: var(--amber-ink); font-weight: 700; }
+    td.blank { background: var(--blank-bg); color: var(--muted); }
+    td.score {
+      font-variant-numeric: tabular-nums;
+      font-weight: 800;
+    }
+    td.status {
+      color: #2f352f;
+      font-weight: 650;
+    }
+    script[type="application/json"] { display: none; }
+    @media (max-width: 800px) {
+      main { width: calc(100vw - 20px); margin-top: 14px; }
+      header { grid-template-columns: 1fr; }
+      .meta { text-align: left; white-space: normal; }
+      .toolbar { align-items: stretch; flex-direction: column; }
+      .legend { margin-left: 0; }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <div>
+      <h1>Project Name Availability Sheet</h1>
+      <p>50 Graft-style name candidates checked with real lookups. Domains use IANA RDAP bootstrap and registry RDAP where available; no-RDAP TLDs fall back to DNS NXDOMAIN and are marked low-confidence. X is manual-check by design.</p>
+    </div>
+    <div class="meta">
+      <div>Generated: 2026-06-23 04:08:26 UTC</div>
+      <div>Rows: 50</div>
+    </div>
+  </header>
+  <div class="toolbar">
+    <input id="filter" type="search" placeholder="filter names or statuses">
+    <div class="legend">
+      <span class="chip">green = likely free</span>
+      <span class="chip">red = taken / seen</span>
+      <span class="chip">stripe = low confidence</span>
+      <span class="chip">blank = ambiguous</span>
+    </div>
+  </div>
+  <div class="wrap">
+    <table id="sheet">
+      <thead>
+        <tr>
+          <th data-type="text">name</th>
+          <th data-type="text">.com</th>
+          <th data-type="text">.io</th>
+          <th data-type="text">.ai</th>
+          <th data-type="text">.dev</th>
+          <th data-type="text">x</th>
+          <th data-type="text">github</th>
+          <th data-type="text">tiktok</th>
+          <th data-type="number">score</th>
+          <th data-type="text">status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class='name'><span>Diffrail</span><small>diffrail</small></td><td class='free' title='registry RDAP HTTP 404 - https://rdap.verisign.com/com/v1; rechecked survivor'>likely free</td><td class='free low' title='DNS NXDOMAIN HTTP  - No RDAP bootstrap server; DNS returned NXDOMAIN'>likely free (low)</td><td class='free' title='registry RDAP HTTP 404 - https://rdap.identitydigital.services/rdap; rechecked survivor'>likely free</td><td class='free' title='registry RDAP HTTP 404 - https://pubapi.registry.google/rdap; rechecked survivor'>likely free</td><td class='manual' title='manual-check HTTP  - X cloaks availability; not scored'>manual-check</td><td class='free' title='GitHub web HTTP 404 - https://github.com/diffrail'>likely free</td><td class='taken low' title='TikTok web heuristic HTTP 200 - https://www.tiktok.com/@diffrail'>seen (low)</td><td class='score' data-value='86.5'>86.5</td><td class='status'>best survivor</td></tr><tr><td class='name'><span>Draftbranch</span><small>draftbranch</small></td><td class='free' title='registry RDAP HTTP 404 - https://rdap.verisign.com/com/v1; rechecked survivor'>likely free</td><td class='free low' title='DNS NXDOMAIN HTTP  - No RDAP bootstrap server; DNS returned NXDOMAIN'>likely free (low)</td><td class='free' title='registry RDAP HTTP 404 - https://rdap.identitydigital.services/rdap; rechecked survivor'>likely free</td><td class='free' title='registry RDAP HTTP 404 - https://pubapi.registry.google/rdap; rechecked survivor'>likely free</td><td class='manual' title='manual-check HTTP  - X cloaks availability; not scored'>manual-check</td><td class='free' title='GitHub web HTTP 404 - https://github.com/draftbranch'>likely free</td><td class='taken low' title='TikTok web heuristic HTTP 200 - https://www.tiktok.com/@draftbranch'>seen (low)</td><td class='score' data-value='86.5'>86.5</td><td class='status'>best survivor</td></tr><tr><td class='name'><span>Draftfold</span><small>draftfold</small></td><td class='free' title='registry RDAP HTTP 404 - https://rdap.verisign.com/com/v1; rechecked survivor'>likely free</td><td class='free low' title='DNS NXDOMAIN HTTP  - No RDAP bootstrap server; DNS returned NXDOMAIN'>likely free (low)</td><td class='free' title='registry RDAP HTTP 404 - https://rdap.identitydigital.services/rdap; rechecked survivor'>likely free</td><td class='free' title='registry RDAP HTTP 404 - https://pubapi.registry.google/rdap; rechecked survivor'>likely free</td><td class='manual' title='manual-check HTTP  - X cloaks availability; not scored'>manual-check</td><td class='free' title='GitHub web HTTP 404 - https://github.com/draftfold'>likely free</td><td class='taken low' title='TikTok web heuristic HTTP 200 - https://www.tiktok.com/@draftfold'>seen (low)</td><td class='score' data-value='86.5'>86.5</td><td class='status'>best survivor</td></tr><tr><td class='name'><span>Draftpacket</span><small>draftpacket</small></td><td class='free' title='registry RDAP HTTP 404 - https://rdap.verisign.com/com/v1; rechecked survivor'>likely free</td><td class='free low' title='DNS NXDOMAIN HTTP  - No RDAP bootstrap server; DNS returned NXDOMAIN'>likely free (low)</td><td class='free' title='registry RDAP HTTP 404 - https://rdap.identitydigital.services/rdap; rechecked survivor'>likely free</td><td class='free' title='registry RDAP HTTP 404 - https://pubapi.registry.google/rdap; rechecked survivor'>likely free</td><td class='manual' title='manual-check HTTP  - X cloaks availability; not scored'>manual-check</td><td class='free' title='GitHub web HTTP 404 - https://github.com/draftpacket'>likely free</td><td class='taken low' title='TikTok web heuristic HTTP 200 - https://www.tiktok.com/@draftpacket'>seen (low)</td><td class='score' data-value='86.5'>86.5</td><td class='status'>best survivor</td></tr><tr><td class='name'><span>Editpacket</span><small>editpacket</small></td><td class='free' title='registry RDAP HTTP 404 - https://rdap.verisign.com/com/v1; rechecked survivor'>likely free</td><td class='free low' title='DNS NXDOMAIN HTTP  - No RDAP bootstrap server; DNS returned NXDOMAIN'>likely free (low)</td><td class='free' title='registry RDAP HTTP 404 - https://rdap.identitydigital.services/rdap; rechecked survivor'>likely free</td><td class='free' title='registry RDAP HTTP 404 - https://pubapi.registry.google/rdap; rechecked survivor'>likely free</td><td class='manual' title='manual-check HTTP  - X cloaks availability; not scored'>manual-check</td><td class='free' title='GitHub web HTTP 404 - https://github.com/editpacket'>likely free</td><td class='taken low' title='TikTok web heuristic HTTP 200 - https://www.tiktok.com/@editpacket'>seen (low)</td><td class='score' data-value='86.5'>86.5</td><td class='status'>best survivor</td></tr><tr><td class='name'><span>Filegrail</span><small>filegrail</small></td><td class='free' title='registry RDAP HTTP 404 - https://rdap.verisign.com/com/v1; rechecked survivor'>likely free</td><td class='free low' title='DNS NXDOMAIN HTTP  - No RDAP bootstrap server; DNS returned NXDOMAIN'>likely free (low)</td><td class='free' title='registry RDAP HTTP 404 - https://rdap.identitydigital.services/rdap; rechecked survivor'>likely free</td><td class='free' title='registry RDAP HTTP 404 - https://pubapi.registry.google/rdap; rechecked survivor'>likely free</td><td class='manual' title='manual-check HTTP  - X cloaks availability; not scored'>manual-check</td><td class='free' title='GitHub web HTTP 404 - https://github.com/filegrail'>likely free</td><td class='taken low' title='TikTok web heuristic HTTP 200 - https://www.tiktok.com/@filegrail'>seen (low)</td><td class='score' data-value='86.5'>86.5</td><td class='status'>best survivor</td></tr><tr><td class='name'><span>Linegraft</span><small>linegraft</small></td><td class='free' title='registry RDAP HTTP 404 - https://rdap.verisign.com/com/v1; rechecked survivor'>likely free</td><td class='free low' title='DNS NXDOMAIN HTTP  - No RDAP bootstrap server; DNS returned NXDOMAIN'>likely free (low)</td><td class='free' title='registry RDAP HTTP 404 - https://rdap.identitydigital.services/rdap; rechecked survivor'>likely free</td><td class='free' title='registry RDAP HTTP 404 - https://pubapi.registry.google/rdap; rechecked survivor'>likely free</td><td class='manual' title='manual-check HTTP  - X cloaks availability; not scored'>manual-check</td><td class='free' title='GitHub web HTTP 404 - https://github.com/linegraft'>likely free</td><td class='taken low' title='TikTok web heuristic HTTP 200 - https://www.tiktok.com/@linegraft'>seen (low)</td><td class='score' data-value='86.5'>86.5</td><td class='status'>best survivor</td></tr><tr><td class='name'><span>Linepacket</span><small>linepacket</small></td><td class='free' title='registry RDAP HTTP 404 - https://rdap.verisign.com/com/v1; rechecked survivor'>likely free</td><td class='free low' title='DNS NXDOMAIN HTTP  - No RDAP bootstrap server; DNS returned NXDOMAIN'>likely free (low)</td><td class='free' title='registry RDAP HTTP 404 - https://rdap.identitydigital.services/rdap; rechecked survivor'>likely free</td><td class='free' title='registry RDAP HTTP 404 - https://pubapi.registry.google/rdap; rechecked survivor'>likely free</td><td class='manual' title='manual-check HTTP  - X cloaks availability; not scored'>manual-check</td><td class='free' title='GitHub web HTTP 404 - https://github.com/linepacket'>likely free</td><td class='taken low' title='TikTok web heuristic HTTP 200 - https://www.tiktok.com/@linepacket'>seen (low)</td><td class='score' data-value='86.5'>86.5</td><td class='status'>best survivor</td></tr><tr><td class='name'><span>Pagepacket</span><small>pagepacket</small></td><td class='free' title='registry RDAP HTTP 404 - https://rdap.verisign.com/com/v1; rechecked survivor'>likely free</td><td class='free low' title='DNS NXDOMAIN HTTP  - No RDAP bootstrap server; DNS returned NXDOMAIN'>likely free (low)</td><td class='free' title='registry RDAP HTTP 404 - https://rdap.identitydigital.services/rdap; rechecked survivor'>likely free</td><td class='free' title='registry RDAP HTTP 404 - https://pubapi.registry.google/rdap; rechecked survivor'>likely free</td><td class='manual' title='manual-check HTTP  - X cloaks availability; not scored'>manual-check</td><td class='free' title='GitHub web HTTP 404 - https://github.com/pagepacket'>likely free</td><td class='taken low' title='TikTok web heuristic HTTP 200 - https://www.tiktok.com/@pagepacket'>seen (low)</td><td class='score' data-value='86.5'>86.5</td><td class='status'>best survivor</td></tr><tr><td class='name'><span>Quilldiff</span><small>quilldiff</small></td><td class='free' title='registry RDAP HTTP 404 - https://rdap.verisign.com/com/v1; rechecked survivor'>likely free</td><td class='free low' title='DNS NXDOMAIN HTTP  - No RDAP bootstrap server; DNS returned NXDOMAIN'>likely free (low)</td><td class='free' title='registry RDAP HTTP 404 - https://rdap.identitydigital.services/rdap; rechecked survivor'>likely free</td><td class='free' title='registry RDAP HTTP 404 - https://pubapi.registry.google/rdap; rechecked survivor'>likely free</td><td class='manual' title='manual-check HTTP  - X cloaks availability; not scored'>manual-check</td><td class='free' title='GitHub web HTTP 404 - https://github.com/quilldiff'>likely free</td><td class='taken low' title='TikTok web heuristic HTTP 200 - https://www.tiktok.com/@quilldiff'>seen (low)</td><td class='score' data-value='86.5'>86.5</td><td class='status'>best survivor</td></tr><tr><td class='name'><span>Quillpacket</span><small>quillpacket</small></td><td class='free' title='registry RDAP HTTP 404 - https://rdap.verisign.com/com/v1; rechecked survivor'>likely free</td><td class='free low' title='DNS NXDOMAIN HTTP  - No RDAP bootstrap server; DNS returned NXDOMAIN'>likely free (low)</td><td class='free' title='registry RDAP HTTP 404 - https://rdap.identitydigital.services/rdap; rechecked survivor'>likely free</td><td class='free' title='registry RDAP HTTP 404 - https://pubapi.registry.google/rdap; rechecked survivor'>likely free</td><td class='manual' title='manual-check HTTP  - X cloaks availability; not scored'>manual-check</td><td class='free' title='GitHub web HTTP 404 - https://github.com/quillpacket'>likely free</td><td class='taken low' title='TikTok web heuristic HTTP 200 - https://www.tiktok.com/@quillpacket'>seen (low)</td><td class='score' data-value='86.5'>86.5</td><td class='status'>best survivor</td></tr><tr><td class='name'><span>Quillrail</span><small>quillrail</small></td><td class='free' title='registry RDAP HTTP 404 - https://rdap.verisign.com/com/v1; rechecked survivor'>likely free</td><td class='free low' title='DNS NXDOMAIN HTTP  - No RDAP bootstrap server; DNS returned NXDOMAIN'>likely free (low)</td><td class='free' title='registry RDAP HTTP 404 - https://rdap.identitydigital.services/rdap; rechecked survivor'>likely free</td><td class='free' title='registry RDAP HTTP 404 - https://pubapi.registry.google/rdap; rechecked survivor'>likely free</td><td class='manual' title='manual-check HTTP  - X cloaks availability; not scored'>manual-check</td><td class='free' title='GitHub web HTTP 404 - https://github.com/quillrail'>likely free</td><td class='taken low' title='TikTok web heuristic HTTP 200 - https://www.tiktok.com/@quillrail'>seen (low)</td><td class='score' data-value='86.5'>86.5</td><td class='status'>best survivor</td></tr><tr><td class='name'><span>Draftgrid</span><small>draftgrid</small></td><td class='taken' title='registry RDAP HTTP 200 - https://rdap.verisign.com/com/v1'>taken</td><td class='free low' title='DNS NXDOMAIN HTTP  - No RDAP bootstrap server; DNS returned NXDOMAIN'>likely free (low)</td><td class='free' title='registry RDAP HTTP 404 - https://rdap.identitydigital.services/rdap; rechecked survivor'>likely free</td><td class='free' title='registry RDAP HTTP 404 - https://pubapi.registry.google/rdap; rechecked survivor'>likely free</td><td class='manual' title='manual-check HTTP  - X cloaks availability; not scored'>manual-check</td><td class='free' title='GitHub web HTTP 404 - https://github.com/draftgrid'>likely free</td><td class='taken low' title='TikTok web heuristic HTTP 200 - https://www.tiktok.com/@draftgrid'>seen (low)</td><td class='score' data-value='41.5'>41.5</td><td class='status'>fallback domain</td></tr><tr><td class='name'><span>Editloom</span><small>editloom</small></td><td class='taken' title='registry RDAP HTTP 200 - https://rdap.verisign.com/com/v1'>taken</td><td class='free low' title='DNS NXDOMAIN HTTP  - No RDAP bootstrap server; DNS returned NXDOMAIN'>likely free (low)</td><td class='free' title='registry RDAP HTTP 404 - https://rdap.identitydigital.services/rdap; rechecked survivor'>likely free</td><td class='free' title='registry RDAP HTTP 404 - https://pubapi.registry.google/rdap; rechecked survivor'>likely free</td><td class='manual' title='manual-check HTTP  - X cloaks availability; not scored'>manual-check</td><td class='free' title='GitHub web HTTP 404 - https://github.com/editloom'>likely free</td><td class='taken low' title='TikTok web heuristic HTTP 200 - https://www.tiktok.com/@editloom'>seen (low)</td><td class='score' data-value='41.5'>41.5</td><td class='status'>fallback domain</td></tr><tr><td class='name'><span>Editrail</span><small>editrail</small></td><td class='taken' title='registry RDAP HTTP 200 - https://rdap.verisign.com/com/v1'>taken</td><td class='free low' title='DNS NXDOMAIN HTTP  - No RDAP bootstrap server; DNS returned NXDOMAIN'>likely free (low)</td><td class='free' title='registry RDAP HTTP 404 - https://rdap.identitydigital.services/rdap; rechecked survivor'>likely free</td><td class='free' title='registry RDAP HTTP 404 - https://pubapi.registry.google/rdap; rechecked survivor'>likely free</td><td class='manual' title='manual-check HTTP  - X cloaks availability; not scored'>manual-check</td><td class='free' title='GitHub web HTTP 404 - https://github.com/editrail'>likely free</td><td class='taken low' title='TikTok web heuristic HTTP 200 - https://www.tiktok.com/@editrail'>seen (low)</td><td class='score' data-value='41.5'>41.5</td><td class='status'>fallback domain</td></tr><tr><td class='name'><span>Filebranch</span><small>filebranch</small></td><td class='taken' title='registry RDAP HTTP 200 - https://rdap.verisign.com/com/v1'>taken</td><td class='free low' title='DNS NXDOMAIN HTTP  - No RDAP bootstrap server; DNS returned NXDOMAIN'>likely free (low)</td><td class='free' title='registry RDAP HTTP 404 - https://rdap.identitydigital.services/rdap; rechecked survivor'>likely free</td><td class='free' title='registry RDAP HTTP 404 - https://pubapi.registry.google/rdap; rechecked survivor'>likely free</td><td class='manual' title='manual-check HTTP  - X cloaks availability; not scored'>manual-check</td><td class='free' title='GitHub web HTTP 404 - https://github.com/filebranch'>likely free</td><td class='taken low' title='TikTok web heuristic HTTP 200 - https://www.tiktok.com/@filebranch'>seen (low)</td><td class='score' data-value='41.5'>41.5</td><td class='status'>fallback domain</td></tr><tr><td class='name'><span>Filedraft</span><small>filedraft</small></td><td class='taken' title='registry RDAP HTTP 200 - https://rdap.verisign.com/com/v1'>taken</td><td class='free low' title='DNS NXDOMAIN HTTP  - No RDAP bootstrap server; DNS returned NXDOMAIN'>likely free (low)</td><td class='free' title='registry RDAP HTTP 404 - https://rdap.identitydigital.services/rdap; rechecked survivor'>likely free</td><td class='free' title='registry RDAP HTTP 404 - https://pubapi.registry.google/rdap; rechecked survivor'>likely free</td><td class='manual' title='manual-check HTTP  - X cloaks availability; not scored'>manual-check</td><td class='free' title='GitHub web HTTP 404 - https://github.com/filedraft'>likely free</td><td class='taken low' title='TikTok web heuristic HTTP 200 - https://www.tiktok.com/@filedraft'>seen (low)</td><td class='score' data-value='41.5'>41.5</td><td class='status'>fallback domain</td></tr><tr><td class='name'><span>Filepacket</span><small>filepacket</small></td><td class='taken' title='registry RDAP HTTP 200 - https://rdap.verisign.com/com/v1'>taken</td><td class='free low' title='DNS NXDOMAIN HTTP  - No RDAP bootstrap server; DNS returned NXDOMAIN'>likely free (low)</td><td class='free' title='registry RDAP HTTP 404 - https://rdap.identitydigital.services/rdap; rechecked survivor'>likely free</td><td class='free' title='registry RDAP HTTP 404 - https://pubapi.registry.google/rdap; rechecked survivor'>likely free</td><td class='manual' title='manual-check HTTP  - X cloaks availability; not scored'>manual-check</td><td class='free' title='GitHub web HTTP 404 - https://github.com/filepacket'>likely free</td><td class='taken low' title='TikTok web heuristic HTTP 200 - https://www.tiktok.com/@filepacket'>seen (low)</td><td class='score' data-value='41.5'>41.5</td><td class='status'>fallback domain</td></tr><tr><td class='name'><span>Marknest</span><small>marknest</small></td><td class='taken' title='registry RDAP HTTP 200 - https://rdap.verisign.com/com/v1'>taken</td><td class='free low' title='DNS NXDOMAIN HTTP  - No RDAP bootstrap server; DNS returned NXDOMAIN'>likely free (low)</td><td class='free' title='registry RDAP HTTP 404 - https://rdap.identitydigital.services/rdap; rechecked survivor'>likely free</td><td class='free' title='registry RDAP HTTP 404 - https://pubapi.registry.google/rdap; rechecked survivor'>likely free</td><td class='manual' title='manual-check HTTP  - X cloaks availability; not scored'>manual-check</td><td class='free' title='GitHub web HTTP 404 - https://github.com/marknest'>likely free</td><td class='taken low' title='TikTok web heuristic HTTP 200 - https://www.tiktok.com/@marknest'>seen (low)</td><td class='score' data-value='41.5'>41.5</td><td class='status'>fallback domain</td></tr><tr><td class='name'><span>Patchmark</span><small>patchmark</small></td><td class='taken' title='registry RDAP HTTP 200 - https://rdap.verisign.com/com/v1'>taken</td><td class='free low' title='DNS NXDOMAIN HTTP  - No RDAP bootstrap server; DNS returned NXDOMAIN'>likely free (low)</td><td class='free' title='registry RDAP HTTP 404 - https://rdap.identitydigital.services/rdap; rechecked survivor'>likely free</td><td class='free' title='registry RDAP HTTP 404 - https://pubapi.registry.google/rdap; rechecked survivor'>likely free</td><td class='manual' title='manual-check HTTP  - X cloaks availability; not scored'>manual-check</td><td class='free' title='GitHub web HTTP 404 - https://github.com/patchmark'>likely free</td><td class='taken low' title='TikTok web heuristic HTTP 200 - https://www.tiktok.com/@patchmark'>seen (low)</td><td class='score' data-value='41.5'>41.5</td><td class='status'>fallback domain</td></tr><tr><td class='name'><span>Patchpad</span><small>patchpad</small></td><td class='taken' title='registry RDAP HTTP 200 - https://rdap.verisign.com/com/v1'>taken</td><td class='free low' title='DNS NXDOMAIN HTTP  - No RDAP bootstrap server; DNS returned NXDOMAIN'>likely free (low)</td><td class='free' title='registry RDAP HTTP 404 - https://rdap.identitydigital.services/rdap; rechecked survivor'>likely free</td><td class='free' title='registry RDAP HTTP 404 - https://pubapi.registry.google/rdap; rechecked survivor'>likely free</td><td class='manual' title='manual-check HTTP  - X cloaks availability; not scored'>manual-check</td><td class='free' title='GitHub web HTTP 404 - https://github.com/patchpad'>likely free</td><td class='taken low' title='TikTok web heuristic HTTP 200 - https://www.tiktok.com/@patchpad'>seen (low)</td><td class='score' data-value='41.5'>41.5</td><td class='status'>fallback domain</td></tr><tr><td class='name'><span>Patchworkr</span><small>patchworkr</small></td><td class='taken' title='registry RDAP HTTP 200 - https://rdap.verisign.com/com/v1'>taken</td><td class='free low' title='DNS NXDOMAIN HTTP  - No RDAP bootstrap server; DNS returned NXDOMAIN'>likely free (low)</td><td class='free' title='registry RDAP HTTP 404 - https://rdap.identitydigital.services/rdap; rechecked survivor'>likely free</td><td class='free' title='registry RDAP HTTP 404 - https://pubapi.registry.google/rdap; rechecked survivor'>likely free</td><td class='manual' title='manual-check HTTP  - X cloaks availability; not scored'>manual-check</td><td class='free' title='GitHub web HTTP 404 - https://github.com/patchworkr'>likely free</td><td class='taken low' title='TikTok web heuristic HTTP 200 - https://www.tiktok.com/@patchworkr'>seen (low)</td><td class='score' data-value='41.5'>41.5</td><td class='status'>fallback domain</td></tr><tr><td class='name'><span>Reviewrail</span><small>reviewrail</small></td><td class='taken' title='registry RDAP HTTP 200 - https://rdap.verisign.com/com/v1'>taken</td><td class='free low' title='DNS NXDOMAIN HTTP  - No RDAP bootstrap server; DNS returned NXDOMAIN'>likely free (low)</td><td class='free' title='registry RDAP HTTP 404 - https://rdap.identitydigital.services/rdap; rechecked survivor'>likely free</td><td class='free' title='registry RDAP HTTP 404 - https://pubapi.registry.google/rdap; rechecked survivor'>likely free</td><td class='manual' title='manual-check HTTP  - X cloaks availability; not scored'>manual-check</td><td class='free' title='GitHub web HTTP 404 - https://github.com/reviewrail'>likely free</td><td class='taken low' title='TikTok web heuristic HTTP 200 - https://www.tiktok.com/@reviewrail'>seen (low)</td><td class='score' data-value='41.5'>41.5</td><td class='status'>fallback domain</td></tr><tr><td class='name'><span>Textkeeper</span><small>textkeeper</small></td><td class='taken' title='registry RDAP HTTP 200 - https://rdap.verisign.com/com/v1'>taken</td><td class='free low' title='DNS NXDOMAIN HTTP  - No RDAP bootstrap server; DNS returned NXDOMAIN'>likely free (low)</td><td class='free' title='registry RDAP HTTP 404 - https://rdap.identitydigital.services/rdap; rechecked survivor'>likely free</td><td class='free' title='registry RDAP HTTP 404 - https://pubapi.registry.google/rdap; rechecked survivor'>likely free</td><td class='manual' title='manual-check HTTP  - X cloaks availability; not scored'>manual-check</td><td class='free' title='GitHub web HTTP 404 - https://github.com/textkeeper'>likely free</td><td class='taken low' title='TikTok web heuristic HTTP 200 - https://www.tiktok.com/@textkeeper'>seen (low)</td><td class='score' data-value='41.5'>41.5</td><td class='status'>fallback domain</td></tr><tr><td class='name'><span>Textloom</span><small>textloom</small></td><td class='taken' title='registry RDAP HTTP 200 - https://rdap.verisign.com/com/v1'>taken</td><td class='free low' title='DNS NXDOMAIN HTTP  - No RDAP bootstrap server; DNS returned NXDOMAIN'>likely free (low)</td><td class='free' title='registry RDAP HTTP 404 - https://rdap.identitydigital.services/rdap; rechecked survivor'>likely free</td><td class='free' title='registry RDAP HTTP 404 - https://pubapi.registry.google/rdap; rechecked survivor'>likely free</td><td class='manual' title='manual-check HTTP  - X cloaks availability; not scored'>manual-check</td><td class='free' title='GitHub web HTTP 404 - https://github.com/textloom'>likely free</td><td class='taken low' title='TikTok web heuristic HTTP 200 - https://www.tiktok.com/@textloom'>seen (low)</td><td class='score' data-value='41.5'>41.5</td><td class='status'>fallback domain</td></tr><tr><td class='name'><span>Textpatch</span><small>textpatch</small></td><td class='taken' title='registry RDAP HTTP 200 - https://rdap.verisign.com/com/v1'>taken</td><td class='free low' title='DNS NXDOMAIN HTTP  - No RDAP bootstrap server; DNS returned NXDOMAIN'>likely free (low)</td><td class='free' title='registry RDAP HTTP 404 - https://rdap.identitydigital.services/rdap; rechecked survivor'>likely free</td><td class='free' title='registry RDAP HTTP 404 - https://pubapi.registry.google/rdap; rechecked survivor'>likely free</td><td class='manual' title='manual-check HTTP  - X cloaks availability; not scored'>manual-check</td><td class='free' title='GitHub web HTTP 404 - https://github.com/textpatch'>likely free</td><td class='taken low' title='TikTok web heuristic HTTP 200 - https://www.tiktok.com/@textpatch'>seen (low)</td><td class='score' data-value='41.5'>41.5</td><td class='status'>fallback domain</td></tr><tr><td class='name'><span>Draftlane</span><small>draftlane</small></td><td class='taken' title='registry RDAP HTTP 200 - https://rdap.verisign.com/com/v1'>taken</td><td class='free low' title='DNS NXDOMAIN HTTP  - No RDAP bootstrap server; DNS returned NXDOMAIN'>likely free (low)</td><td class='free' title='registry RDAP HTTP 404 - https://rdap.identitydigital.services/rdap; rechecked survivor'>likely free</td><td class='free' title='registry RDAP HTTP 404 - https://pubapi.registry.google/rdap; rechecked survivor'>likely free</td><td class='manual' title='manual-check HTTP  - X cloaks availability; not scored'>manual-check</td><td class='taken' title='GitHub web HTTP 200 - https://github.com/draftlane'>taken</td><td class='taken low' title='TikTok web heuristic HTTP 200 - https://www.tiktok.com/@draftlane'>seen (low)</td><td class='score' data-value='33.5'>33.5</td><td class='status'>fallback domain</td></tr><tr><td class='name'><span>Markreview</span><small>markreview</small></td><td class='taken' title='registry RDAP HTTP 200 - https://rdap.verisign.com/com/v1'>taken</td><td class='free low' title='DNS NXDOMAIN HTTP  - No RDAP bootstrap server; DNS returned NXDOMAIN'>likely free (low)</td><td class='free' title='registry RDAP HTTP 404 - https://rdap.identitydigital.services/rdap; rechecked survivor'>likely free</td><td class='free' title='registry RDAP HTTP 404 - https://pubapi.registry.google/rdap; rechecked survivor'>likely free</td><td class='manual' title='manual-check HTTP  - X cloaks availability; not scored'>manual-check</td><td class='taken' title='GitHub web HTTP 200 - https://github.com/markreview'>taken</td><td class='taken low' title='TikTok web heuristic HTTP 200 - https://www.tiktok.com/@markreview'>seen (low)</td><td class='score' data-value='33.5'>33.5</td><td class='status'>fallback domain</td></tr><tr><td class='name'><span>Noterail</span><small>noterail</small></td><td class='taken' title='registry RDAP HTTP 200 - https://rdap.verisign.com/com/v1'>taken</td><td class='free low' title='DNS NXDOMAIN HTTP  - No RDAP bootstrap server; DNS returned NXDOMAIN'>likely free (low)</td><td class='free' title='registry RDAP HTTP 404 - https://rdap.identitydigital.services/rdap; rechecked survivor'>likely free</td><td class='free' title='registry RDAP HTTP 404 - https://pubapi.registry.google/rdap; rechecked survivor'>likely free</td><td class='manual' title='manual-check HTTP  - X cloaks availability; not scored'>manual-check</td><td class='taken' title='GitHub web HTTP 200 - https://github.com/noterail'>taken</td><td class='taken low' title='TikTok web heuristic HTTP 200 - https://www.tiktok.com/@noterail'>seen (low)</td><td class='score' data-value='33.5'>33.5</td><td class='status'>fallback domain</td></tr><tr><td class='name'><span>Patchbook</span><small>patchbook</small></td><td class='taken' title='registry RDAP HTTP 200 - https://rdap.verisign.com/com/v1'>taken</td><td class='free low' title='DNS NXDOMAIN HTTP  - No RDAP bootstrap server; DNS returned NXDOMAIN'>likely free (low)</td><td class='free' title='registry RDAP HTTP 404 - https://rdap.identitydigital.services/rdap; rechecked survivor'>likely free</td><td class='free' title='registry RDAP HTTP 404 - https://pubapi.registry.google/rdap; rechecked survivor'>likely free</td><td class='manual' title='manual-check HTTP  - X cloaks availability; not scored'>manual-check</td><td class='taken' title='GitHub web HTTP 200 - https://github.com/patchbook'>taken</td><td class='taken low' title='TikTok web heuristic HTTP 200 - https://www.tiktok.com/@patchbook'>seen (low)</td><td class='score' data-value='33.5'>33.5</td><td class='status'>fallback domain</td></tr><tr><td class='name'><span>Quillbase</span><small>quillbase</small></td><td class='taken' title='registry RDAP HTTP 200 - https://rdap.verisign.com/com/v1'>taken</td><td class='free low' title='DNS NXDOMAIN HTTP  - No RDAP bootstrap server; DNS returned NXDOMAIN'>likely free (low)</td><td class='free' title='registry RDAP HTTP 404 - https://rdap.identitydigital.services/rdap; rechecked survivor'>likely free</td><td class='free' title='registry RDAP HTTP 404 - https://pubapi.registry.google/rdap; rechecked survivor'>likely free</td><td class='manual' title='manual-check HTTP  - X cloaks availability; not scored'>manual-check</td><td class='taken' title='GitHub web HTTP 200 - https://github.com/quillbase'>taken</td><td class='taken low' title='TikTok web heuristic HTTP 200 - https://www.tiktok.com/@quillbase'>seen (low)</td><td class='score' data-value='33.5'>33.5</td><td class='status'>fallback domain</td></tr><tr><td class='name'><span>Diffdeck</span><small>diffdeck</small></td><td class='taken' title='registry RDAP HTTP 200 - https://rdap.verisign.com/com/v1'>taken</td><td class='free low' title='DNS NXDOMAIN HTTP  - No RDAP bootstrap server; DNS returned NXDOMAIN'>likely free (low)</td><td class='free' title='registry RDAP HTTP 404 - https://rdap.identitydigital.services/rdap; rechecked survivor'>likely free</td><td class='taken' title='registry RDAP HTTP 200 - https://pubapi.registry.google/rdap'>taken</td><td class='manual' title='manual-check HTTP  - X cloaks availability; not scored'>manual-check</td><td class='free' title='GitHub web HTTP 404 - https://github.com/diffdeck'>likely free</td><td class='taken low' title='TikTok web heuristic HTTP 200 - https://www.tiktok.com/@diffdeck'>seen (low)</td><td class='score' data-value='29.5'>29.5</td><td class='status'>fallback domain</td></tr><tr><td class='name'><span>Docbranch</span><small>docbranch</small></td><td class='taken' title='registry RDAP HTTP 200 - https://rdap.verisign.com/com/v1'>taken</td><td class='free low' title='DNS NXDOMAIN HTTP  - No RDAP bootstrap server; DNS returned NXDOMAIN'>likely free (low)</td><td class='free' title='registry RDAP HTTP 404 - https://rdap.identitydigital.services/rdap; rechecked survivor'>likely free</td><td class='blank' title='registry RDAP HTTP None - The read operation timed out'></td><td class='manual' title='manual-check HTTP  - X cloaks availability; not scored'>manual-check</td><td class='free' title='GitHub web HTTP 404 - https://github.com/docbranch'>likely free</td><td class='taken low' title='TikTok web heuristic HTTP 200 - https://www.tiktok.com/@docbranch'>seen (low)</td><td class='score' data-value='29.5'>29.5</td><td class='status'>fallback domain</td></tr><tr><td class='name'><span>Draftmark</span><small>draftmark</small></td><td class='taken' title='registry RDAP HTTP 200 - https://rdap.verisign.com/com/v1'>taken</td><td class='taken low' title='DNS NXDOMAIN HTTP  - No RDAP bootstrap server; DNS did not return NXDOMAIN'>dns seen (low)</td><td class='free' title='registry RDAP HTTP 404 - https://rdap.identitydigital.services/rdap; rechecked survivor'>likely free</td><td class='free' title='registry RDAP HTTP 404 - https://pubapi.registry.google/rdap; rechecked survivor'>likely free</td><td class='manual' title='manual-check HTTP  - X cloaks availability; not scored'>manual-check</td><td class='taken' title='GitHub web HTTP 200 - https://github.com/draftmark'>taken</td><td class='taken low' title='TikTok web heuristic HTTP 200 - https://www.tiktok.com/@draftmark'>seen (low)</td><td class='score' data-value='26.0'>26.0</td><td class='status'>fallback domain</td></tr><tr><td class='name'><span>Linekeep</span><small>linekeep</small></td><td class='taken' title='registry RDAP HTTP 200 - https://rdap.verisign.com/com/v1'>taken</td><td class='taken low' title='DNS NXDOMAIN HTTP  - No RDAP bootstrap server; DNS did not return NXDOMAIN'>dns seen (low)</td><td class='free' title='registry RDAP HTTP 404 - https://rdap.identitydigital.services/rdap; rechecked survivor'>likely free</td><td class='free' title='registry RDAP HTTP 404 - https://pubapi.registry.google/rdap; rechecked survivor'>likely free</td><td class='manual' title='manual-check HTTP  - X cloaks availability; not scored'>manual-check</td><td class='taken' title='GitHub web HTTP 200 - https://github.com/linekeep'>taken</td><td class='taken low' title='TikTok web heuristic HTTP 200 - https://www.tiktok.com/@linekeep'>seen (low)</td><td class='score' data-value='26.0'>26.0</td><td class='status'>fallback domain</td></tr><tr><td class='name'><span>Markpilot</span><small>markpilot</small></td><td class='taken' title='registry RDAP HTTP 200 - https://rdap.verisign.com/com/v1'>taken</td><td class='taken low' title='DNS NXDOMAIN HTTP  - No RDAP bootstrap server; DNS did not return NXDOMAIN'>dns seen (low)</td><td class='free' title='registry RDAP HTTP 404 - https://rdap.identitydigital.services/rdap; rechecked survivor'>likely free</td><td class='free' title='registry RDAP HTTP 404 - https://pubapi.registry.google/rdap; rechecked survivor'>likely free</td><td class='manual' title='manual-check HTTP  - X cloaks availability; not scored'>manual-check</td><td class='taken' title='GitHub web HTTP 200 - https://github.com/markpilot'>taken</td><td class='taken low' title='TikTok web heuristic HTTP 200 - https://www.tiktok.com/@markpilot'>seen (low)</td><td class='score' data-value='26.0'>26.0</td><td class='status'>fallback domain</td></tr><tr><td class='name'><span>Lineforge</span><small>lineforge</small></td><td class='taken' title='registry RDAP HTTP 200 - https://rdap.verisign.com/com/v1'>taken</td><td class='taken low' title='DNS NXDOMAIN HTTP  - No RDAP bootstrap server; DNS did not return NXDOMAIN'>dns seen (low)</td><td class='taken' title='registry RDAP HTTP 200 - https://rdap.identitydigital.services/rdap'>taken</td><td class='free' title='registry RDAP HTTP 404 - https://pubapi.registry.google/rdap; rechecked survivor'>likely free</td><td class='manual' title='manual-check HTTP  - X cloaks availability; not scored'>manual-check</td><td class='free' title='GitHub web HTTP 404 - https://github.com/lineforge'>likely free</td><td class='taken low' title='TikTok web heuristic HTTP 200 - https://www.tiktok.com/@lineforge'>seen (low)</td><td class='score' data-value='20.0'>20.0</td><td class='status'>fallback domain</td></tr><tr><td class='name'><span>Docloom</span><small>docloom</small></td><td class='taken' title='registry RDAP HTTP 200 - https://rdap.verisign.com/com/v1'>taken</td><td class='taken low' title='DNS NXDOMAIN HTTP  - No RDAP bootstrap server; DNS did not return NXDOMAIN'>dns seen (low)</td><td class='taken' title='registry RDAP HTTP 200 - https://rdap.identitydigital.services/rdap'>taken</td><td class='free' title='registry RDAP HTTP 404 - https://pubapi.registry.google/rdap; rechecked survivor'>likely free</td><td class='manual' title='manual-check HTTP  - X cloaks availability; not scored'>manual-check</td><td class='taken' title='GitHub web HTTP 200 - https://github.com/docloom'>taken</td><td class='taken low' title='TikTok web heuristic HTTP 200 - https://www.tiktok.com/@docloom'>seen (low)</td><td class='score' data-value='12.0'>12.0</td><td class='status'>fallback domain</td></tr><tr><td class='name'><span>Docreview</span><small>docreview</small></td><td class='taken' title='registry RDAP HTTP 200 - https://rdap.verisign.com/com/v1'>taken</td><td class='taken low' title='DNS NXDOMAIN HTTP  - No RDAP bootstrap server; DNS did not return NXDOMAIN'>dns seen (low)</td><td class='taken' title='registry RDAP HTTP 200 - https://rdap.identitydigital.services/rdap'>taken</td><td class='free' title='registry RDAP HTTP 404 - https://pubapi.registry.google/rdap; rechecked survivor'>likely free</td><td class='manual' title='manual-check HTTP  - X cloaks availability; not scored'>manual-check</td><td class='taken' title='GitHub web HTTP 200 - https://github.com/docreview'>taken</td><td class='taken low' title='TikTok web heuristic HTTP 200 - https://www.tiktok.com/@docreview'>seen (low)</td><td class='score' data-value='12.0'>12.0</td><td class='status'>fallback domain</td></tr><tr><td class='name'><span>Draftwell</span><small>draftwell</small></td><td class='taken' title='registry RDAP HTTP 200 - https://rdap.verisign.com/com/v1'>taken</td><td class='taken low' title='DNS NXDOMAIN HTTP  - No RDAP bootstrap server; DNS did not return NXDOMAIN'>dns seen (low)</td><td class='taken' title='registry RDAP HTTP 200 - https://rdap.identitydigital.services/rdap'>taken</td><td class='free' title='registry RDAP HTTP 404 - https://pubapi.registry.google/rdap; rechecked survivor'>likely free</td><td class='manual' title='manual-check HTTP  - X cloaks availability; not scored'>manual-check</td><td class='taken' title='GitHub web HTTP 200 - https://github.com/draftwell'>taken</td><td class='taken low' title='TikTok web heuristic HTTP 200 - https://www.tiktok.com/@draftwell'>seen (low)</td><td class='score' data-value='12.0'>12.0</td><td class='status'>fallback domain</td></tr><tr><td class='name'><span>Filewise</span><small>filewise</small></td><td class='taken' title='registry RDAP HTTP 200 - https://rdap.verisign.com/com/v1'>taken</td><td class='taken low' title='DNS NXDOMAIN HTTP  - No RDAP bootstrap server; DNS did not return NXDOMAIN'>dns seen (low)</td><td class='taken' title='registry RDAP HTTP 200 - https://rdap.identitydigital.services/rdap'>taken</td><td class='free' title='registry RDAP HTTP 404 - https://pubapi.registry.google/rdap; rechecked survivor'>likely free</td><td class='manual' title='manual-check HTTP  - X cloaks availability; not scored'>manual-check</td><td class='taken' title='GitHub web HTTP 200 - https://github.com/filewise'>taken</td><td class='taken low' title='TikTok web heuristic HTTP 200 - https://www.tiktok.com/@filewise'>seen (low)</td><td class='score' data-value='12.0'>12.0</td><td class='status'>fallback domain</td></tr><tr><td class='name'><span>Linewise</span><small>linewise</small></td><td class='taken' title='registry RDAP HTTP 200 - https://rdap.verisign.com/com/v1'>taken</td><td class='taken low' title='DNS NXDOMAIN HTTP  - No RDAP bootstrap server; DNS did not return NXDOMAIN'>dns seen (low)</td><td class='taken' title='registry RDAP HTTP 200 - https://rdap.identitydigital.services/rdap'>taken</td><td class='free' title='registry RDAP HTTP 404 - https://pubapi.registry.google/rdap; rechecked survivor'>likely free</td><td class='manual' title='manual-check HTTP  - X cloaks availability; not scored'>manual-check</td><td class='taken' title='GitHub web HTTP 200 - https://github.com/linewise'>taken</td><td class='taken low' title='TikTok web heuristic HTTP 200 - https://www.tiktok.com/@linewise'>seen (low)</td><td class='score' data-value='12.0'>12.0</td><td class='status'>fallback domain</td></tr><tr><td class='name'><span>Markloop</span><small>markloop</small></td><td class='taken' title='registry RDAP HTTP 200 - https://rdap.verisign.com/com/v1'>taken</td><td class='taken low' title='DNS NXDOMAIN HTTP  - No RDAP bootstrap server; DNS did not return NXDOMAIN'>dns seen (low)</td><td class='taken' title='registry RDAP HTTP 200 - https://rdap.identitydigital.services/rdap'>taken</td><td class='free' title='registry RDAP HTTP 404 - https://pubapi.registry.google/rdap; rechecked survivor'>likely free</td><td class='manual' title='manual-check HTTP  - X cloaks availability; not scored'>manual-check</td><td class='taken' title='GitHub web HTTP 200 - https://github.com/markloop'>taken</td><td class='taken low' title='TikTok web heuristic HTTP 200 - https://www.tiktok.com/@markloop'>seen (low)</td><td class='score' data-value='12.0'>12.0</td><td class='status'>fallback domain</td></tr><tr><td class='name'><span>Notekeep</span><small>notekeep</small></td><td class='taken' title='registry RDAP HTTP 200 - https://rdap.verisign.com/com/v1'>taken</td><td class='taken low' title='DNS NXDOMAIN HTTP  - No RDAP bootstrap server; DNS did not return NXDOMAIN'>dns seen (low)</td><td class='taken' title='registry RDAP HTTP 200 - https://rdap.identitydigital.services/rdap'>taken</td><td class='free' title='registry RDAP HTTP 404 - https://pubapi.registry.google/rdap; rechecked survivor'>likely free</td><td class='manual' title='manual-check HTTP  - X cloaks availability; not scored'>manual-check</td><td class='taken' title='GitHub web HTTP 200 - https://github.com/notekeep'>taken</td><td class='taken low' title='TikTok web heuristic HTTP 200 - https://www.tiktok.com/@notekeep'>seen (low)</td><td class='score' data-value='12.0'>12.0</td><td class='status'>fallback domain</td></tr><tr><td class='name'><span>Reviewpad</span><small>reviewpad</small></td><td class='taken' title='registry RDAP HTTP 200 - https://rdap.verisign.com/com/v1'>taken</td><td class='taken low' title='DNS NXDOMAIN HTTP  - No RDAP bootstrap server; DNS did not return NXDOMAIN'>dns seen (low)</td><td class='taken' title='registry RDAP HTTP 200 - https://rdap.identitydigital.services/rdap'>taken</td><td class='free' title='registry RDAP HTTP 404 - https://pubapi.registry.google/rdap; rechecked survivor'>likely free</td><td class='manual' title='manual-check HTTP  - X cloaks availability; not scored'>manual-check</td><td class='taken' title='GitHub web HTTP 200 - https://github.com/reviewpad'>taken</td><td class='taken low' title='TikTok web heuristic HTTP 200 - https://www.tiktok.com/@reviewpad'>seen (low)</td><td class='score' data-value='12.0'>12.0</td><td class='status'>fallback domain</td></tr><tr><td class='name'><span>Patchpilot</span><small>patchpilot</small></td><td class='taken' title='registry RDAP HTTP 200 - https://rdap.verisign.com/com/v1'>taken</td><td class='free low' title='DNS NXDOMAIN HTTP  - No RDAP bootstrap server; DNS returned NXDOMAIN'>likely free (low)</td><td class='taken' title='registry RDAP HTTP 200 - https://rdap.identitydigital.services/rdap'>taken</td><td class='taken' title='registry RDAP HTTP 200 - https://pubapi.registry.google/rdap'>taken</td><td class='manual' title='manual-check HTTP  - X cloaks availability; not scored'>manual-check</td><td class='taken' title='GitHub web HTTP 200 - https://github.com/patchpilot'>taken</td><td class='taken low' title='TikTok web heuristic HTTP 200 - https://www.tiktok.com/@patchpilot'>seen (low)</td><td class='score' data-value='7.5'>7.5</td><td class='status'>low-confidence only</td></tr><tr><td class='name'><span>Marksmith</span><small>marksmith</small></td><td class='taken' title='registry RDAP HTTP 200 - https://rdap.verisign.com/com/v1'>taken</td><td class='taken low' title='DNS NXDOMAIN HTTP  - No RDAP bootstrap server; DNS did not return NXDOMAIN'>dns seen (low)</td><td class='taken' title='registry RDAP HTTP 200 - https://rdap.identitydigital.services/rdap'>taken</td><td class='taken' title='registry RDAP HTTP 200 - https://pubapi.registry.google/rdap'>taken</td><td class='manual' title='manual-check HTTP  - X cloaks availability; not scored'>manual-check</td><td class='taken' title='GitHub web HTTP 200 - https://github.com/marksmith'>taken</td><td class='taken low' title='TikTok web heuristic HTTP 200 - https://www.tiktok.com/@marksmith'>seen (low)</td><td class='score' data-value='0.0'>0.0</td><td class='status'>weak</td></tr><tr><td class='name'><span>Noteforge</span><small>noteforge</small></td><td class='taken' title='registry RDAP HTTP 200 - https://rdap.verisign.com/com/v1'>taken</td><td class='blank' title='DNS NXDOMAIN HTTP  - DNS check inconclusive'></td><td class='taken' title='registry RDAP HTTP 200 - https://rdap.identitydigital.services/rdap'>taken</td><td class='taken' title='registry RDAP HTTP 200 - https://pubapi.registry.google/rdap'>taken</td><td class='manual' title='manual-check HTTP  - X cloaks availability; not scored'>manual-check</td><td class='taken' title='GitHub web HTTP 200 - https://github.com/noteforge'>taken</td><td class='taken low' title='TikTok web heuristic HTTP 200 - https://www.tiktok.com/@noteforge'>seen (low)</td><td class='score' data-value='0.0'>0.0</td><td class='status'>incomplete</td></tr><tr><td class='name'><span>Patchlane</span><small>patchlane</small></td><td class='taken' title='registry RDAP HTTP 200 - https://rdap.verisign.com/com/v1'>taken</td><td class='taken low' title='DNS NXDOMAIN HTTP  - No RDAP bootstrap server; DNS did not return NXDOMAIN'>dns seen (low)</td><td class='taken' title='registry RDAP HTTP 200 - https://rdap.identitydigital.services/rdap'>taken</td><td class='taken' title='registry RDAP HTTP 200 - https://pubapi.registry.google/rdap'>taken</td><td class='manual' title='manual-check HTTP  - X cloaks availability; not scored'>manual-check</td><td class='taken' title='GitHub web HTTP 200 - https://github.com/patchlane'>taken</td><td class='taken low' title='TikTok web heuristic HTTP 200 - https://www.tiktok.com/@patchlane'>seen (low)</td><td class='score' data-value='0.0'>0.0</td><td class='status'>weak</td></tr><tr><td class='name'><span>Reviewly</span><small>reviewly</small></td><td class='taken' title='registry RDAP HTTP 200 - https://rdap.verisign.com/com/v1'>taken</td><td class='taken low' title='DNS NXDOMAIN HTTP  - No RDAP bootstrap server; DNS did not return NXDOMAIN'>dns seen (low)</td><td class='taken' title='registry RDAP HTTP 200 - https://rdap.identitydigital.services/rdap'>taken</td><td class='taken' title='registry RDAP HTTP 200 - https://pubapi.registry.google/rdap'>taken</td><td class='manual' title='manual-check HTTP  - X cloaks availability; not scored'>manual-check</td><td class='taken' title='GitHub web HTTP 200 - https://github.com/reviewly'>taken</td><td class='taken low' title='TikTok web heuristic HTTP 200 - https://www.tiktok.com/@reviewly'>seen (low)</td><td class='score' data-value='0.0'>0.0</td><td class='status'>weak</td></tr>
+      </tbody>
+    </table>
+  </div>
+</main>
+<script id="raw-data" type="application/json">[
+  {
+    &quot;name&quot;: &quot;Diffrail&quot;,
+    &quot;handle&quot;: &quot;diffrail&quot;,
+    &quot;domains&quot;: {
+      &quot;com&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://rdap.verisign.com/com/v1; rechecked survivor&quot;
+      },
+      &quot;io&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;low&quot;,
+        &quot;method&quot;: &quot;DNS NXDOMAIN&quot;,
+        &quot;http&quot;: &quot;&quot;,
+        &quot;note&quot;: &quot;No RDAP bootstrap server; DNS returned NXDOMAIN&quot;
+      },
+      &quot;ai&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://rdap.identitydigital.services/rdap; rechecked survivor&quot;
+      },
+      &quot;dev&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://pubapi.registry.google/rdap; rechecked survivor&quot;
+      }
+    },
+    &quot;x&quot;: {
+      &quot;state&quot;: &quot;manual&quot;,
+      &quot;label&quot;: &quot;manual-check&quot;,
+      &quot;confidence&quot;: &quot;manual&quot;,
+      &quot;method&quot;: &quot;manual-check&quot;,
+      &quot;http&quot;: &quot;&quot;,
+      &quot;note&quot;: &quot;X cloaks availability; not scored&quot;
+    },
+    &quot;github&quot;: {
+      &quot;state&quot;: &quot;free&quot;,
+      &quot;label&quot;: &quot;likely free&quot;,
+      &quot;confidence&quot;: &quot;high&quot;,
+      &quot;method&quot;: &quot;GitHub web&quot;,
+      &quot;http&quot;: 404,
+      &quot;note&quot;: &quot;https://github.com/diffrail&quot;
+    },
+    &quot;tiktok&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;seen&quot;,
+      &quot;confidence&quot;: &quot;low&quot;,
+      &quot;method&quot;: &quot;TikTok web heuristic&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://www.tiktok.com/@diffrail&quot;
+    },
+    &quot;score&quot;: 86.5,
+    &quot;status&quot;: &quot;best survivor&quot;
+  },
+  {
+    &quot;name&quot;: &quot;Draftbranch&quot;,
+    &quot;handle&quot;: &quot;draftbranch&quot;,
+    &quot;domains&quot;: {
+      &quot;com&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://rdap.verisign.com/com/v1; rechecked survivor&quot;
+      },
+      &quot;io&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;low&quot;,
+        &quot;method&quot;: &quot;DNS NXDOMAIN&quot;,
+        &quot;http&quot;: &quot;&quot;,
+        &quot;note&quot;: &quot;No RDAP bootstrap server; DNS returned NXDOMAIN&quot;
+      },
+      &quot;ai&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://rdap.identitydigital.services/rdap; rechecked survivor&quot;
+      },
+      &quot;dev&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://pubapi.registry.google/rdap; rechecked survivor&quot;
+      }
+    },
+    &quot;x&quot;: {
+      &quot;state&quot;: &quot;manual&quot;,
+      &quot;label&quot;: &quot;manual-check&quot;,
+      &quot;confidence&quot;: &quot;manual&quot;,
+      &quot;method&quot;: &quot;manual-check&quot;,
+      &quot;http&quot;: &quot;&quot;,
+      &quot;note&quot;: &quot;X cloaks availability; not scored&quot;
+    },
+    &quot;github&quot;: {
+      &quot;state&quot;: &quot;free&quot;,
+      &quot;label&quot;: &quot;likely free&quot;,
+      &quot;confidence&quot;: &quot;high&quot;,
+      &quot;method&quot;: &quot;GitHub web&quot;,
+      &quot;http&quot;: 404,
+      &quot;note&quot;: &quot;https://github.com/draftbranch&quot;
+    },
+    &quot;tiktok&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;seen&quot;,
+      &quot;confidence&quot;: &quot;low&quot;,
+      &quot;method&quot;: &quot;TikTok web heuristic&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://www.tiktok.com/@draftbranch&quot;
+    },
+    &quot;score&quot;: 86.5,
+    &quot;status&quot;: &quot;best survivor&quot;
+  },
+  {
+    &quot;name&quot;: &quot;Draftfold&quot;,
+    &quot;handle&quot;: &quot;draftfold&quot;,
+    &quot;domains&quot;: {
+      &quot;com&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://rdap.verisign.com/com/v1; rechecked survivor&quot;
+      },
+      &quot;io&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;low&quot;,
+        &quot;method&quot;: &quot;DNS NXDOMAIN&quot;,
+        &quot;http&quot;: &quot;&quot;,
+        &quot;note&quot;: &quot;No RDAP bootstrap server; DNS returned NXDOMAIN&quot;
+      },
+      &quot;ai&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://rdap.identitydigital.services/rdap; rechecked survivor&quot;
+      },
+      &quot;dev&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://pubapi.registry.google/rdap; rechecked survivor&quot;
+      }
+    },
+    &quot;x&quot;: {
+      &quot;state&quot;: &quot;manual&quot;,
+      &quot;label&quot;: &quot;manual-check&quot;,
+      &quot;confidence&quot;: &quot;manual&quot;,
+      &quot;method&quot;: &quot;manual-check&quot;,
+      &quot;http&quot;: &quot;&quot;,
+      &quot;note&quot;: &quot;X cloaks availability; not scored&quot;
+    },
+    &quot;github&quot;: {
+      &quot;state&quot;: &quot;free&quot;,
+      &quot;label&quot;: &quot;likely free&quot;,
+      &quot;confidence&quot;: &quot;high&quot;,
+      &quot;method&quot;: &quot;GitHub web&quot;,
+      &quot;http&quot;: 404,
+      &quot;note&quot;: &quot;https://github.com/draftfold&quot;
+    },
+    &quot;tiktok&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;seen&quot;,
+      &quot;confidence&quot;: &quot;low&quot;,
+      &quot;method&quot;: &quot;TikTok web heuristic&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://www.tiktok.com/@draftfold&quot;
+    },
+    &quot;score&quot;: 86.5,
+    &quot;status&quot;: &quot;best survivor&quot;
+  },
+  {
+    &quot;name&quot;: &quot;Draftpacket&quot;,
+    &quot;handle&quot;: &quot;draftpacket&quot;,
+    &quot;domains&quot;: {
+      &quot;com&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://rdap.verisign.com/com/v1; rechecked survivor&quot;
+      },
+      &quot;io&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;low&quot;,
+        &quot;method&quot;: &quot;DNS NXDOMAIN&quot;,
+        &quot;http&quot;: &quot;&quot;,
+        &quot;note&quot;: &quot;No RDAP bootstrap server; DNS returned NXDOMAIN&quot;
+      },
+      &quot;ai&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://rdap.identitydigital.services/rdap; rechecked survivor&quot;
+      },
+      &quot;dev&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://pubapi.registry.google/rdap; rechecked survivor&quot;
+      }
+    },
+    &quot;x&quot;: {
+      &quot;state&quot;: &quot;manual&quot;,
+      &quot;label&quot;: &quot;manual-check&quot;,
+      &quot;confidence&quot;: &quot;manual&quot;,
+      &quot;method&quot;: &quot;manual-check&quot;,
+      &quot;http&quot;: &quot;&quot;,
+      &quot;note&quot;: &quot;X cloaks availability; not scored&quot;
+    },
+    &quot;github&quot;: {
+      &quot;state&quot;: &quot;free&quot;,
+      &quot;label&quot;: &quot;likely free&quot;,
+      &quot;confidence&quot;: &quot;high&quot;,
+      &quot;method&quot;: &quot;GitHub web&quot;,
+      &quot;http&quot;: 404,
+      &quot;note&quot;: &quot;https://github.com/draftpacket&quot;
+    },
+    &quot;tiktok&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;seen&quot;,
+      &quot;confidence&quot;: &quot;low&quot;,
+      &quot;method&quot;: &quot;TikTok web heuristic&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://www.tiktok.com/@draftpacket&quot;
+    },
+    &quot;score&quot;: 86.5,
+    &quot;status&quot;: &quot;best survivor&quot;
+  },
+  {
+    &quot;name&quot;: &quot;Editpacket&quot;,
+    &quot;handle&quot;: &quot;editpacket&quot;,
+    &quot;domains&quot;: {
+      &quot;com&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://rdap.verisign.com/com/v1; rechecked survivor&quot;
+      },
+      &quot;io&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;low&quot;,
+        &quot;method&quot;: &quot;DNS NXDOMAIN&quot;,
+        &quot;http&quot;: &quot;&quot;,
+        &quot;note&quot;: &quot;No RDAP bootstrap server; DNS returned NXDOMAIN&quot;
+      },
+      &quot;ai&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://rdap.identitydigital.services/rdap; rechecked survivor&quot;
+      },
+      &quot;dev&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://pubapi.registry.google/rdap; rechecked survivor&quot;
+      }
+    },
+    &quot;x&quot;: {
+      &quot;state&quot;: &quot;manual&quot;,
+      &quot;label&quot;: &quot;manual-check&quot;,
+      &quot;confidence&quot;: &quot;manual&quot;,
+      &quot;method&quot;: &quot;manual-check&quot;,
+      &quot;http&quot;: &quot;&quot;,
+      &quot;note&quot;: &quot;X cloaks availability; not scored&quot;
+    },
+    &quot;github&quot;: {
+      &quot;state&quot;: &quot;free&quot;,
+      &quot;label&quot;: &quot;likely free&quot;,
+      &quot;confidence&quot;: &quot;high&quot;,
+      &quot;method&quot;: &quot;GitHub web&quot;,
+      &quot;http&quot;: 404,
+      &quot;note&quot;: &quot;https://github.com/editpacket&quot;
+    },
+    &quot;tiktok&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;seen&quot;,
+      &quot;confidence&quot;: &quot;low&quot;,
+      &quot;method&quot;: &quot;TikTok web heuristic&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://www.tiktok.com/@editpacket&quot;
+    },
+    &quot;score&quot;: 86.5,
+    &quot;status&quot;: &quot;best survivor&quot;
+  },
+  {
+    &quot;name&quot;: &quot;Filegrail&quot;,
+    &quot;handle&quot;: &quot;filegrail&quot;,
+    &quot;domains&quot;: {
+      &quot;com&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://rdap.verisign.com/com/v1; rechecked survivor&quot;
+      },
+      &quot;io&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;low&quot;,
+        &quot;method&quot;: &quot;DNS NXDOMAIN&quot;,
+        &quot;http&quot;: &quot;&quot;,
+        &quot;note&quot;: &quot;No RDAP bootstrap server; DNS returned NXDOMAIN&quot;
+      },
+      &quot;ai&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://rdap.identitydigital.services/rdap; rechecked survivor&quot;
+      },
+      &quot;dev&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://pubapi.registry.google/rdap; rechecked survivor&quot;
+      }
+    },
+    &quot;x&quot;: {
+      &quot;state&quot;: &quot;manual&quot;,
+      &quot;label&quot;: &quot;manual-check&quot;,
+      &quot;confidence&quot;: &quot;manual&quot;,
+      &quot;method&quot;: &quot;manual-check&quot;,
+      &quot;http&quot;: &quot;&quot;,
+      &quot;note&quot;: &quot;X cloaks availability; not scored&quot;
+    },
+    &quot;github&quot;: {
+      &quot;state&quot;: &quot;free&quot;,
+      &quot;label&quot;: &quot;likely free&quot;,
+      &quot;confidence&quot;: &quot;high&quot;,
+      &quot;method&quot;: &quot;GitHub web&quot;,
+      &quot;http&quot;: 404,
+      &quot;note&quot;: &quot;https://github.com/filegrail&quot;
+    },
+    &quot;tiktok&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;seen&quot;,
+      &quot;confidence&quot;: &quot;low&quot;,
+      &quot;method&quot;: &quot;TikTok web heuristic&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://www.tiktok.com/@filegrail&quot;
+    },
+    &quot;score&quot;: 86.5,
+    &quot;status&quot;: &quot;best survivor&quot;
+  },
+  {
+    &quot;name&quot;: &quot;Linegraft&quot;,
+    &quot;handle&quot;: &quot;linegraft&quot;,
+    &quot;domains&quot;: {
+      &quot;com&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://rdap.verisign.com/com/v1; rechecked survivor&quot;
+      },
+      &quot;io&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;low&quot;,
+        &quot;method&quot;: &quot;DNS NXDOMAIN&quot;,
+        &quot;http&quot;: &quot;&quot;,
+        &quot;note&quot;: &quot;No RDAP bootstrap server; DNS returned NXDOMAIN&quot;
+      },
+      &quot;ai&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://rdap.identitydigital.services/rdap; rechecked survivor&quot;
+      },
+      &quot;dev&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://pubapi.registry.google/rdap; rechecked survivor&quot;
+      }
+    },
+    &quot;x&quot;: {
+      &quot;state&quot;: &quot;manual&quot;,
+      &quot;label&quot;: &quot;manual-check&quot;,
+      &quot;confidence&quot;: &quot;manual&quot;,
+      &quot;method&quot;: &quot;manual-check&quot;,
+      &quot;http&quot;: &quot;&quot;,
+      &quot;note&quot;: &quot;X cloaks availability; not scored&quot;
+    },
+    &quot;github&quot;: {
+      &quot;state&quot;: &quot;free&quot;,
+      &quot;label&quot;: &quot;likely free&quot;,
+      &quot;confidence&quot;: &quot;high&quot;,
+      &quot;method&quot;: &quot;GitHub web&quot;,
+      &quot;http&quot;: 404,
+      &quot;note&quot;: &quot;https://github.com/linegraft&quot;
+    },
+    &quot;tiktok&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;seen&quot;,
+      &quot;confidence&quot;: &quot;low&quot;,
+      &quot;method&quot;: &quot;TikTok web heuristic&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://www.tiktok.com/@linegraft&quot;
+    },
+    &quot;score&quot;: 86.5,
+    &quot;status&quot;: &quot;best survivor&quot;
+  },
+  {
+    &quot;name&quot;: &quot;Linepacket&quot;,
+    &quot;handle&quot;: &quot;linepacket&quot;,
+    &quot;domains&quot;: {
+      &quot;com&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://rdap.verisign.com/com/v1; rechecked survivor&quot;
+      },
+      &quot;io&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;low&quot;,
+        &quot;method&quot;: &quot;DNS NXDOMAIN&quot;,
+        &quot;http&quot;: &quot;&quot;,
+        &quot;note&quot;: &quot;No RDAP bootstrap server; DNS returned NXDOMAIN&quot;
+      },
+      &quot;ai&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://rdap.identitydigital.services/rdap; rechecked survivor&quot;
+      },
+      &quot;dev&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://pubapi.registry.google/rdap; rechecked survivor&quot;
+      }
+    },
+    &quot;x&quot;: {
+      &quot;state&quot;: &quot;manual&quot;,
+      &quot;label&quot;: &quot;manual-check&quot;,
+      &quot;confidence&quot;: &quot;manual&quot;,
+      &quot;method&quot;: &quot;manual-check&quot;,
+      &quot;http&quot;: &quot;&quot;,
+      &quot;note&quot;: &quot;X cloaks availability; not scored&quot;
+    },
+    &quot;github&quot;: {
+      &quot;state&quot;: &quot;free&quot;,
+      &quot;label&quot;: &quot;likely free&quot;,
+      &quot;confidence&quot;: &quot;high&quot;,
+      &quot;method&quot;: &quot;GitHub web&quot;,
+      &quot;http&quot;: 404,
+      &quot;note&quot;: &quot;https://github.com/linepacket&quot;
+    },
+    &quot;tiktok&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;seen&quot;,
+      &quot;confidence&quot;: &quot;low&quot;,
+      &quot;method&quot;: &quot;TikTok web heuristic&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://www.tiktok.com/@linepacket&quot;
+    },
+    &quot;score&quot;: 86.5,
+    &quot;status&quot;: &quot;best survivor&quot;
+  },
+  {
+    &quot;name&quot;: &quot;Pagepacket&quot;,
+    &quot;handle&quot;: &quot;pagepacket&quot;,
+    &quot;domains&quot;: {
+      &quot;com&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://rdap.verisign.com/com/v1; rechecked survivor&quot;
+      },
+      &quot;io&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;low&quot;,
+        &quot;method&quot;: &quot;DNS NXDOMAIN&quot;,
+        &quot;http&quot;: &quot;&quot;,
+        &quot;note&quot;: &quot;No RDAP bootstrap server; DNS returned NXDOMAIN&quot;
+      },
+      &quot;ai&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://rdap.identitydigital.services/rdap; rechecked survivor&quot;
+      },
+      &quot;dev&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://pubapi.registry.google/rdap; rechecked survivor&quot;
+      }
+    },
+    &quot;x&quot;: {
+      &quot;state&quot;: &quot;manual&quot;,
+      &quot;label&quot;: &quot;manual-check&quot;,
+      &quot;confidence&quot;: &quot;manual&quot;,
+      &quot;method&quot;: &quot;manual-check&quot;,
+      &quot;http&quot;: &quot;&quot;,
+      &quot;note&quot;: &quot;X cloaks availability; not scored&quot;
+    },
+    &quot;github&quot;: {
+      &quot;state&quot;: &quot;free&quot;,
+      &quot;label&quot;: &quot;likely free&quot;,
+      &quot;confidence&quot;: &quot;high&quot;,
+      &quot;method&quot;: &quot;GitHub web&quot;,
+      &quot;http&quot;: 404,
+      &quot;note&quot;: &quot;https://github.com/pagepacket&quot;
+    },
+    &quot;tiktok&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;seen&quot;,
+      &quot;confidence&quot;: &quot;low&quot;,
+      &quot;method&quot;: &quot;TikTok web heuristic&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://www.tiktok.com/@pagepacket&quot;
+    },
+    &quot;score&quot;: 86.5,
+    &quot;status&quot;: &quot;best survivor&quot;
+  },
+  {
+    &quot;name&quot;: &quot;Quilldiff&quot;,
+    &quot;handle&quot;: &quot;quilldiff&quot;,
+    &quot;domains&quot;: {
+      &quot;com&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://rdap.verisign.com/com/v1; rechecked survivor&quot;
+      },
+      &quot;io&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;low&quot;,
+        &quot;method&quot;: &quot;DNS NXDOMAIN&quot;,
+        &quot;http&quot;: &quot;&quot;,
+        &quot;note&quot;: &quot;No RDAP bootstrap server; DNS returned NXDOMAIN&quot;
+      },
+      &quot;ai&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://rdap.identitydigital.services/rdap; rechecked survivor&quot;
+      },
+      &quot;dev&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://pubapi.registry.google/rdap; rechecked survivor&quot;
+      }
+    },
+    &quot;x&quot;: {
+      &quot;state&quot;: &quot;manual&quot;,
+      &quot;label&quot;: &quot;manual-check&quot;,
+      &quot;confidence&quot;: &quot;manual&quot;,
+      &quot;method&quot;: &quot;manual-check&quot;,
+      &quot;http&quot;: &quot;&quot;,
+      &quot;note&quot;: &quot;X cloaks availability; not scored&quot;
+    },
+    &quot;github&quot;: {
+      &quot;state&quot;: &quot;free&quot;,
+      &quot;label&quot;: &quot;likely free&quot;,
+      &quot;confidence&quot;: &quot;high&quot;,
+      &quot;method&quot;: &quot;GitHub web&quot;,
+      &quot;http&quot;: 404,
+      &quot;note&quot;: &quot;https://github.com/quilldiff&quot;
+    },
+    &quot;tiktok&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;seen&quot;,
+      &quot;confidence&quot;: &quot;low&quot;,
+      &quot;method&quot;: &quot;TikTok web heuristic&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://www.tiktok.com/@quilldiff&quot;
+    },
+    &quot;score&quot;: 86.5,
+    &quot;status&quot;: &quot;best survivor&quot;
+  },
+  {
+    &quot;name&quot;: &quot;Quillpacket&quot;,
+    &quot;handle&quot;: &quot;quillpacket&quot;,
+    &quot;domains&quot;: {
+      &quot;com&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://rdap.verisign.com/com/v1; rechecked survivor&quot;
+      },
+      &quot;io&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;low&quot;,
+        &quot;method&quot;: &quot;DNS NXDOMAIN&quot;,
+        &quot;http&quot;: &quot;&quot;,
+        &quot;note&quot;: &quot;No RDAP bootstrap server; DNS returned NXDOMAIN&quot;
+      },
+      &quot;ai&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://rdap.identitydigital.services/rdap; rechecked survivor&quot;
+      },
+      &quot;dev&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://pubapi.registry.google/rdap; rechecked survivor&quot;
+      }
+    },
+    &quot;x&quot;: {
+      &quot;state&quot;: &quot;manual&quot;,
+      &quot;label&quot;: &quot;manual-check&quot;,
+      &quot;confidence&quot;: &quot;manual&quot;,
+      &quot;method&quot;: &quot;manual-check&quot;,
+      &quot;http&quot;: &quot;&quot;,
+      &quot;note&quot;: &quot;X cloaks availability; not scored&quot;
+    },
+    &quot;github&quot;: {
+      &quot;state&quot;: &quot;free&quot;,
+      &quot;label&quot;: &quot;likely free&quot;,
+      &quot;confidence&quot;: &quot;high&quot;,
+      &quot;method&quot;: &quot;GitHub web&quot;,
+      &quot;http&quot;: 404,
+      &quot;note&quot;: &quot;https://github.com/quillpacket&quot;
+    },
+    &quot;tiktok&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;seen&quot;,
+      &quot;confidence&quot;: &quot;low&quot;,
+      &quot;method&quot;: &quot;TikTok web heuristic&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://www.tiktok.com/@quillpacket&quot;
+    },
+    &quot;score&quot;: 86.5,
+    &quot;status&quot;: &quot;best survivor&quot;
+  },
+  {
+    &quot;name&quot;: &quot;Quillrail&quot;,
+    &quot;handle&quot;: &quot;quillrail&quot;,
+    &quot;domains&quot;: {
+      &quot;com&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://rdap.verisign.com/com/v1; rechecked survivor&quot;
+      },
+      &quot;io&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;low&quot;,
+        &quot;method&quot;: &quot;DNS NXDOMAIN&quot;,
+        &quot;http&quot;: &quot;&quot;,
+        &quot;note&quot;: &quot;No RDAP bootstrap server; DNS returned NXDOMAIN&quot;
+      },
+      &quot;ai&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://rdap.identitydigital.services/rdap; rechecked survivor&quot;
+      },
+      &quot;dev&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://pubapi.registry.google/rdap; rechecked survivor&quot;
+      }
+    },
+    &quot;x&quot;: {
+      &quot;state&quot;: &quot;manual&quot;,
+      &quot;label&quot;: &quot;manual-check&quot;,
+      &quot;confidence&quot;: &quot;manual&quot;,
+      &quot;method&quot;: &quot;manual-check&quot;,
+      &quot;http&quot;: &quot;&quot;,
+      &quot;note&quot;: &quot;X cloaks availability; not scored&quot;
+    },
+    &quot;github&quot;: {
+      &quot;state&quot;: &quot;free&quot;,
+      &quot;label&quot;: &quot;likely free&quot;,
+      &quot;confidence&quot;: &quot;high&quot;,
+      &quot;method&quot;: &quot;GitHub web&quot;,
+      &quot;http&quot;: 404,
+      &quot;note&quot;: &quot;https://github.com/quillrail&quot;
+    },
+    &quot;tiktok&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;seen&quot;,
+      &quot;confidence&quot;: &quot;low&quot;,
+      &quot;method&quot;: &quot;TikTok web heuristic&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://www.tiktok.com/@quillrail&quot;
+    },
+    &quot;score&quot;: 86.5,
+    &quot;status&quot;: &quot;best survivor&quot;
+  },
+  {
+    &quot;name&quot;: &quot;Draftgrid&quot;,
+    &quot;handle&quot;: &quot;draftgrid&quot;,
+    &quot;domains&quot;: {
+      &quot;com&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;taken&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 200,
+        &quot;note&quot;: &quot;https://rdap.verisign.com/com/v1&quot;
+      },
+      &quot;io&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;low&quot;,
+        &quot;method&quot;: &quot;DNS NXDOMAIN&quot;,
+        &quot;http&quot;: &quot;&quot;,
+        &quot;note&quot;: &quot;No RDAP bootstrap server; DNS returned NXDOMAIN&quot;
+      },
+      &quot;ai&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://rdap.identitydigital.services/rdap; rechecked survivor&quot;
+      },
+      &quot;dev&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://pubapi.registry.google/rdap; rechecked survivor&quot;
+      }
+    },
+    &quot;x&quot;: {
+      &quot;state&quot;: &quot;manual&quot;,
+      &quot;label&quot;: &quot;manual-check&quot;,
+      &quot;confidence&quot;: &quot;manual&quot;,
+      &quot;method&quot;: &quot;manual-check&quot;,
+      &quot;http&quot;: &quot;&quot;,
+      &quot;note&quot;: &quot;X cloaks availability; not scored&quot;
+    },
+    &quot;github&quot;: {
+      &quot;state&quot;: &quot;free&quot;,
+      &quot;label&quot;: &quot;likely free&quot;,
+      &quot;confidence&quot;: &quot;high&quot;,
+      &quot;method&quot;: &quot;GitHub web&quot;,
+      &quot;http&quot;: 404,
+      &quot;note&quot;: &quot;https://github.com/draftgrid&quot;
+    },
+    &quot;tiktok&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;seen&quot;,
+      &quot;confidence&quot;: &quot;low&quot;,
+      &quot;method&quot;: &quot;TikTok web heuristic&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://www.tiktok.com/@draftgrid&quot;
+    },
+    &quot;score&quot;: 41.5,
+    &quot;status&quot;: &quot;fallback domain&quot;
+  },
+  {
+    &quot;name&quot;: &quot;Editloom&quot;,
+    &quot;handle&quot;: &quot;editloom&quot;,
+    &quot;domains&quot;: {
+      &quot;com&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;taken&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 200,
+        &quot;note&quot;: &quot;https://rdap.verisign.com/com/v1&quot;
+      },
+      &quot;io&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;low&quot;,
+        &quot;method&quot;: &quot;DNS NXDOMAIN&quot;,
+        &quot;http&quot;: &quot;&quot;,
+        &quot;note&quot;: &quot;No RDAP bootstrap server; DNS returned NXDOMAIN&quot;
+      },
+      &quot;ai&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://rdap.identitydigital.services/rdap; rechecked survivor&quot;
+      },
+      &quot;dev&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://pubapi.registry.google/rdap; rechecked survivor&quot;
+      }
+    },
+    &quot;x&quot;: {
+      &quot;state&quot;: &quot;manual&quot;,
+      &quot;label&quot;: &quot;manual-check&quot;,
+      &quot;confidence&quot;: &quot;manual&quot;,
+      &quot;method&quot;: &quot;manual-check&quot;,
+      &quot;http&quot;: &quot;&quot;,
+      &quot;note&quot;: &quot;X cloaks availability; not scored&quot;
+    },
+    &quot;github&quot;: {
+      &quot;state&quot;: &quot;free&quot;,
+      &quot;label&quot;: &quot;likely free&quot;,
+      &quot;confidence&quot;: &quot;high&quot;,
+      &quot;method&quot;: &quot;GitHub web&quot;,
+      &quot;http&quot;: 404,
+      &quot;note&quot;: &quot;https://github.com/editloom&quot;
+    },
+    &quot;tiktok&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;seen&quot;,
+      &quot;confidence&quot;: &quot;low&quot;,
+      &quot;method&quot;: &quot;TikTok web heuristic&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://www.tiktok.com/@editloom&quot;
+    },
+    &quot;score&quot;: 41.5,
+    &quot;status&quot;: &quot;fallback domain&quot;
+  },
+  {
+    &quot;name&quot;: &quot;Editrail&quot;,
+    &quot;handle&quot;: &quot;editrail&quot;,
+    &quot;domains&quot;: {
+      &quot;com&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;taken&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 200,
+        &quot;note&quot;: &quot;https://rdap.verisign.com/com/v1&quot;
+      },
+      &quot;io&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;low&quot;,
+        &quot;method&quot;: &quot;DNS NXDOMAIN&quot;,
+        &quot;http&quot;: &quot;&quot;,
+        &quot;note&quot;: &quot;No RDAP bootstrap server; DNS returned NXDOMAIN&quot;
+      },
+      &quot;ai&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://rdap.identitydigital.services/rdap; rechecked survivor&quot;
+      },
+      &quot;dev&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://pubapi.registry.google/rdap; rechecked survivor&quot;
+      }
+    },
+    &quot;x&quot;: {
+      &quot;state&quot;: &quot;manual&quot;,
+      &quot;label&quot;: &quot;manual-check&quot;,
+      &quot;confidence&quot;: &quot;manual&quot;,
+      &quot;method&quot;: &quot;manual-check&quot;,
+      &quot;http&quot;: &quot;&quot;,
+      &quot;note&quot;: &quot;X cloaks availability; not scored&quot;
+    },
+    &quot;github&quot;: {
+      &quot;state&quot;: &quot;free&quot;,
+      &quot;label&quot;: &quot;likely free&quot;,
+      &quot;confidence&quot;: &quot;high&quot;,
+      &quot;method&quot;: &quot;GitHub web&quot;,
+      &quot;http&quot;: 404,
+      &quot;note&quot;: &quot;https://github.com/editrail&quot;
+    },
+    &quot;tiktok&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;seen&quot;,
+      &quot;confidence&quot;: &quot;low&quot;,
+      &quot;method&quot;: &quot;TikTok web heuristic&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://www.tiktok.com/@editrail&quot;
+    },
+    &quot;score&quot;: 41.5,
+    &quot;status&quot;: &quot;fallback domain&quot;
+  },
+  {
+    &quot;name&quot;: &quot;Filebranch&quot;,
+    &quot;handle&quot;: &quot;filebranch&quot;,
+    &quot;domains&quot;: {
+      &quot;com&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;taken&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 200,
+        &quot;note&quot;: &quot;https://rdap.verisign.com/com/v1&quot;
+      },
+      &quot;io&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;low&quot;,
+        &quot;method&quot;: &quot;DNS NXDOMAIN&quot;,
+        &quot;http&quot;: &quot;&quot;,
+        &quot;note&quot;: &quot;No RDAP bootstrap server; DNS returned NXDOMAIN&quot;
+      },
+      &quot;ai&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://rdap.identitydigital.services/rdap; rechecked survivor&quot;
+      },
+      &quot;dev&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://pubapi.registry.google/rdap; rechecked survivor&quot;
+      }
+    },
+    &quot;x&quot;: {
+      &quot;state&quot;: &quot;manual&quot;,
+      &quot;label&quot;: &quot;manual-check&quot;,
+      &quot;confidence&quot;: &quot;manual&quot;,
+      &quot;method&quot;: &quot;manual-check&quot;,
+      &quot;http&quot;: &quot;&quot;,
+      &quot;note&quot;: &quot;X cloaks availability; not scored&quot;
+    },
+    &quot;github&quot;: {
+      &quot;state&quot;: &quot;free&quot;,
+      &quot;label&quot;: &quot;likely free&quot;,
+      &quot;confidence&quot;: &quot;high&quot;,
+      &quot;method&quot;: &quot;GitHub web&quot;,
+      &quot;http&quot;: 404,
+      &quot;note&quot;: &quot;https://github.com/filebranch&quot;
+    },
+    &quot;tiktok&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;seen&quot;,
+      &quot;confidence&quot;: &quot;low&quot;,
+      &quot;method&quot;: &quot;TikTok web heuristic&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://www.tiktok.com/@filebranch&quot;
+    },
+    &quot;score&quot;: 41.5,
+    &quot;status&quot;: &quot;fallback domain&quot;
+  },
+  {
+    &quot;name&quot;: &quot;Filedraft&quot;,
+    &quot;handle&quot;: &quot;filedraft&quot;,
+    &quot;domains&quot;: {
+      &quot;com&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;taken&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 200,
+        &quot;note&quot;: &quot;https://rdap.verisign.com/com/v1&quot;
+      },
+      &quot;io&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;low&quot;,
+        &quot;method&quot;: &quot;DNS NXDOMAIN&quot;,
+        &quot;http&quot;: &quot;&quot;,
+        &quot;note&quot;: &quot;No RDAP bootstrap server; DNS returned NXDOMAIN&quot;
+      },
+      &quot;ai&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://rdap.identitydigital.services/rdap; rechecked survivor&quot;
+      },
+      &quot;dev&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://pubapi.registry.google/rdap; rechecked survivor&quot;
+      }
+    },
+    &quot;x&quot;: {
+      &quot;state&quot;: &quot;manual&quot;,
+      &quot;label&quot;: &quot;manual-check&quot;,
+      &quot;confidence&quot;: &quot;manual&quot;,
+      &quot;method&quot;: &quot;manual-check&quot;,
+      &quot;http&quot;: &quot;&quot;,
+      &quot;note&quot;: &quot;X cloaks availability; not scored&quot;
+    },
+    &quot;github&quot;: {
+      &quot;state&quot;: &quot;free&quot;,
+      &quot;label&quot;: &quot;likely free&quot;,
+      &quot;confidence&quot;: &quot;high&quot;,
+      &quot;method&quot;: &quot;GitHub web&quot;,
+      &quot;http&quot;: 404,
+      &quot;note&quot;: &quot;https://github.com/filedraft&quot;
+    },
+    &quot;tiktok&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;seen&quot;,
+      &quot;confidence&quot;: &quot;low&quot;,
+      &quot;method&quot;: &quot;TikTok web heuristic&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://www.tiktok.com/@filedraft&quot;
+    },
+    &quot;score&quot;: 41.5,
+    &quot;status&quot;: &quot;fallback domain&quot;
+  },
+  {
+    &quot;name&quot;: &quot;Filepacket&quot;,
+    &quot;handle&quot;: &quot;filepacket&quot;,
+    &quot;domains&quot;: {
+      &quot;com&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;taken&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 200,
+        &quot;note&quot;: &quot;https://rdap.verisign.com/com/v1&quot;
+      },
+      &quot;io&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;low&quot;,
+        &quot;method&quot;: &quot;DNS NXDOMAIN&quot;,
+        &quot;http&quot;: &quot;&quot;,
+        &quot;note&quot;: &quot;No RDAP bootstrap server; DNS returned NXDOMAIN&quot;
+      },
+      &quot;ai&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://rdap.identitydigital.services/rdap; rechecked survivor&quot;
+      },
+      &quot;dev&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://pubapi.registry.google/rdap; rechecked survivor&quot;
+      }
+    },
+    &quot;x&quot;: {
+      &quot;state&quot;: &quot;manual&quot;,
+      &quot;label&quot;: &quot;manual-check&quot;,
+      &quot;confidence&quot;: &quot;manual&quot;,
+      &quot;method&quot;: &quot;manual-check&quot;,
+      &quot;http&quot;: &quot;&quot;,
+      &quot;note&quot;: &quot;X cloaks availability; not scored&quot;
+    },
+    &quot;github&quot;: {
+      &quot;state&quot;: &quot;free&quot;,
+      &quot;label&quot;: &quot;likely free&quot;,
+      &quot;confidence&quot;: &quot;high&quot;,
+      &quot;method&quot;: &quot;GitHub web&quot;,
+      &quot;http&quot;: 404,
+      &quot;note&quot;: &quot;https://github.com/filepacket&quot;
+    },
+    &quot;tiktok&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;seen&quot;,
+      &quot;confidence&quot;: &quot;low&quot;,
+      &quot;method&quot;: &quot;TikTok web heuristic&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://www.tiktok.com/@filepacket&quot;
+    },
+    &quot;score&quot;: 41.5,
+    &quot;status&quot;: &quot;fallback domain&quot;
+  },
+  {
+    &quot;name&quot;: &quot;Marknest&quot;,
+    &quot;handle&quot;: &quot;marknest&quot;,
+    &quot;domains&quot;: {
+      &quot;com&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;taken&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 200,
+        &quot;note&quot;: &quot;https://rdap.verisign.com/com/v1&quot;
+      },
+      &quot;io&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;low&quot;,
+        &quot;method&quot;: &quot;DNS NXDOMAIN&quot;,
+        &quot;http&quot;: &quot;&quot;,
+        &quot;note&quot;: &quot;No RDAP bootstrap server; DNS returned NXDOMAIN&quot;
+      },
+      &quot;ai&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://rdap.identitydigital.services/rdap; rechecked survivor&quot;
+      },
+      &quot;dev&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://pubapi.registry.google/rdap; rechecked survivor&quot;
+      }
+    },
+    &quot;x&quot;: {
+      &quot;state&quot;: &quot;manual&quot;,
+      &quot;label&quot;: &quot;manual-check&quot;,
+      &quot;confidence&quot;: &quot;manual&quot;,
+      &quot;method&quot;: &quot;manual-check&quot;,
+      &quot;http&quot;: &quot;&quot;,
+      &quot;note&quot;: &quot;X cloaks availability; not scored&quot;
+    },
+    &quot;github&quot;: {
+      &quot;state&quot;: &quot;free&quot;,
+      &quot;label&quot;: &quot;likely free&quot;,
+      &quot;confidence&quot;: &quot;high&quot;,
+      &quot;method&quot;: &quot;GitHub web&quot;,
+      &quot;http&quot;: 404,
+      &quot;note&quot;: &quot;https://github.com/marknest&quot;
+    },
+    &quot;tiktok&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;seen&quot;,
+      &quot;confidence&quot;: &quot;low&quot;,
+      &quot;method&quot;: &quot;TikTok web heuristic&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://www.tiktok.com/@marknest&quot;
+    },
+    &quot;score&quot;: 41.5,
+    &quot;status&quot;: &quot;fallback domain&quot;
+  },
+  {
+    &quot;name&quot;: &quot;Patchmark&quot;,
+    &quot;handle&quot;: &quot;patchmark&quot;,
+    &quot;domains&quot;: {
+      &quot;com&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;taken&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 200,
+        &quot;note&quot;: &quot;https://rdap.verisign.com/com/v1&quot;
+      },
+      &quot;io&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;low&quot;,
+        &quot;method&quot;: &quot;DNS NXDOMAIN&quot;,
+        &quot;http&quot;: &quot;&quot;,
+        &quot;note&quot;: &quot;No RDAP bootstrap server; DNS returned NXDOMAIN&quot;
+      },
+      &quot;ai&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://rdap.identitydigital.services/rdap; rechecked survivor&quot;
+      },
+      &quot;dev&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://pubapi.registry.google/rdap; rechecked survivor&quot;
+      }
+    },
+    &quot;x&quot;: {
+      &quot;state&quot;: &quot;manual&quot;,
+      &quot;label&quot;: &quot;manual-check&quot;,
+      &quot;confidence&quot;: &quot;manual&quot;,
+      &quot;method&quot;: &quot;manual-check&quot;,
+      &quot;http&quot;: &quot;&quot;,
+      &quot;note&quot;: &quot;X cloaks availability; not scored&quot;
+    },
+    &quot;github&quot;: {
+      &quot;state&quot;: &quot;free&quot;,
+      &quot;label&quot;: &quot;likely free&quot;,
+      &quot;confidence&quot;: &quot;high&quot;,
+      &quot;method&quot;: &quot;GitHub web&quot;,
+      &quot;http&quot;: 404,
+      &quot;note&quot;: &quot;https://github.com/patchmark&quot;
+    },
+    &quot;tiktok&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;seen&quot;,
+      &quot;confidence&quot;: &quot;low&quot;,
+      &quot;method&quot;: &quot;TikTok web heuristic&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://www.tiktok.com/@patchmark&quot;
+    },
+    &quot;score&quot;: 41.5,
+    &quot;status&quot;: &quot;fallback domain&quot;
+  },
+  {
+    &quot;name&quot;: &quot;Patchpad&quot;,
+    &quot;handle&quot;: &quot;patchpad&quot;,
+    &quot;domains&quot;: {
+      &quot;com&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;taken&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 200,
+        &quot;note&quot;: &quot;https://rdap.verisign.com/com/v1&quot;
+      },
+      &quot;io&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;low&quot;,
+        &quot;method&quot;: &quot;DNS NXDOMAIN&quot;,
+        &quot;http&quot;: &quot;&quot;,
+        &quot;note&quot;: &quot;No RDAP bootstrap server; DNS returned NXDOMAIN&quot;
+      },
+      &quot;ai&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://rdap.identitydigital.services/rdap; rechecked survivor&quot;
+      },
+      &quot;dev&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://pubapi.registry.google/rdap; rechecked survivor&quot;
+      }
+    },
+    &quot;x&quot;: {
+      &quot;state&quot;: &quot;manual&quot;,
+      &quot;label&quot;: &quot;manual-check&quot;,
+      &quot;confidence&quot;: &quot;manual&quot;,
+      &quot;method&quot;: &quot;manual-check&quot;,
+      &quot;http&quot;: &quot;&quot;,
+      &quot;note&quot;: &quot;X cloaks availability; not scored&quot;
+    },
+    &quot;github&quot;: {
+      &quot;state&quot;: &quot;free&quot;,
+      &quot;label&quot;: &quot;likely free&quot;,
+      &quot;confidence&quot;: &quot;high&quot;,
+      &quot;method&quot;: &quot;GitHub web&quot;,
+      &quot;http&quot;: 404,
+      &quot;note&quot;: &quot;https://github.com/patchpad&quot;
+    },
+    &quot;tiktok&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;seen&quot;,
+      &quot;confidence&quot;: &quot;low&quot;,
+      &quot;method&quot;: &quot;TikTok web heuristic&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://www.tiktok.com/@patchpad&quot;
+    },
+    &quot;score&quot;: 41.5,
+    &quot;status&quot;: &quot;fallback domain&quot;
+  },
+  {
+    &quot;name&quot;: &quot;Patchworkr&quot;,
+    &quot;handle&quot;: &quot;patchworkr&quot;,
+    &quot;domains&quot;: {
+      &quot;com&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;taken&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 200,
+        &quot;note&quot;: &quot;https://rdap.verisign.com/com/v1&quot;
+      },
+      &quot;io&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;low&quot;,
+        &quot;method&quot;: &quot;DNS NXDOMAIN&quot;,
+        &quot;http&quot;: &quot;&quot;,
+        &quot;note&quot;: &quot;No RDAP bootstrap server; DNS returned NXDOMAIN&quot;
+      },
+      &quot;ai&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://rdap.identitydigital.services/rdap; rechecked survivor&quot;
+      },
+      &quot;dev&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://pubapi.registry.google/rdap; rechecked survivor&quot;
+      }
+    },
+    &quot;x&quot;: {
+      &quot;state&quot;: &quot;manual&quot;,
+      &quot;label&quot;: &quot;manual-check&quot;,
+      &quot;confidence&quot;: &quot;manual&quot;,
+      &quot;method&quot;: &quot;manual-check&quot;,
+      &quot;http&quot;: &quot;&quot;,
+      &quot;note&quot;: &quot;X cloaks availability; not scored&quot;
+    },
+    &quot;github&quot;: {
+      &quot;state&quot;: &quot;free&quot;,
+      &quot;label&quot;: &quot;likely free&quot;,
+      &quot;confidence&quot;: &quot;high&quot;,
+      &quot;method&quot;: &quot;GitHub web&quot;,
+      &quot;http&quot;: 404,
+      &quot;note&quot;: &quot;https://github.com/patchworkr&quot;
+    },
+    &quot;tiktok&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;seen&quot;,
+      &quot;confidence&quot;: &quot;low&quot;,
+      &quot;method&quot;: &quot;TikTok web heuristic&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://www.tiktok.com/@patchworkr&quot;
+    },
+    &quot;score&quot;: 41.5,
+    &quot;status&quot;: &quot;fallback domain&quot;
+  },
+  {
+    &quot;name&quot;: &quot;Reviewrail&quot;,
+    &quot;handle&quot;: &quot;reviewrail&quot;,
+    &quot;domains&quot;: {
+      &quot;com&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;taken&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 200,
+        &quot;note&quot;: &quot;https://rdap.verisign.com/com/v1&quot;
+      },
+      &quot;io&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;low&quot;,
+        &quot;method&quot;: &quot;DNS NXDOMAIN&quot;,
+        &quot;http&quot;: &quot;&quot;,
+        &quot;note&quot;: &quot;No RDAP bootstrap server; DNS returned NXDOMAIN&quot;
+      },
+      &quot;ai&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://rdap.identitydigital.services/rdap; rechecked survivor&quot;
+      },
+      &quot;dev&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://pubapi.registry.google/rdap; rechecked survivor&quot;
+      }
+    },
+    &quot;x&quot;: {
+      &quot;state&quot;: &quot;manual&quot;,
+      &quot;label&quot;: &quot;manual-check&quot;,
+      &quot;confidence&quot;: &quot;manual&quot;,
+      &quot;method&quot;: &quot;manual-check&quot;,
+      &quot;http&quot;: &quot;&quot;,
+      &quot;note&quot;: &quot;X cloaks availability; not scored&quot;
+    },
+    &quot;github&quot;: {
+      &quot;state&quot;: &quot;free&quot;,
+      &quot;label&quot;: &quot;likely free&quot;,
+      &quot;confidence&quot;: &quot;high&quot;,
+      &quot;method&quot;: &quot;GitHub web&quot;,
+      &quot;http&quot;: 404,
+      &quot;note&quot;: &quot;https://github.com/reviewrail&quot;
+    },
+    &quot;tiktok&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;seen&quot;,
+      &quot;confidence&quot;: &quot;low&quot;,
+      &quot;method&quot;: &quot;TikTok web heuristic&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://www.tiktok.com/@reviewrail&quot;
+    },
+    &quot;score&quot;: 41.5,
+    &quot;status&quot;: &quot;fallback domain&quot;
+  },
+  {
+    &quot;name&quot;: &quot;Textkeeper&quot;,
+    &quot;handle&quot;: &quot;textkeeper&quot;,
+    &quot;domains&quot;: {
+      &quot;com&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;taken&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 200,
+        &quot;note&quot;: &quot;https://rdap.verisign.com/com/v1&quot;
+      },
+      &quot;io&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;low&quot;,
+        &quot;method&quot;: &quot;DNS NXDOMAIN&quot;,
+        &quot;http&quot;: &quot;&quot;,
+        &quot;note&quot;: &quot;No RDAP bootstrap server; DNS returned NXDOMAIN&quot;
+      },
+      &quot;ai&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://rdap.identitydigital.services/rdap; rechecked survivor&quot;
+      },
+      &quot;dev&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://pubapi.registry.google/rdap; rechecked survivor&quot;
+      }
+    },
+    &quot;x&quot;: {
+      &quot;state&quot;: &quot;manual&quot;,
+      &quot;label&quot;: &quot;manual-check&quot;,
+      &quot;confidence&quot;: &quot;manual&quot;,
+      &quot;method&quot;: &quot;manual-check&quot;,
+      &quot;http&quot;: &quot;&quot;,
+      &quot;note&quot;: &quot;X cloaks availability; not scored&quot;
+    },
+    &quot;github&quot;: {
+      &quot;state&quot;: &quot;free&quot;,
+      &quot;label&quot;: &quot;likely free&quot;,
+      &quot;confidence&quot;: &quot;high&quot;,
+      &quot;method&quot;: &quot;GitHub web&quot;,
+      &quot;http&quot;: 404,
+      &quot;note&quot;: &quot;https://github.com/textkeeper&quot;
+    },
+    &quot;tiktok&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;seen&quot;,
+      &quot;confidence&quot;: &quot;low&quot;,
+      &quot;method&quot;: &quot;TikTok web heuristic&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://www.tiktok.com/@textkeeper&quot;
+    },
+    &quot;score&quot;: 41.5,
+    &quot;status&quot;: &quot;fallback domain&quot;
+  },
+  {
+    &quot;name&quot;: &quot;Textloom&quot;,
+    &quot;handle&quot;: &quot;textloom&quot;,
+    &quot;domains&quot;: {
+      &quot;com&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;taken&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 200,
+        &quot;note&quot;: &quot;https://rdap.verisign.com/com/v1&quot;
+      },
+      &quot;io&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;low&quot;,
+        &quot;method&quot;: &quot;DNS NXDOMAIN&quot;,
+        &quot;http&quot;: &quot;&quot;,
+        &quot;note&quot;: &quot;No RDAP bootstrap server; DNS returned NXDOMAIN&quot;
+      },
+      &quot;ai&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://rdap.identitydigital.services/rdap; rechecked survivor&quot;
+      },
+      &quot;dev&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://pubapi.registry.google/rdap; rechecked survivor&quot;
+      }
+    },
+    &quot;x&quot;: {
+      &quot;state&quot;: &quot;manual&quot;,
+      &quot;label&quot;: &quot;manual-check&quot;,
+      &quot;confidence&quot;: &quot;manual&quot;,
+      &quot;method&quot;: &quot;manual-check&quot;,
+      &quot;http&quot;: &quot;&quot;,
+      &quot;note&quot;: &quot;X cloaks availability; not scored&quot;
+    },
+    &quot;github&quot;: {
+      &quot;state&quot;: &quot;free&quot;,
+      &quot;label&quot;: &quot;likely free&quot;,
+      &quot;confidence&quot;: &quot;high&quot;,
+      &quot;method&quot;: &quot;GitHub web&quot;,
+      &quot;http&quot;: 404,
+      &quot;note&quot;: &quot;https://github.com/textloom&quot;
+    },
+    &quot;tiktok&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;seen&quot;,
+      &quot;confidence&quot;: &quot;low&quot;,
+      &quot;method&quot;: &quot;TikTok web heuristic&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://www.tiktok.com/@textloom&quot;
+    },
+    &quot;score&quot;: 41.5,
+    &quot;status&quot;: &quot;fallback domain&quot;
+  },
+  {
+    &quot;name&quot;: &quot;Textpatch&quot;,
+    &quot;handle&quot;: &quot;textpatch&quot;,
+    &quot;domains&quot;: {
+      &quot;com&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;taken&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 200,
+        &quot;note&quot;: &quot;https://rdap.verisign.com/com/v1&quot;
+      },
+      &quot;io&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;low&quot;,
+        &quot;method&quot;: &quot;DNS NXDOMAIN&quot;,
+        &quot;http&quot;: &quot;&quot;,
+        &quot;note&quot;: &quot;No RDAP bootstrap server; DNS returned NXDOMAIN&quot;
+      },
+      &quot;ai&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://rdap.identitydigital.services/rdap; rechecked survivor&quot;
+      },
+      &quot;dev&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://pubapi.registry.google/rdap; rechecked survivor&quot;
+      }
+    },
+    &quot;x&quot;: {
+      &quot;state&quot;: &quot;manual&quot;,
+      &quot;label&quot;: &quot;manual-check&quot;,
+      &quot;confidence&quot;: &quot;manual&quot;,
+      &quot;method&quot;: &quot;manual-check&quot;,
+      &quot;http&quot;: &quot;&quot;,
+      &quot;note&quot;: &quot;X cloaks availability; not scored&quot;
+    },
+    &quot;github&quot;: {
+      &quot;state&quot;: &quot;free&quot;,
+      &quot;label&quot;: &quot;likely free&quot;,
+      &quot;confidence&quot;: &quot;high&quot;,
+      &quot;method&quot;: &quot;GitHub web&quot;,
+      &quot;http&quot;: 404,
+      &quot;note&quot;: &quot;https://github.com/textpatch&quot;
+    },
+    &quot;tiktok&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;seen&quot;,
+      &quot;confidence&quot;: &quot;low&quot;,
+      &quot;method&quot;: &quot;TikTok web heuristic&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://www.tiktok.com/@textpatch&quot;
+    },
+    &quot;score&quot;: 41.5,
+    &quot;status&quot;: &quot;fallback domain&quot;
+  },
+  {
+    &quot;name&quot;: &quot;Draftlane&quot;,
+    &quot;handle&quot;: &quot;draftlane&quot;,
+    &quot;domains&quot;: {
+      &quot;com&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;taken&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 200,
+        &quot;note&quot;: &quot;https://rdap.verisign.com/com/v1&quot;
+      },
+      &quot;io&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;low&quot;,
+        &quot;method&quot;: &quot;DNS NXDOMAIN&quot;,
+        &quot;http&quot;: &quot;&quot;,
+        &quot;note&quot;: &quot;No RDAP bootstrap server; DNS returned NXDOMAIN&quot;
+      },
+      &quot;ai&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://rdap.identitydigital.services/rdap; rechecked survivor&quot;
+      },
+      &quot;dev&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://pubapi.registry.google/rdap; rechecked survivor&quot;
+      }
+    },
+    &quot;x&quot;: {
+      &quot;state&quot;: &quot;manual&quot;,
+      &quot;label&quot;: &quot;manual-check&quot;,
+      &quot;confidence&quot;: &quot;manual&quot;,
+      &quot;method&quot;: &quot;manual-check&quot;,
+      &quot;http&quot;: &quot;&quot;,
+      &quot;note&quot;: &quot;X cloaks availability; not scored&quot;
+    },
+    &quot;github&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;taken&quot;,
+      &quot;confidence&quot;: &quot;high&quot;,
+      &quot;method&quot;: &quot;GitHub web&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://github.com/draftlane&quot;
+    },
+    &quot;tiktok&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;seen&quot;,
+      &quot;confidence&quot;: &quot;low&quot;,
+      &quot;method&quot;: &quot;TikTok web heuristic&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://www.tiktok.com/@draftlane&quot;
+    },
+    &quot;score&quot;: 33.5,
+    &quot;status&quot;: &quot;fallback domain&quot;
+  },
+  {
+    &quot;name&quot;: &quot;Markreview&quot;,
+    &quot;handle&quot;: &quot;markreview&quot;,
+    &quot;domains&quot;: {
+      &quot;com&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;taken&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 200,
+        &quot;note&quot;: &quot;https://rdap.verisign.com/com/v1&quot;
+      },
+      &quot;io&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;low&quot;,
+        &quot;method&quot;: &quot;DNS NXDOMAIN&quot;,
+        &quot;http&quot;: &quot;&quot;,
+        &quot;note&quot;: &quot;No RDAP bootstrap server; DNS returned NXDOMAIN&quot;
+      },
+      &quot;ai&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://rdap.identitydigital.services/rdap; rechecked survivor&quot;
+      },
+      &quot;dev&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://pubapi.registry.google/rdap; rechecked survivor&quot;
+      }
+    },
+    &quot;x&quot;: {
+      &quot;state&quot;: &quot;manual&quot;,
+      &quot;label&quot;: &quot;manual-check&quot;,
+      &quot;confidence&quot;: &quot;manual&quot;,
+      &quot;method&quot;: &quot;manual-check&quot;,
+      &quot;http&quot;: &quot;&quot;,
+      &quot;note&quot;: &quot;X cloaks availability; not scored&quot;
+    },
+    &quot;github&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;taken&quot;,
+      &quot;confidence&quot;: &quot;high&quot;,
+      &quot;method&quot;: &quot;GitHub web&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://github.com/markreview&quot;
+    },
+    &quot;tiktok&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;seen&quot;,
+      &quot;confidence&quot;: &quot;low&quot;,
+      &quot;method&quot;: &quot;TikTok web heuristic&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://www.tiktok.com/@markreview&quot;
+    },
+    &quot;score&quot;: 33.5,
+    &quot;status&quot;: &quot;fallback domain&quot;
+  },
+  {
+    &quot;name&quot;: &quot;Noterail&quot;,
+    &quot;handle&quot;: &quot;noterail&quot;,
+    &quot;domains&quot;: {
+      &quot;com&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;taken&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 200,
+        &quot;note&quot;: &quot;https://rdap.verisign.com/com/v1&quot;
+      },
+      &quot;io&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;low&quot;,
+        &quot;method&quot;: &quot;DNS NXDOMAIN&quot;,
+        &quot;http&quot;: &quot;&quot;,
+        &quot;note&quot;: &quot;No RDAP bootstrap server; DNS returned NXDOMAIN&quot;
+      },
+      &quot;ai&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://rdap.identitydigital.services/rdap; rechecked survivor&quot;
+      },
+      &quot;dev&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://pubapi.registry.google/rdap; rechecked survivor&quot;
+      }
+    },
+    &quot;x&quot;: {
+      &quot;state&quot;: &quot;manual&quot;,
+      &quot;label&quot;: &quot;manual-check&quot;,
+      &quot;confidence&quot;: &quot;manual&quot;,
+      &quot;method&quot;: &quot;manual-check&quot;,
+      &quot;http&quot;: &quot;&quot;,
+      &quot;note&quot;: &quot;X cloaks availability; not scored&quot;
+    },
+    &quot;github&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;taken&quot;,
+      &quot;confidence&quot;: &quot;high&quot;,
+      &quot;method&quot;: &quot;GitHub web&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://github.com/noterail&quot;
+    },
+    &quot;tiktok&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;seen&quot;,
+      &quot;confidence&quot;: &quot;low&quot;,
+      &quot;method&quot;: &quot;TikTok web heuristic&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://www.tiktok.com/@noterail&quot;
+    },
+    &quot;score&quot;: 33.5,
+    &quot;status&quot;: &quot;fallback domain&quot;
+  },
+  {
+    &quot;name&quot;: &quot;Patchbook&quot;,
+    &quot;handle&quot;: &quot;patchbook&quot;,
+    &quot;domains&quot;: {
+      &quot;com&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;taken&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 200,
+        &quot;note&quot;: &quot;https://rdap.verisign.com/com/v1&quot;
+      },
+      &quot;io&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;low&quot;,
+        &quot;method&quot;: &quot;DNS NXDOMAIN&quot;,
+        &quot;http&quot;: &quot;&quot;,
+        &quot;note&quot;: &quot;No RDAP bootstrap server; DNS returned NXDOMAIN&quot;
+      },
+      &quot;ai&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://rdap.identitydigital.services/rdap; rechecked survivor&quot;
+      },
+      &quot;dev&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://pubapi.registry.google/rdap; rechecked survivor&quot;
+      }
+    },
+    &quot;x&quot;: {
+      &quot;state&quot;: &quot;manual&quot;,
+      &quot;label&quot;: &quot;manual-check&quot;,
+      &quot;confidence&quot;: &quot;manual&quot;,
+      &quot;method&quot;: &quot;manual-check&quot;,
+      &quot;http&quot;: &quot;&quot;,
+      &quot;note&quot;: &quot;X cloaks availability; not scored&quot;
+    },
+    &quot;github&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;taken&quot;,
+      &quot;confidence&quot;: &quot;high&quot;,
+      &quot;method&quot;: &quot;GitHub web&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://github.com/patchbook&quot;
+    },
+    &quot;tiktok&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;seen&quot;,
+      &quot;confidence&quot;: &quot;low&quot;,
+      &quot;method&quot;: &quot;TikTok web heuristic&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://www.tiktok.com/@patchbook&quot;
+    },
+    &quot;score&quot;: 33.5,
+    &quot;status&quot;: &quot;fallback domain&quot;
+  },
+  {
+    &quot;name&quot;: &quot;Quillbase&quot;,
+    &quot;handle&quot;: &quot;quillbase&quot;,
+    &quot;domains&quot;: {
+      &quot;com&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;taken&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 200,
+        &quot;note&quot;: &quot;https://rdap.verisign.com/com/v1&quot;
+      },
+      &quot;io&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;low&quot;,
+        &quot;method&quot;: &quot;DNS NXDOMAIN&quot;,
+        &quot;http&quot;: &quot;&quot;,
+        &quot;note&quot;: &quot;No RDAP bootstrap server; DNS returned NXDOMAIN&quot;
+      },
+      &quot;ai&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://rdap.identitydigital.services/rdap; rechecked survivor&quot;
+      },
+      &quot;dev&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://pubapi.registry.google/rdap; rechecked survivor&quot;
+      }
+    },
+    &quot;x&quot;: {
+      &quot;state&quot;: &quot;manual&quot;,
+      &quot;label&quot;: &quot;manual-check&quot;,
+      &quot;confidence&quot;: &quot;manual&quot;,
+      &quot;method&quot;: &quot;manual-check&quot;,
+      &quot;http&quot;: &quot;&quot;,
+      &quot;note&quot;: &quot;X cloaks availability; not scored&quot;
+    },
+    &quot;github&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;taken&quot;,
+      &quot;confidence&quot;: &quot;high&quot;,
+      &quot;method&quot;: &quot;GitHub web&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://github.com/quillbase&quot;
+    },
+    &quot;tiktok&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;seen&quot;,
+      &quot;confidence&quot;: &quot;low&quot;,
+      &quot;method&quot;: &quot;TikTok web heuristic&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://www.tiktok.com/@quillbase&quot;
+    },
+    &quot;score&quot;: 33.5,
+    &quot;status&quot;: &quot;fallback domain&quot;
+  },
+  {
+    &quot;name&quot;: &quot;Diffdeck&quot;,
+    &quot;handle&quot;: &quot;diffdeck&quot;,
+    &quot;domains&quot;: {
+      &quot;com&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;taken&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 200,
+        &quot;note&quot;: &quot;https://rdap.verisign.com/com/v1&quot;
+      },
+      &quot;io&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;low&quot;,
+        &quot;method&quot;: &quot;DNS NXDOMAIN&quot;,
+        &quot;http&quot;: &quot;&quot;,
+        &quot;note&quot;: &quot;No RDAP bootstrap server; DNS returned NXDOMAIN&quot;
+      },
+      &quot;ai&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://rdap.identitydigital.services/rdap; rechecked survivor&quot;
+      },
+      &quot;dev&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;taken&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 200,
+        &quot;note&quot;: &quot;https://pubapi.registry.google/rdap&quot;
+      }
+    },
+    &quot;x&quot;: {
+      &quot;state&quot;: &quot;manual&quot;,
+      &quot;label&quot;: &quot;manual-check&quot;,
+      &quot;confidence&quot;: &quot;manual&quot;,
+      &quot;method&quot;: &quot;manual-check&quot;,
+      &quot;http&quot;: &quot;&quot;,
+      &quot;note&quot;: &quot;X cloaks availability; not scored&quot;
+    },
+    &quot;github&quot;: {
+      &quot;state&quot;: &quot;free&quot;,
+      &quot;label&quot;: &quot;likely free&quot;,
+      &quot;confidence&quot;: &quot;high&quot;,
+      &quot;method&quot;: &quot;GitHub web&quot;,
+      &quot;http&quot;: 404,
+      &quot;note&quot;: &quot;https://github.com/diffdeck&quot;
+    },
+    &quot;tiktok&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;seen&quot;,
+      &quot;confidence&quot;: &quot;low&quot;,
+      &quot;method&quot;: &quot;TikTok web heuristic&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://www.tiktok.com/@diffdeck&quot;
+    },
+    &quot;score&quot;: 29.5,
+    &quot;status&quot;: &quot;fallback domain&quot;
+  },
+  {
+    &quot;name&quot;: &quot;Docbranch&quot;,
+    &quot;handle&quot;: &quot;docbranch&quot;,
+    &quot;domains&quot;: {
+      &quot;com&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;taken&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 200,
+        &quot;note&quot;: &quot;https://rdap.verisign.com/com/v1&quot;
+      },
+      &quot;io&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;low&quot;,
+        &quot;method&quot;: &quot;DNS NXDOMAIN&quot;,
+        &quot;http&quot;: &quot;&quot;,
+        &quot;note&quot;: &quot;No RDAP bootstrap server; DNS returned NXDOMAIN&quot;
+      },
+      &quot;ai&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://rdap.identitydigital.services/rdap; rechecked survivor&quot;
+      },
+      &quot;dev&quot;: {
+        &quot;state&quot;: &quot;&quot;,
+        &quot;label&quot;: &quot;&quot;,
+        &quot;confidence&quot;: &quot;&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: null,
+        &quot;note&quot;: &quot;The read operation timed out&quot;
+      }
+    },
+    &quot;x&quot;: {
+      &quot;state&quot;: &quot;manual&quot;,
+      &quot;label&quot;: &quot;manual-check&quot;,
+      &quot;confidence&quot;: &quot;manual&quot;,
+      &quot;method&quot;: &quot;manual-check&quot;,
+      &quot;http&quot;: &quot;&quot;,
+      &quot;note&quot;: &quot;X cloaks availability; not scored&quot;
+    },
+    &quot;github&quot;: {
+      &quot;state&quot;: &quot;free&quot;,
+      &quot;label&quot;: &quot;likely free&quot;,
+      &quot;confidence&quot;: &quot;high&quot;,
+      &quot;method&quot;: &quot;GitHub web&quot;,
+      &quot;http&quot;: 404,
+      &quot;note&quot;: &quot;https://github.com/docbranch&quot;
+    },
+    &quot;tiktok&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;seen&quot;,
+      &quot;confidence&quot;: &quot;low&quot;,
+      &quot;method&quot;: &quot;TikTok web heuristic&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://www.tiktok.com/@docbranch&quot;
+    },
+    &quot;score&quot;: 29.5,
+    &quot;status&quot;: &quot;fallback domain&quot;
+  },
+  {
+    &quot;name&quot;: &quot;Draftmark&quot;,
+    &quot;handle&quot;: &quot;draftmark&quot;,
+    &quot;domains&quot;: {
+      &quot;com&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;taken&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 200,
+        &quot;note&quot;: &quot;https://rdap.verisign.com/com/v1&quot;
+      },
+      &quot;io&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;dns seen&quot;,
+        &quot;confidence&quot;: &quot;low&quot;,
+        &quot;method&quot;: &quot;DNS NXDOMAIN&quot;,
+        &quot;http&quot;: &quot;&quot;,
+        &quot;note&quot;: &quot;No RDAP bootstrap server; DNS did not return NXDOMAIN&quot;
+      },
+      &quot;ai&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://rdap.identitydigital.services/rdap; rechecked survivor&quot;
+      },
+      &quot;dev&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://pubapi.registry.google/rdap; rechecked survivor&quot;
+      }
+    },
+    &quot;x&quot;: {
+      &quot;state&quot;: &quot;manual&quot;,
+      &quot;label&quot;: &quot;manual-check&quot;,
+      &quot;confidence&quot;: &quot;manual&quot;,
+      &quot;method&quot;: &quot;manual-check&quot;,
+      &quot;http&quot;: &quot;&quot;,
+      &quot;note&quot;: &quot;X cloaks availability; not scored&quot;
+    },
+    &quot;github&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;taken&quot;,
+      &quot;confidence&quot;: &quot;high&quot;,
+      &quot;method&quot;: &quot;GitHub web&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://github.com/draftmark&quot;
+    },
+    &quot;tiktok&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;seen&quot;,
+      &quot;confidence&quot;: &quot;low&quot;,
+      &quot;method&quot;: &quot;TikTok web heuristic&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://www.tiktok.com/@draftmark&quot;
+    },
+    &quot;score&quot;: 26.0,
+    &quot;status&quot;: &quot;fallback domain&quot;
+  },
+  {
+    &quot;name&quot;: &quot;Linekeep&quot;,
+    &quot;handle&quot;: &quot;linekeep&quot;,
+    &quot;domains&quot;: {
+      &quot;com&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;taken&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 200,
+        &quot;note&quot;: &quot;https://rdap.verisign.com/com/v1&quot;
+      },
+      &quot;io&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;dns seen&quot;,
+        &quot;confidence&quot;: &quot;low&quot;,
+        &quot;method&quot;: &quot;DNS NXDOMAIN&quot;,
+        &quot;http&quot;: &quot;&quot;,
+        &quot;note&quot;: &quot;No RDAP bootstrap server; DNS did not return NXDOMAIN&quot;
+      },
+      &quot;ai&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://rdap.identitydigital.services/rdap; rechecked survivor&quot;
+      },
+      &quot;dev&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://pubapi.registry.google/rdap; rechecked survivor&quot;
+      }
+    },
+    &quot;x&quot;: {
+      &quot;state&quot;: &quot;manual&quot;,
+      &quot;label&quot;: &quot;manual-check&quot;,
+      &quot;confidence&quot;: &quot;manual&quot;,
+      &quot;method&quot;: &quot;manual-check&quot;,
+      &quot;http&quot;: &quot;&quot;,
+      &quot;note&quot;: &quot;X cloaks availability; not scored&quot;
+    },
+    &quot;github&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;taken&quot;,
+      &quot;confidence&quot;: &quot;high&quot;,
+      &quot;method&quot;: &quot;GitHub web&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://github.com/linekeep&quot;
+    },
+    &quot;tiktok&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;seen&quot;,
+      &quot;confidence&quot;: &quot;low&quot;,
+      &quot;method&quot;: &quot;TikTok web heuristic&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://www.tiktok.com/@linekeep&quot;
+    },
+    &quot;score&quot;: 26.0,
+    &quot;status&quot;: &quot;fallback domain&quot;
+  },
+  {
+    &quot;name&quot;: &quot;Markpilot&quot;,
+    &quot;handle&quot;: &quot;markpilot&quot;,
+    &quot;domains&quot;: {
+      &quot;com&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;taken&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 200,
+        &quot;note&quot;: &quot;https://rdap.verisign.com/com/v1&quot;
+      },
+      &quot;io&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;dns seen&quot;,
+        &quot;confidence&quot;: &quot;low&quot;,
+        &quot;method&quot;: &quot;DNS NXDOMAIN&quot;,
+        &quot;http&quot;: &quot;&quot;,
+        &quot;note&quot;: &quot;No RDAP bootstrap server; DNS did not return NXDOMAIN&quot;
+      },
+      &quot;ai&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://rdap.identitydigital.services/rdap; rechecked survivor&quot;
+      },
+      &quot;dev&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://pubapi.registry.google/rdap; rechecked survivor&quot;
+      }
+    },
+    &quot;x&quot;: {
+      &quot;state&quot;: &quot;manual&quot;,
+      &quot;label&quot;: &quot;manual-check&quot;,
+      &quot;confidence&quot;: &quot;manual&quot;,
+      &quot;method&quot;: &quot;manual-check&quot;,
+      &quot;http&quot;: &quot;&quot;,
+      &quot;note&quot;: &quot;X cloaks availability; not scored&quot;
+    },
+    &quot;github&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;taken&quot;,
+      &quot;confidence&quot;: &quot;high&quot;,
+      &quot;method&quot;: &quot;GitHub web&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://github.com/markpilot&quot;
+    },
+    &quot;tiktok&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;seen&quot;,
+      &quot;confidence&quot;: &quot;low&quot;,
+      &quot;method&quot;: &quot;TikTok web heuristic&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://www.tiktok.com/@markpilot&quot;
+    },
+    &quot;score&quot;: 26.0,
+    &quot;status&quot;: &quot;fallback domain&quot;
+  },
+  {
+    &quot;name&quot;: &quot;Lineforge&quot;,
+    &quot;handle&quot;: &quot;lineforge&quot;,
+    &quot;domains&quot;: {
+      &quot;com&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;taken&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 200,
+        &quot;note&quot;: &quot;https://rdap.verisign.com/com/v1&quot;
+      },
+      &quot;io&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;dns seen&quot;,
+        &quot;confidence&quot;: &quot;low&quot;,
+        &quot;method&quot;: &quot;DNS NXDOMAIN&quot;,
+        &quot;http&quot;: &quot;&quot;,
+        &quot;note&quot;: &quot;No RDAP bootstrap server; DNS did not return NXDOMAIN&quot;
+      },
+      &quot;ai&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;taken&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 200,
+        &quot;note&quot;: &quot;https://rdap.identitydigital.services/rdap&quot;
+      },
+      &quot;dev&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://pubapi.registry.google/rdap; rechecked survivor&quot;
+      }
+    },
+    &quot;x&quot;: {
+      &quot;state&quot;: &quot;manual&quot;,
+      &quot;label&quot;: &quot;manual-check&quot;,
+      &quot;confidence&quot;: &quot;manual&quot;,
+      &quot;method&quot;: &quot;manual-check&quot;,
+      &quot;http&quot;: &quot;&quot;,
+      &quot;note&quot;: &quot;X cloaks availability; not scored&quot;
+    },
+    &quot;github&quot;: {
+      &quot;state&quot;: &quot;free&quot;,
+      &quot;label&quot;: &quot;likely free&quot;,
+      &quot;confidence&quot;: &quot;high&quot;,
+      &quot;method&quot;: &quot;GitHub web&quot;,
+      &quot;http&quot;: 404,
+      &quot;note&quot;: &quot;https://github.com/lineforge&quot;
+    },
+    &quot;tiktok&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;seen&quot;,
+      &quot;confidence&quot;: &quot;low&quot;,
+      &quot;method&quot;: &quot;TikTok web heuristic&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://www.tiktok.com/@lineforge&quot;
+    },
+    &quot;score&quot;: 20.0,
+    &quot;status&quot;: &quot;fallback domain&quot;
+  },
+  {
+    &quot;name&quot;: &quot;Docloom&quot;,
+    &quot;handle&quot;: &quot;docloom&quot;,
+    &quot;domains&quot;: {
+      &quot;com&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;taken&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 200,
+        &quot;note&quot;: &quot;https://rdap.verisign.com/com/v1&quot;
+      },
+      &quot;io&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;dns seen&quot;,
+        &quot;confidence&quot;: &quot;low&quot;,
+        &quot;method&quot;: &quot;DNS NXDOMAIN&quot;,
+        &quot;http&quot;: &quot;&quot;,
+        &quot;note&quot;: &quot;No RDAP bootstrap server; DNS did not return NXDOMAIN&quot;
+      },
+      &quot;ai&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;taken&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 200,
+        &quot;note&quot;: &quot;https://rdap.identitydigital.services/rdap&quot;
+      },
+      &quot;dev&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://pubapi.registry.google/rdap; rechecked survivor&quot;
+      }
+    },
+    &quot;x&quot;: {
+      &quot;state&quot;: &quot;manual&quot;,
+      &quot;label&quot;: &quot;manual-check&quot;,
+      &quot;confidence&quot;: &quot;manual&quot;,
+      &quot;method&quot;: &quot;manual-check&quot;,
+      &quot;http&quot;: &quot;&quot;,
+      &quot;note&quot;: &quot;X cloaks availability; not scored&quot;
+    },
+    &quot;github&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;taken&quot;,
+      &quot;confidence&quot;: &quot;high&quot;,
+      &quot;method&quot;: &quot;GitHub web&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://github.com/docloom&quot;
+    },
+    &quot;tiktok&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;seen&quot;,
+      &quot;confidence&quot;: &quot;low&quot;,
+      &quot;method&quot;: &quot;TikTok web heuristic&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://www.tiktok.com/@docloom&quot;
+    },
+    &quot;score&quot;: 12.0,
+    &quot;status&quot;: &quot;fallback domain&quot;
+  },
+  {
+    &quot;name&quot;: &quot;Docreview&quot;,
+    &quot;handle&quot;: &quot;docreview&quot;,
+    &quot;domains&quot;: {
+      &quot;com&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;taken&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 200,
+        &quot;note&quot;: &quot;https://rdap.verisign.com/com/v1&quot;
+      },
+      &quot;io&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;dns seen&quot;,
+        &quot;confidence&quot;: &quot;low&quot;,
+        &quot;method&quot;: &quot;DNS NXDOMAIN&quot;,
+        &quot;http&quot;: &quot;&quot;,
+        &quot;note&quot;: &quot;No RDAP bootstrap server; DNS did not return NXDOMAIN&quot;
+      },
+      &quot;ai&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;taken&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 200,
+        &quot;note&quot;: &quot;https://rdap.identitydigital.services/rdap&quot;
+      },
+      &quot;dev&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://pubapi.registry.google/rdap; rechecked survivor&quot;
+      }
+    },
+    &quot;x&quot;: {
+      &quot;state&quot;: &quot;manual&quot;,
+      &quot;label&quot;: &quot;manual-check&quot;,
+      &quot;confidence&quot;: &quot;manual&quot;,
+      &quot;method&quot;: &quot;manual-check&quot;,
+      &quot;http&quot;: &quot;&quot;,
+      &quot;note&quot;: &quot;X cloaks availability; not scored&quot;
+    },
+    &quot;github&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;taken&quot;,
+      &quot;confidence&quot;: &quot;high&quot;,
+      &quot;method&quot;: &quot;GitHub web&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://github.com/docreview&quot;
+    },
+    &quot;tiktok&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;seen&quot;,
+      &quot;confidence&quot;: &quot;low&quot;,
+      &quot;method&quot;: &quot;TikTok web heuristic&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://www.tiktok.com/@docreview&quot;
+    },
+    &quot;score&quot;: 12.0,
+    &quot;status&quot;: &quot;fallback domain&quot;
+  },
+  {
+    &quot;name&quot;: &quot;Draftwell&quot;,
+    &quot;handle&quot;: &quot;draftwell&quot;,
+    &quot;domains&quot;: {
+      &quot;com&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;taken&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 200,
+        &quot;note&quot;: &quot;https://rdap.verisign.com/com/v1&quot;
+      },
+      &quot;io&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;dns seen&quot;,
+        &quot;confidence&quot;: &quot;low&quot;,
+        &quot;method&quot;: &quot;DNS NXDOMAIN&quot;,
+        &quot;http&quot;: &quot;&quot;,
+        &quot;note&quot;: &quot;No RDAP bootstrap server; DNS did not return NXDOMAIN&quot;
+      },
+      &quot;ai&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;taken&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 200,
+        &quot;note&quot;: &quot;https://rdap.identitydigital.services/rdap&quot;
+      },
+      &quot;dev&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://pubapi.registry.google/rdap; rechecked survivor&quot;
+      }
+    },
+    &quot;x&quot;: {
+      &quot;state&quot;: &quot;manual&quot;,
+      &quot;label&quot;: &quot;manual-check&quot;,
+      &quot;confidence&quot;: &quot;manual&quot;,
+      &quot;method&quot;: &quot;manual-check&quot;,
+      &quot;http&quot;: &quot;&quot;,
+      &quot;note&quot;: &quot;X cloaks availability; not scored&quot;
+    },
+    &quot;github&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;taken&quot;,
+      &quot;confidence&quot;: &quot;high&quot;,
+      &quot;method&quot;: &quot;GitHub web&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://github.com/draftwell&quot;
+    },
+    &quot;tiktok&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;seen&quot;,
+      &quot;confidence&quot;: &quot;low&quot;,
+      &quot;method&quot;: &quot;TikTok web heuristic&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://www.tiktok.com/@draftwell&quot;
+    },
+    &quot;score&quot;: 12.0,
+    &quot;status&quot;: &quot;fallback domain&quot;
+  },
+  {
+    &quot;name&quot;: &quot;Filewise&quot;,
+    &quot;handle&quot;: &quot;filewise&quot;,
+    &quot;domains&quot;: {
+      &quot;com&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;taken&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 200,
+        &quot;note&quot;: &quot;https://rdap.verisign.com/com/v1&quot;
+      },
+      &quot;io&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;dns seen&quot;,
+        &quot;confidence&quot;: &quot;low&quot;,
+        &quot;method&quot;: &quot;DNS NXDOMAIN&quot;,
+        &quot;http&quot;: &quot;&quot;,
+        &quot;note&quot;: &quot;No RDAP bootstrap server; DNS did not return NXDOMAIN&quot;
+      },
+      &quot;ai&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;taken&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 200,
+        &quot;note&quot;: &quot;https://rdap.identitydigital.services/rdap&quot;
+      },
+      &quot;dev&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://pubapi.registry.google/rdap; rechecked survivor&quot;
+      }
+    },
+    &quot;x&quot;: {
+      &quot;state&quot;: &quot;manual&quot;,
+      &quot;label&quot;: &quot;manual-check&quot;,
+      &quot;confidence&quot;: &quot;manual&quot;,
+      &quot;method&quot;: &quot;manual-check&quot;,
+      &quot;http&quot;: &quot;&quot;,
+      &quot;note&quot;: &quot;X cloaks availability; not scored&quot;
+    },
+    &quot;github&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;taken&quot;,
+      &quot;confidence&quot;: &quot;high&quot;,
+      &quot;method&quot;: &quot;GitHub web&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://github.com/filewise&quot;
+    },
+    &quot;tiktok&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;seen&quot;,
+      &quot;confidence&quot;: &quot;low&quot;,
+      &quot;method&quot;: &quot;TikTok web heuristic&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://www.tiktok.com/@filewise&quot;
+    },
+    &quot;score&quot;: 12.0,
+    &quot;status&quot;: &quot;fallback domain&quot;
+  },
+  {
+    &quot;name&quot;: &quot;Linewise&quot;,
+    &quot;handle&quot;: &quot;linewise&quot;,
+    &quot;domains&quot;: {
+      &quot;com&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;taken&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 200,
+        &quot;note&quot;: &quot;https://rdap.verisign.com/com/v1&quot;
+      },
+      &quot;io&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;dns seen&quot;,
+        &quot;confidence&quot;: &quot;low&quot;,
+        &quot;method&quot;: &quot;DNS NXDOMAIN&quot;,
+        &quot;http&quot;: &quot;&quot;,
+        &quot;note&quot;: &quot;No RDAP bootstrap server; DNS did not return NXDOMAIN&quot;
+      },
+      &quot;ai&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;taken&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 200,
+        &quot;note&quot;: &quot;https://rdap.identitydigital.services/rdap&quot;
+      },
+      &quot;dev&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://pubapi.registry.google/rdap; rechecked survivor&quot;
+      }
+    },
+    &quot;x&quot;: {
+      &quot;state&quot;: &quot;manual&quot;,
+      &quot;label&quot;: &quot;manual-check&quot;,
+      &quot;confidence&quot;: &quot;manual&quot;,
+      &quot;method&quot;: &quot;manual-check&quot;,
+      &quot;http&quot;: &quot;&quot;,
+      &quot;note&quot;: &quot;X cloaks availability; not scored&quot;
+    },
+    &quot;github&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;taken&quot;,
+      &quot;confidence&quot;: &quot;high&quot;,
+      &quot;method&quot;: &quot;GitHub web&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://github.com/linewise&quot;
+    },
+    &quot;tiktok&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;seen&quot;,
+      &quot;confidence&quot;: &quot;low&quot;,
+      &quot;method&quot;: &quot;TikTok web heuristic&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://www.tiktok.com/@linewise&quot;
+    },
+    &quot;score&quot;: 12.0,
+    &quot;status&quot;: &quot;fallback domain&quot;
+  },
+  {
+    &quot;name&quot;: &quot;Markloop&quot;,
+    &quot;handle&quot;: &quot;markloop&quot;,
+    &quot;domains&quot;: {
+      &quot;com&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;taken&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 200,
+        &quot;note&quot;: &quot;https://rdap.verisign.com/com/v1&quot;
+      },
+      &quot;io&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;dns seen&quot;,
+        &quot;confidence&quot;: &quot;low&quot;,
+        &quot;method&quot;: &quot;DNS NXDOMAIN&quot;,
+        &quot;http&quot;: &quot;&quot;,
+        &quot;note&quot;: &quot;No RDAP bootstrap server; DNS did not return NXDOMAIN&quot;
+      },
+      &quot;ai&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;taken&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 200,
+        &quot;note&quot;: &quot;https://rdap.identitydigital.services/rdap&quot;
+      },
+      &quot;dev&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://pubapi.registry.google/rdap; rechecked survivor&quot;
+      }
+    },
+    &quot;x&quot;: {
+      &quot;state&quot;: &quot;manual&quot;,
+      &quot;label&quot;: &quot;manual-check&quot;,
+      &quot;confidence&quot;: &quot;manual&quot;,
+      &quot;method&quot;: &quot;manual-check&quot;,
+      &quot;http&quot;: &quot;&quot;,
+      &quot;note&quot;: &quot;X cloaks availability; not scored&quot;
+    },
+    &quot;github&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;taken&quot;,
+      &quot;confidence&quot;: &quot;high&quot;,
+      &quot;method&quot;: &quot;GitHub web&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://github.com/markloop&quot;
+    },
+    &quot;tiktok&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;seen&quot;,
+      &quot;confidence&quot;: &quot;low&quot;,
+      &quot;method&quot;: &quot;TikTok web heuristic&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://www.tiktok.com/@markloop&quot;
+    },
+    &quot;score&quot;: 12.0,
+    &quot;status&quot;: &quot;fallback domain&quot;
+  },
+  {
+    &quot;name&quot;: &quot;Notekeep&quot;,
+    &quot;handle&quot;: &quot;notekeep&quot;,
+    &quot;domains&quot;: {
+      &quot;com&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;taken&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 200,
+        &quot;note&quot;: &quot;https://rdap.verisign.com/com/v1&quot;
+      },
+      &quot;io&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;dns seen&quot;,
+        &quot;confidence&quot;: &quot;low&quot;,
+        &quot;method&quot;: &quot;DNS NXDOMAIN&quot;,
+        &quot;http&quot;: &quot;&quot;,
+        &quot;note&quot;: &quot;No RDAP bootstrap server; DNS did not return NXDOMAIN&quot;
+      },
+      &quot;ai&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;taken&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 200,
+        &quot;note&quot;: &quot;https://rdap.identitydigital.services/rdap&quot;
+      },
+      &quot;dev&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://pubapi.registry.google/rdap; rechecked survivor&quot;
+      }
+    },
+    &quot;x&quot;: {
+      &quot;state&quot;: &quot;manual&quot;,
+      &quot;label&quot;: &quot;manual-check&quot;,
+      &quot;confidence&quot;: &quot;manual&quot;,
+      &quot;method&quot;: &quot;manual-check&quot;,
+      &quot;http&quot;: &quot;&quot;,
+      &quot;note&quot;: &quot;X cloaks availability; not scored&quot;
+    },
+    &quot;github&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;taken&quot;,
+      &quot;confidence&quot;: &quot;high&quot;,
+      &quot;method&quot;: &quot;GitHub web&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://github.com/notekeep&quot;
+    },
+    &quot;tiktok&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;seen&quot;,
+      &quot;confidence&quot;: &quot;low&quot;,
+      &quot;method&quot;: &quot;TikTok web heuristic&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://www.tiktok.com/@notekeep&quot;
+    },
+    &quot;score&quot;: 12.0,
+    &quot;status&quot;: &quot;fallback domain&quot;
+  },
+  {
+    &quot;name&quot;: &quot;Reviewpad&quot;,
+    &quot;handle&quot;: &quot;reviewpad&quot;,
+    &quot;domains&quot;: {
+      &quot;com&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;taken&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 200,
+        &quot;note&quot;: &quot;https://rdap.verisign.com/com/v1&quot;
+      },
+      &quot;io&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;dns seen&quot;,
+        &quot;confidence&quot;: &quot;low&quot;,
+        &quot;method&quot;: &quot;DNS NXDOMAIN&quot;,
+        &quot;http&quot;: &quot;&quot;,
+        &quot;note&quot;: &quot;No RDAP bootstrap server; DNS did not return NXDOMAIN&quot;
+      },
+      &quot;ai&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;taken&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 200,
+        &quot;note&quot;: &quot;https://rdap.identitydigital.services/rdap&quot;
+      },
+      &quot;dev&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 404,
+        &quot;note&quot;: &quot;https://pubapi.registry.google/rdap; rechecked survivor&quot;
+      }
+    },
+    &quot;x&quot;: {
+      &quot;state&quot;: &quot;manual&quot;,
+      &quot;label&quot;: &quot;manual-check&quot;,
+      &quot;confidence&quot;: &quot;manual&quot;,
+      &quot;method&quot;: &quot;manual-check&quot;,
+      &quot;http&quot;: &quot;&quot;,
+      &quot;note&quot;: &quot;X cloaks availability; not scored&quot;
+    },
+    &quot;github&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;taken&quot;,
+      &quot;confidence&quot;: &quot;high&quot;,
+      &quot;method&quot;: &quot;GitHub web&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://github.com/reviewpad&quot;
+    },
+    &quot;tiktok&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;seen&quot;,
+      &quot;confidence&quot;: &quot;low&quot;,
+      &quot;method&quot;: &quot;TikTok web heuristic&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://www.tiktok.com/@reviewpad&quot;
+    },
+    &quot;score&quot;: 12.0,
+    &quot;status&quot;: &quot;fallback domain&quot;
+  },
+  {
+    &quot;name&quot;: &quot;Patchpilot&quot;,
+    &quot;handle&quot;: &quot;patchpilot&quot;,
+    &quot;domains&quot;: {
+      &quot;com&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;taken&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 200,
+        &quot;note&quot;: &quot;https://rdap.verisign.com/com/v1&quot;
+      },
+      &quot;io&quot;: {
+        &quot;state&quot;: &quot;free&quot;,
+        &quot;label&quot;: &quot;likely free&quot;,
+        &quot;confidence&quot;: &quot;low&quot;,
+        &quot;method&quot;: &quot;DNS NXDOMAIN&quot;,
+        &quot;http&quot;: &quot;&quot;,
+        &quot;note&quot;: &quot;No RDAP bootstrap server; DNS returned NXDOMAIN&quot;
+      },
+      &quot;ai&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;taken&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 200,
+        &quot;note&quot;: &quot;https://rdap.identitydigital.services/rdap&quot;
+      },
+      &quot;dev&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;taken&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 200,
+        &quot;note&quot;: &quot;https://pubapi.registry.google/rdap&quot;
+      }
+    },
+    &quot;x&quot;: {
+      &quot;state&quot;: &quot;manual&quot;,
+      &quot;label&quot;: &quot;manual-check&quot;,
+      &quot;confidence&quot;: &quot;manual&quot;,
+      &quot;method&quot;: &quot;manual-check&quot;,
+      &quot;http&quot;: &quot;&quot;,
+      &quot;note&quot;: &quot;X cloaks availability; not scored&quot;
+    },
+    &quot;github&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;taken&quot;,
+      &quot;confidence&quot;: &quot;high&quot;,
+      &quot;method&quot;: &quot;GitHub web&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://github.com/patchpilot&quot;
+    },
+    &quot;tiktok&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;seen&quot;,
+      &quot;confidence&quot;: &quot;low&quot;,
+      &quot;method&quot;: &quot;TikTok web heuristic&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://www.tiktok.com/@patchpilot&quot;
+    },
+    &quot;score&quot;: 7.5,
+    &quot;status&quot;: &quot;low-confidence only&quot;
+  },
+  {
+    &quot;name&quot;: &quot;Marksmith&quot;,
+    &quot;handle&quot;: &quot;marksmith&quot;,
+    &quot;domains&quot;: {
+      &quot;com&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;taken&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 200,
+        &quot;note&quot;: &quot;https://rdap.verisign.com/com/v1&quot;
+      },
+      &quot;io&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;dns seen&quot;,
+        &quot;confidence&quot;: &quot;low&quot;,
+        &quot;method&quot;: &quot;DNS NXDOMAIN&quot;,
+        &quot;http&quot;: &quot;&quot;,
+        &quot;note&quot;: &quot;No RDAP bootstrap server; DNS did not return NXDOMAIN&quot;
+      },
+      &quot;ai&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;taken&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 200,
+        &quot;note&quot;: &quot;https://rdap.identitydigital.services/rdap&quot;
+      },
+      &quot;dev&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;taken&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 200,
+        &quot;note&quot;: &quot;https://pubapi.registry.google/rdap&quot;
+      }
+    },
+    &quot;x&quot;: {
+      &quot;state&quot;: &quot;manual&quot;,
+      &quot;label&quot;: &quot;manual-check&quot;,
+      &quot;confidence&quot;: &quot;manual&quot;,
+      &quot;method&quot;: &quot;manual-check&quot;,
+      &quot;http&quot;: &quot;&quot;,
+      &quot;note&quot;: &quot;X cloaks availability; not scored&quot;
+    },
+    &quot;github&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;taken&quot;,
+      &quot;confidence&quot;: &quot;high&quot;,
+      &quot;method&quot;: &quot;GitHub web&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://github.com/marksmith&quot;
+    },
+    &quot;tiktok&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;seen&quot;,
+      &quot;confidence&quot;: &quot;low&quot;,
+      &quot;method&quot;: &quot;TikTok web heuristic&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://www.tiktok.com/@marksmith&quot;
+    },
+    &quot;score&quot;: 0.0,
+    &quot;status&quot;: &quot;weak&quot;
+  },
+  {
+    &quot;name&quot;: &quot;Noteforge&quot;,
+    &quot;handle&quot;: &quot;noteforge&quot;,
+    &quot;domains&quot;: {
+      &quot;com&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;taken&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 200,
+        &quot;note&quot;: &quot;https://rdap.verisign.com/com/v1&quot;
+      },
+      &quot;io&quot;: {
+        &quot;state&quot;: &quot;&quot;,
+        &quot;label&quot;: &quot;&quot;,
+        &quot;confidence&quot;: &quot;&quot;,
+        &quot;method&quot;: &quot;DNS NXDOMAIN&quot;,
+        &quot;http&quot;: &quot;&quot;,
+        &quot;note&quot;: &quot;DNS check inconclusive&quot;
+      },
+      &quot;ai&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;taken&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 200,
+        &quot;note&quot;: &quot;https://rdap.identitydigital.services/rdap&quot;
+      },
+      &quot;dev&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;taken&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 200,
+        &quot;note&quot;: &quot;https://pubapi.registry.google/rdap&quot;
+      }
+    },
+    &quot;x&quot;: {
+      &quot;state&quot;: &quot;manual&quot;,
+      &quot;label&quot;: &quot;manual-check&quot;,
+      &quot;confidence&quot;: &quot;manual&quot;,
+      &quot;method&quot;: &quot;manual-check&quot;,
+      &quot;http&quot;: &quot;&quot;,
+      &quot;note&quot;: &quot;X cloaks availability; not scored&quot;
+    },
+    &quot;github&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;taken&quot;,
+      &quot;confidence&quot;: &quot;high&quot;,
+      &quot;method&quot;: &quot;GitHub web&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://github.com/noteforge&quot;
+    },
+    &quot;tiktok&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;seen&quot;,
+      &quot;confidence&quot;: &quot;low&quot;,
+      &quot;method&quot;: &quot;TikTok web heuristic&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://www.tiktok.com/@noteforge&quot;
+    },
+    &quot;score&quot;: 0.0,
+    &quot;status&quot;: &quot;incomplete&quot;
+  },
+  {
+    &quot;name&quot;: &quot;Patchlane&quot;,
+    &quot;handle&quot;: &quot;patchlane&quot;,
+    &quot;domains&quot;: {
+      &quot;com&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;taken&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 200,
+        &quot;note&quot;: &quot;https://rdap.verisign.com/com/v1&quot;
+      },
+      &quot;io&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;dns seen&quot;,
+        &quot;confidence&quot;: &quot;low&quot;,
+        &quot;method&quot;: &quot;DNS NXDOMAIN&quot;,
+        &quot;http&quot;: &quot;&quot;,
+        &quot;note&quot;: &quot;No RDAP bootstrap server; DNS did not return NXDOMAIN&quot;
+      },
+      &quot;ai&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;taken&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 200,
+        &quot;note&quot;: &quot;https://rdap.identitydigital.services/rdap&quot;
+      },
+      &quot;dev&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;taken&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 200,
+        &quot;note&quot;: &quot;https://pubapi.registry.google/rdap&quot;
+      }
+    },
+    &quot;x&quot;: {
+      &quot;state&quot;: &quot;manual&quot;,
+      &quot;label&quot;: &quot;manual-check&quot;,
+      &quot;confidence&quot;: &quot;manual&quot;,
+      &quot;method&quot;: &quot;manual-check&quot;,
+      &quot;http&quot;: &quot;&quot;,
+      &quot;note&quot;: &quot;X cloaks availability; not scored&quot;
+    },
+    &quot;github&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;taken&quot;,
+      &quot;confidence&quot;: &quot;high&quot;,
+      &quot;method&quot;: &quot;GitHub web&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://github.com/patchlane&quot;
+    },
+    &quot;tiktok&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;seen&quot;,
+      &quot;confidence&quot;: &quot;low&quot;,
+      &quot;method&quot;: &quot;TikTok web heuristic&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://www.tiktok.com/@patchlane&quot;
+    },
+    &quot;score&quot;: 0.0,
+    &quot;status&quot;: &quot;weak&quot;
+  },
+  {
+    &quot;name&quot;: &quot;Reviewly&quot;,
+    &quot;handle&quot;: &quot;reviewly&quot;,
+    &quot;domains&quot;: {
+      &quot;com&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;taken&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 200,
+        &quot;note&quot;: &quot;https://rdap.verisign.com/com/v1&quot;
+      },
+      &quot;io&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;dns seen&quot;,
+        &quot;confidence&quot;: &quot;low&quot;,
+        &quot;method&quot;: &quot;DNS NXDOMAIN&quot;,
+        &quot;http&quot;: &quot;&quot;,
+        &quot;note&quot;: &quot;No RDAP bootstrap server; DNS did not return NXDOMAIN&quot;
+      },
+      &quot;ai&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;taken&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 200,
+        &quot;note&quot;: &quot;https://rdap.identitydigital.services/rdap&quot;
+      },
+      &quot;dev&quot;: {
+        &quot;state&quot;: &quot;taken&quot;,
+        &quot;label&quot;: &quot;taken&quot;,
+        &quot;confidence&quot;: &quot;high&quot;,
+        &quot;method&quot;: &quot;registry RDAP&quot;,
+        &quot;http&quot;: 200,
+        &quot;note&quot;: &quot;https://pubapi.registry.google/rdap&quot;
+      }
+    },
+    &quot;x&quot;: {
+      &quot;state&quot;: &quot;manual&quot;,
+      &quot;label&quot;: &quot;manual-check&quot;,
+      &quot;confidence&quot;: &quot;manual&quot;,
+      &quot;method&quot;: &quot;manual-check&quot;,
+      &quot;http&quot;: &quot;&quot;,
+      &quot;note&quot;: &quot;X cloaks availability; not scored&quot;
+    },
+    &quot;github&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;taken&quot;,
+      &quot;confidence&quot;: &quot;high&quot;,
+      &quot;method&quot;: &quot;GitHub web&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://github.com/reviewly&quot;
+    },
+    &quot;tiktok&quot;: {
+      &quot;state&quot;: &quot;taken&quot;,
+      &quot;label&quot;: &quot;seen&quot;,
+      &quot;confidence&quot;: &quot;low&quot;,
+      &quot;method&quot;: &quot;TikTok web heuristic&quot;,
+      &quot;http&quot;: 200,
+      &quot;note&quot;: &quot;https://www.tiktok.com/@reviewly&quot;
+    },
+    &quot;score&quot;: 0.0,
+    &quot;status&quot;: &quot;weak&quot;
+  }
+]</script>
+<script>
+  const table = document.getElementById('sheet');
+  const tbody = table.tBodies[0];
+  const filter = document.getElementById('filter');
+  let sortState = { index: 8, dir: -1 };
+
+  function value(row, index, type) {
+    const cell = row.cells[index];
+    if (type === 'number') return Number(cell.dataset.value || cell.textContent.trim() || 0);
+    return cell.textContent.trim().toLowerCase();
+  }
+
+  function sortBy(index, type) {
+    const dir = sortState.index === index ? -sortState.dir : (type === 'number' ? -1 : 1);
+    sortState = { index, dir };
+    const rows = Array.from(tbody.rows);
+    rows.sort((a, b) => {
+      const av = value(a, index, type);
+      const bv = value(b, index, type);
+      if (av < bv) return -1 * dir;
+      if (av > bv) return 1 * dir;
+      return 0;
+    });
+    rows.forEach(row => tbody.appendChild(row));
+  }
+
+  Array.from(table.tHead.rows[0].cells).forEach((th, index) => {
+    th.addEventListener('click', () => sortBy(index, th.dataset.type));
+  });
+
+  filter.addEventListener('input', () => {
+    const query = filter.value.trim().toLowerCase();
+    Array.from(tbody.rows).forEach(row => {
+      row.style.display = row.textContent.toLowerCase().includes(query) ? '' : 'none';
+    });
+  });
+</script>
+</body>
+</html>
