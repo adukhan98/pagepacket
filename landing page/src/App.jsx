@@ -2,17 +2,17 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import SmoothScrollProvider, { scrollToTarget } from "./SmoothScrollProvider.jsx";
 import { useGraftMotion } from "./useGraftMotion.js";
 
-const heroHelper = "early access for the local-first mac app. no cloud account required.";
+const heroHelper = "early access for the local-first Mac app. no cloud account required.";
 
 // Hero terminal stream, framed as preview output rather than exact CLI proof.
 const heroStream = [
   { out: "# 1 review pass before commit", kind: "muted" },
-  { prompt: "$", cmd: "graft status ./notes", muted: false },
+  { prompt: "$", cmd: "pagepacket-cli status ./notes", muted: false },
   { out: "3 markdown files touched", kind: "pending" },
   { out: "agent edits waiting", kind: "pending" },
-  { prompt: "$", cmd: "graft snapshot ./notes", muted: false },
+  { prompt: "$", cmd: "pagepacket-cli snapshot ./notes launch-plan.md", muted: false },
   { out: "local checkpoint saved", kind: "ok" },
-  { prompt: "$", cmd: "graft review ./notes", muted: false },
+  { prompt: "$", cmd: "pagepacket-cli history ./notes launch-plan.md", muted: false },
   { out: "review before your next commit", kind: "ok" },
   { caret: true },
 ];
@@ -38,7 +38,7 @@ const workflowStages = [
     label: "write the intent",
     title: "keep 1 folder",
     body: "your specs, notes, and launch plans stay in the folder git, scripts, and agents already use.",
-    cmd: "graft status ./notes",
+    cmd: "pagepacket-cli status ./notes",
     note: "human draft",
   },
   {
@@ -52,13 +52,13 @@ const workflowStages = [
     label: "inspect the trail",
     title: "review in 1 pass",
     body: "scan the agent change before it replaces your draft. keep the line you meant, reject the line you did not ask for.",
-    cmd: "graft history ./notes/launch-plan.md",
+    cmd: "pagepacket-cli history ./notes launch-plan.md",
     note: "review queue",
   },
   {
     label: "keep the source",
     title: "ship with a trail",
-    body: "your files still open anywhere, and graft leaves a local record you can inspect after the commit.",
+    body: "your files still open anywhere, and pagepacket leaves a local record you can inspect after the commit.",
     cmd: "git commit -m \"ship v1\"",
     note: "plain files",
   },
@@ -73,16 +73,16 @@ const fileRows = [
     tree: ["notes/", "  launch-plan.md", "  agents.md", "  risks.md"],
   },
   {
-    path: ".graft/history",
+    path: ".pagepacket/history",
     desc: "a local record of meaningful changes.",
     reason: "you get a way back when a broad edit changes more than you asked for.",
-    tree: [".graft/", "  history/", "    before-agent.snapshot", "    latest.snapshot"],
+    tree: [".pagepacket/", "  history/", "    before-agent.snapshot", "    latest.snapshot"],
   },
   {
-    path: ".graft/reviews",
+    path: ".pagepacket/reviews",
     desc: "local descriptions of proposed edits.",
     reason: "you see what changed before the agent rewrite becomes your draft.",
-    tree: [".graft/", "  reviews/", "    agent-review.packet", "    status.json"],
+    tree: [".pagepacket/", "  reviews/", "    agent-review.packet", "    status.json"],
   },
 ];
 
@@ -137,7 +137,10 @@ function App() {
     }
 
     setStatus("loading");
-    window.setTimeout(() => setStatus("success"), 650);
+    window.setTimeout(() => {
+      saveWaitlistEmail(email);
+      setStatus("success");
+    }, 650);
   }
 
   const formProps = {
@@ -167,6 +170,18 @@ function App() {
   );
 }
 
+function saveWaitlistEmail(rawEmail) {
+  const normalized = rawEmail.trim().toLowerCase();
+  let saved = [];
+  try {
+    const parsed = JSON.parse(localStorage.getItem("pagepacket-waitlist-preview") || "[]");
+    saved = Array.isArray(parsed) ? parsed : [];
+  } catch {
+    saved = [];
+  }
+  localStorage.setItem("pagepacket-waitlist-preview", JSON.stringify(Array.from(new Set([...saved, normalized]))));
+}
+
 function scrollToHash(event) {
   const href = event.currentTarget.getAttribute("href");
   if (!href?.startsWith("#")) return;
@@ -181,9 +196,9 @@ function scrollToHash(event) {
 function Nav() {
   return (
     <header className="masthead js-nav" aria-label="Primary">
-      <pre className="nav-term" aria-label="graft navigation">
+      <pre className="nav-term" aria-label="pagepacket navigation">
         <span className="term-prompt">$</span>{" "}
-        <span className="term-cmd">graft</span>{" "}
+        <span className="term-cmd">pagepacket</span>{" "}
         <a href="#waitlist" onClick={scrollToHash} className="term-flag term-flag--accent">--join</a>
         <span className="term-caret js-nav-caret" aria-hidden="true">▮</span>
       </pre>
@@ -313,7 +328,7 @@ function Workflow() {
             </ol>
           </div>
           <div className="split-terminal workflow-terminal js-workflow-term">
-            <TerminalFrame label="~/notes · graft preview">
+            <TerminalFrame label="~/notes · pagepacket preview">
               {workflowStages.map((stage, i) => (
                 <span key={i} className="stream-block js-workflow-cmd" data-stage={i}>
                   <span className="stream-line stream-cmd">
@@ -345,7 +360,7 @@ function PlainFiles() {
           <TerminalFrame label="~/notes · tree">
             <span className="stream-line stream-cmd">
               <span className="term-prompt">$</span>{" "}
-              <span className="term-cmd js-stream-text">tree -L 2 .graft</span>
+              <span className="term-cmd js-stream-text">tree -L 2 .pagepacket</span>
             </span>
             {fileRows.map((row, i) => (
               <span key={i} className="stream-block js-files-tree" data-row={i}>
@@ -363,7 +378,7 @@ function PlainFiles() {
             keep plain markdown. get the receipt.
           </h2>
           <p className="section-body js-reveal">
-            graft records the context around shared work while your markdown
+            pagepacket records the context around shared work while your markdown
             stays portable. open files anywhere, commit them to git, and know
             what an agent tried to change.
           </p>
@@ -395,7 +410,7 @@ function Waitlist({ ...formProps }) {
         </h2>
         <p className="converge-lede">
           if codex, claude code, cursor, or scripts already touch your markdown,
-          graft gives you a review step before the next draft changes.
+          pagepacket gives you a review step before the next draft changes.
         </p>
         <p className="converge-lede converge-proof">
           product proof for the first build: plain files, local history, and
@@ -445,7 +460,7 @@ function WaitlistForm({
       noValidate
     >
       <label className="form-prompt" htmlFor={inputId} aria-label="join the waitlist">
-        <span className="term-prompt">$</span> graft --join
+        <span className="term-prompt">$</span> pagepacket --join
       </label>
       <div className="form-row" data-state={emailState} data-status={status}>
         <input
@@ -478,9 +493,9 @@ function Footer() {
     <footer className="colophon" aria-label="Site footer">
       <pre className="colophon-block" aria-hidden="false">
         <span className="colophon-line">
-          <span className="term-prompt">$</span> graft --about
+          <span className="term-prompt">$</span> pagepacket --about
         </span>
-        <span className="colophon-line colophon-out">graft preview · local-first mac markdown editor</span>
+        <span className="colophon-line colophon-out">pagepacket preview · local-first Mac Markdown editor</span>
         <span className="colophon-line">
           plain files / local history / agent handoff / review before replace
         </span>

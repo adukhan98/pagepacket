@@ -1,0 +1,1 @@
+# Flat collision candidate

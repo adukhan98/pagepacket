@@ -43,7 +43,7 @@ func expectThrowsEqual<E: Error & Equatable>(_ expected: E, _ body: () throws ->
 
 func temporaryWorkspace() throws -> URL {
     let url = FileManager.default.temporaryDirectory
-        .appendingPathComponent("graft-behavior-harness-\(UUID().uuidString)", isDirectory: true)
+        .appendingPathComponent("pagepacket-behavior-harness-\(UUID().uuidString)", isDirectory: true)
     try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
     return url
 }
@@ -118,7 +118,7 @@ test("ChangeSet reports conflicts from status or ranges") {
 
 test("ChangeMetadataStore reads agent metadata and fallback values") {
     let root = try temporaryWorkspace()
-    let changes = root.appendingPathComponent(".graft/changes", isDirectory: true)
+    let changes = root.appendingPathComponent(".pagepacket/changes", isDirectory: true)
     try FileManager.default.createDirectory(at: changes, withIntermediateDirectories: true)
     try """
     {
@@ -148,7 +148,7 @@ test("AgentInstructionsWriter writes plain Markdown editing contract") {
 
     try expectEqual(url.lastPathComponent, "AGENTS.md", "instructions filename")
     try expectTrue(text.contains("Keep Markdown files as plain text."), "plain text guidance")
-    try expectTrue(text.contains(".graft/changes"), "metadata guidance")
+    try expectTrue(text.contains(".pagepacket/changes"), "metadata guidance")
     try expectTrue(text.contains("Do not rewrite unrelated sections."), "scoped edit guidance")
 }
 
@@ -304,9 +304,9 @@ test("MarkdownDiffEngine groups heading, paragraph, no-op, and list changes") {
 }
 
 if failures.isEmpty {
-    print("Graft behavior harness passed \(passed) checks.")
+    print("Pagepacket behavior harness passed \(passed) checks.")
 } else {
-    fputs("Graft behavior harness failed \(failures.count) of \(passed + failures.count) checks.\n", stderr)
+    fputs("Pagepacket behavior harness failed \(failures.count) of \(passed + failures.count) checks.\n", stderr)
     for failure in failures {
         fputs("- \(failure)\n", stderr)
     }

@@ -2,9 +2,9 @@ import XCTest
 @testable import GraftCore
 
 final class ChangeMetadataStoreTests: XCTestCase {
-    func testReadsAgentMetadataFromGraftChangesFolder() throws {
+    func testReadsAgentMetadataFromPagepacketChangesFolder() throws {
         let root = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString, isDirectory: true)
-        let changes = root.appendingPathComponent(".graft/changes", isDirectory: true)
+        let changes = root.appendingPathComponent(".pagepacket/changes", isDirectory: true)
         try FileManager.default.createDirectory(at: changes, withIntermediateDirectories: true)
         try """
         {
