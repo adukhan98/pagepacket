@@ -12,7 +12,9 @@ struct ContentView: View {
                 ExternalChangeBanner()
                 HStack(spacing: 0) {
                     EditorContainerView()
-                    ReviewRailView()
+                    if workspace.editorMode != .split {
+                        ReviewRailView()
+                    }
                 }
                 StatusStrip()
             }

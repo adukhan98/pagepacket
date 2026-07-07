@@ -21,11 +21,12 @@ struct MarkdownTextView: NSViewRepresentable {
         let textView = NSTextView()
         textView.delegate = context.coordinator
         textView.drawsBackground = false
-        textView.backgroundColor = .clear
-        textView.textColor = NSColor(GraftTheme.ink)
+        textView.appearance = NSAppearance(named: .aqua)
+        textView.backgroundColor = GraftTheme.nsCanvas
+        textView.textColor = GraftTheme.nsInk
         textView.insertionPointColor = NSColor(GraftTheme.pink)
         textView.selectedTextAttributes = [
-            .backgroundColor: NSColor(GraftTheme.mint).withAlphaComponent(0.35)
+            .backgroundColor: GraftTheme.nsSelection
         ]
         textView.textContainerInset = NSSize(width: 18, height: 18)
         textView.isRichText = false

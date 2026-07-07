@@ -14,11 +14,16 @@ struct EditorContainerView: View {
                 case .preview:
                     MarkdownPreviewView()
                 case .split:
-                    HSplitView {
+                    HStack(spacing: 0) {
                         MarkdownEditorView()
-                            .frame(minWidth: 320)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .clipped()
+                        Rectangle()
+                            .fill(GraftTheme.divider)
+                            .frame(width: 1)
                         MarkdownPreviewView()
-                            .frame(minWidth: 320)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .clipped()
                     }
                 }
             }
@@ -62,6 +67,7 @@ private struct EmptyWorkspaceView: View {
         }
         .padding(48)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .foregroundStyle(GraftTheme.body)
         .background(GraftTheme.canvas)
     }
 }

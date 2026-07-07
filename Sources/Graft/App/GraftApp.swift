@@ -14,6 +14,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     static func main() {
         let app = NSApplication.shared
+        app.appearance = NSAppearance(named: .aqua)
         let delegate = AppDelegate()
         retainedDelegate = delegate
         app.delegate = delegate
@@ -66,6 +67,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
                 .environmentObject(workspace)
                 .frame(minWidth: 1120, minHeight: 720)
                 .preferredColorScheme(.light)
+                .tint(GraftTheme.teal)
                 .onAppear {
                     self.workspace.bootstrap()
                 }
@@ -98,6 +100,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
                 .frame(width: 520)
                 .padding(24)
                 .preferredColorScheme(.light)
+                .tint(GraftTheme.teal)
 
             let window = NSWindow(
                 contentRect: NSRect(x: 0, y: 0, width: 568, height: 360),

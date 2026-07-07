@@ -5,16 +5,19 @@ struct MarkdownPreviewView: View {
     @EnvironmentObject private var workspace: WorkspaceStore
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 14) {
-                ForEach(workspace.renderedBlocks) { block in
-                    blockView(block)
+        GeometryReader { proxy in
+            ScrollView {
+                VStack(alignment: .leading, spacing: 14) {
+                    ForEach(workspace.renderedBlocks) { block in
+                        blockView(block)
+                    }
                 }
+                .frame(width: contentWidth(for: proxy.size.width), alignment: .leading)
+                .padding(32)
+                .foregroundStyle(GraftTheme.body)
             }
-            .frame(maxWidth: 760, alignment: .leading)
-            .padding(32)
+            .background(GraftTheme.surfaceSoft)
         }
-        .background(GraftTheme.surfaceSoft)
     }
 
     @ViewBuilder
@@ -42,12 +45,12 @@ struct MarkdownPreviewView: View {
         case let .unorderedItem(text):
             Label {
                 MarkdownInlineText(text)
+                    .foregroundStyle(GraftTheme.body)
             } icon: {
                 Circle()
                     .fill(GraftTheme.teal)
                     .frame(width: 6, height: 6)
             }
-            .foregroundStyle(GraftTheme.body)
         case let .orderedItem(number, text):
             HStack(alignment: .top) {
                 Text("\(number).")
@@ -71,7 +74,7 @@ struct MarkdownPreviewView: View {
                 }
                 Text(text)
                     .font(.system(.body, design: .monospaced))
-                    .foregroundStyle(GraftTheme.body)
+                    .foregroundStyle(GraftTheme.ink)
                     .textSelection(.enabled)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -82,6 +85,7 @@ struct MarkdownPreviewView: View {
                     ForEach(Array(headers.enumerated()), id: \.offset) { _, header in
                         Text(header)
                             .font(.caption.weight(.semibold))
+                            .foregroundStyle(GraftTheme.ink)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(8)
                             .background(GraftTheme.ochre.opacity(0.28))
@@ -103,7 +107,7 @@ struct MarkdownPreviewView: View {
             .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
             .overlay {
                 RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .stroke(.black.opacity(0.08), lineWidth: 1)
+                    .stroke(GraftTheme.divider.opacity(0.75), lineWidth: 1)
             }
             .padding(.vertical, 4)
         case let .image(alt, path):
@@ -131,7 +135,7 @@ struct MarkdownPreviewView: View {
                         .lineLimit(1)
                 }
                 .font(.caption)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(GraftTheme.muted)
             }
             .graftCard()
         } else {
@@ -162,6 +166,10 @@ struct MarkdownPreviewView: View {
         }
         return row + Array(repeating: "", count: width - row.count)
     }
+
+    private func contentWidth(for containerWidth: CGFloat) -> CGFloat {
+        min(max(containerWidth - 64, 260), 760)
+    }
 }
 
 private struct MarkdownInlineText: View {
@@ -172,10 +180,14 @@ private struct MarkdownInlineText: View {
     }
 
     var body: some View {
-        if let attributed = try? AttributedString(markdown: text) {
-            Text(attributed)
-        } else {
-            Text(text)
+        Group {
+            if let attributed = try? AttributedString(markdown: text) {
+                Text(attributed)
+            } else {
+                Text(text)
+            }
         }
+        .lineLimit(nil)
+        .fixedSize(horizontal: false, vertical: true)
     }
 }
