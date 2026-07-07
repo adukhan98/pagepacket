@@ -1,0 +1,752 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      @font-face {
+        font-family: "GraftHand";
+        src: url("assets/fonts/bradley-hand-bold.ttf") format("truetype");
+        font-weight: 700;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: "GraftMono";
+        src: url("assets/fonts/sf-mono.ttf") format("truetype");
+        font-weight: 500;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: "GraftSans";
+        src: url("assets/fonts/sf-sans.ttf") format("truetype");
+        font-weight: 400 900;
+        font-display: swap;
+      }
+      :root {
+        --paper: #f6f5f4;
+        --surface: #ffffff;
+        --ink: #111111;
+        --muted: #615d59;
+        --hairline: #e6e6e6;
+        --blue: #0075de;
+        --blue-press: #005bab;
+        --blue-text: #00519a;
+        --night: #213183;
+        --pink: #ff64c8;
+        --purple: #d6b6f6;
+        --orange: #dd5b00;
+        --teal: #2a9d99;
+        --green: #1aae39;
+        --sky: #62aef0;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 1920px;
+        height: 1080px;
+        margin: 0;
+        overflow: hidden;
+        background: var(--paper);
+        color: var(--ink);
+        font-family: "GraftSans", sans-serif;
+      }
+      #root {
+        position: relative;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: var(--paper);
+        isolation: isolate;
+      }
+      .scene {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        padding: 84px 112px;
+        background: var(--paper);
+      }
+      .scene::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        opacity: 0.24;
+        background-image:
+          linear-gradient(rgba(17, 17, 17, 0.035) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(17, 17, 17, 0.026) 1px, transparent 1px);
+        background-size: 48px 48px, 48px 48px;
+      }
+      .grain {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        opacity: 0.12;
+        background:
+          radial-gradient(circle at 20% 12%, rgba(0,0,0,0.10) 0 1px, transparent 1.4px),
+          radial-gradient(circle at 70% 44%, rgba(0,0,0,0.08) 0 1px, transparent 1.6px),
+          radial-gradient(circle at 42% 82%, rgba(0,0,0,0.10) 0 1px, transparent 1.3px);
+        background-size: 31px 31px, 43px 43px, 59px 59px;
+        mix-blend-mode: multiply;
+      }
+      h1,
+      h2,
+      p {
+        margin: 0;
+      }
+      .display {
+        font-size: 136px;
+        line-height: 0.92;
+        letter-spacing: -4px;
+        font-weight: 900;
+      }
+      .headline {
+        font-size: 104px;
+        line-height: 0.96;
+        letter-spacing: -3px;
+        font-weight: 900;
+      }
+      .body {
+        font-size: 38px;
+        line-height: 1.2;
+        color: var(--muted);
+        font-weight: 520;
+      }
+      .mono {
+        font-family: "GraftMono", monospace;
+      }
+      .hand {
+        font-family: "GraftHand", cursive;
+        letter-spacing: 0;
+      }
+      .pill {
+        border-radius: 999px;
+        padding: 18px 30px;
+        border: 1px solid rgba(0,0,0,0.10);
+        background: var(--surface);
+        box-shadow:
+          0 1px 1px rgba(0,0,0,0.04),
+          0 14px 38px rgba(0,0,0,0.08);
+        font-size: 28px;
+        font-weight: 740;
+      }
+      .blue-pill {
+        color: white;
+        background: var(--blue);
+        border-color: var(--blue);
+      }
+      .paper-card {
+        background: var(--surface);
+        border: 1px solid var(--hairline);
+        border-radius: 12px;
+        box-shadow:
+          0 0.2px 1px rgba(0,0,0,0.04),
+          0 12px 38px rgba(34,31,27,0.08);
+      }
+      .sticker {
+        position: absolute;
+        border: 3px solid var(--ink);
+        box-shadow: 10px 10px 0 rgba(17,17,17,0.13);
+        color: var(--ink);
+        font-weight: 900;
+        transform-origin: 50% 50%;
+      }
+      .scribble {
+        position: absolute;
+        font-size: 54px;
+        line-height: 1;
+        color: var(--pink);
+        transform: rotate(-7deg);
+        text-shadow: 1px 1px 0 rgba(255,255,255,0.5);
+      }
+      .tear {
+        position: absolute;
+        height: 140px;
+        width: 2300px;
+        left: -190px;
+        background: var(--pink);
+        transform: rotate(-7deg);
+        border: 4px solid var(--ink);
+        box-shadow: 16px 16px 0 rgba(17,17,17,0.12);
+      }
+      .wipe {
+        position: absolute;
+        inset: -140px -220px;
+        z-index: 80;
+        pointer-events: none;
+        background:
+          linear-gradient(100deg, transparent 0 18%, var(--ink) 18% 24%, var(--paper) 24% 62%, var(--blue) 62% 72%, transparent 72%);
+        transform: translateX(-2350px) rotate(-3deg);
+      }
+      .scene-1 .hook {
+        position: absolute;
+        left: 118px;
+        top: 138px;
+        width: 1180px;
+        z-index: 5;
+      }
+      .scene-1 .hook .blue {
+        color: var(--blue-text);
+      }
+      .scene-1 .sub {
+        position: absolute;
+        left: 126px;
+        top: 616px;
+        width: 850px;
+        z-index: 5;
+      }
+      .scene-1 .hot-note {
+        right: 96px;
+        top: 116px;
+        width: 530px;
+        padding: 38px 42px;
+        background: var(--pink);
+        font-size: 74px;
+        line-height: 0.94;
+        transform: rotate(5deg);
+        z-index: 8;
+      }
+      .scene-1 .agent-strip {
+        left: 1050px;
+        top: 565px;
+        width: 710px;
+        padding: 24px 34px;
+        background: var(--purple);
+        font-size: 36px;
+        transform: rotate(-4deg);
+        z-index: 8;
+      }
+      .scene-1 .mark-a {
+        left: 1020px;
+        top: 354px;
+      }
+      .scene-1 .mark-b {
+        left: 1320px;
+        top: 760px;
+        color: var(--orange);
+        transform: rotate(4deg);
+      }
+      .scene-2 .grid {
+        position: relative;
+        z-index: 5;
+        display: grid;
+        grid-template-columns: 0.9fr 1.1fr;
+        gap: 64px;
+        height: 100%;
+        align-items: center;
+      }
+      .scene-2 .icon {
+        width: 220px;
+        height: 220px;
+        border-radius: 44px;
+        box-shadow: 16px 16px 0 rgba(0,0,0,0.12);
+      }
+      .scene-2 .copy {
+        display: grid;
+        gap: 30px;
+      }
+      .scene-2 .files {
+        position: relative;
+        height: 720px;
+        transform: scale(0.93);
+        transform-origin: center;
+      }
+      .file-card {
+        position: absolute;
+        width: 570px;
+        padding: 34px;
+      }
+      .file-card .path {
+        font-size: 30px;
+        color: var(--blue-text);
+        margin-bottom: 18px;
+      }
+      .file-card .lines {
+        display: grid;
+        gap: 14px;
+      }
+      .file-card .line {
+        height: 20px;
+        border-radius: 99px;
+        background: #ddd9d2;
+      }
+      .file-a {
+        left: 20px;
+        top: 20px;
+        transform: rotate(-3deg);
+      }
+      .file-b {
+        left: 150px;
+        top: 245px;
+        transform: rotate(2deg);
+      }
+      .file-c {
+        left: 4px;
+        top: 462px;
+        transform: rotate(-1deg);
+      }
+      .scene-3 .edit-wall {
+        position: absolute;
+        left: 120px;
+        top: 134px;
+        width: 1680px;
+        height: 760px;
+        z-index: 5;
+      }
+      .scene-3 .edit-title {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 900px;
+      }
+      .scene-3 .agent-card {
+        position: absolute;
+        right: 20px;
+        top: 18px;
+        width: 530px;
+        padding: 34px;
+        background: var(--night);
+        color: white;
+        border: 4px solid var(--ink);
+        transform: rotate(3deg);
+      }
+      .scene-3 .agent-card img {
+        width: 112px;
+        height: 112px;
+        border-radius: 24px;
+        float: right;
+        margin-left: 20px;
+      }
+      .scene-3 .diff-strip {
+        position: absolute;
+        left: 120px;
+        width: 1260px;
+        padding: 26px 34px;
+        border: 3px solid var(--ink);
+        background: white;
+        box-shadow: 12px 12px 0 rgba(17,17,17,0.14);
+        font-size: 36px;
+      }
+      .scene-3 .diff-strip b {
+        color: var(--blue-text);
+      }
+      .scene-3 .d1 {
+        top: 300px;
+        transform: rotate(-2deg);
+      }
+      .scene-3 .d2 {
+        top: 442px;
+        background: var(--purple);
+        transform: rotate(2deg);
+      }
+      .scene-3 .d3 {
+        top: 586px;
+        background: var(--sky);
+        transform: rotate(-1deg);
+      }
+      .scene-4 .packet {
+        position: absolute;
+        left: 212px;
+        top: 72px;
+        width: 1496px;
+        height: 930px;
+        z-index: 5;
+        padding: 42px;
+      }
+      .scene-4 .packet-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 40px;
+        min-height: 270px;
+        padding-top: 18px;
+        padding-bottom: 26px;
+        border-bottom: 1px solid var(--hairline);
+      }
+      .scene-4 .packet-head h2 {
+        max-width: 880px;
+        font-size: 84px;
+        line-height: 1.08;
+      }
+      .scene-4 .meta {
+        display: flex;
+        gap: 14px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        align-content: flex-start;
+        max-width: 560px;
+      }
+      .scene-4 .hunks {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 22px;
+        margin-top: 24px;
+      }
+      .hunk {
+        padding: 22px 24px;
+        border-radius: 12px;
+        border: 1px solid var(--hairline);
+        background: #fbfaf8;
+        min-height: 202px;
+      }
+      .hunk .label {
+        color: var(--muted);
+        font-size: 23px;
+        margin-bottom: 18px;
+      }
+      .hunk .code {
+        font-size: 28px;
+        line-height: 1.28;
+      }
+      .plus {
+        color: #0b7d28;
+      }
+      .minus {
+        color: #982116;
+      }
+      .scene-4 .capture {
+        right: 118px;
+        bottom: 76px;
+        color: var(--blue);
+        font-size: 60px;
+        transform: rotate(-5deg);
+      }
+      .scene-5 .decision {
+        position: relative;
+        z-index: 5;
+        height: 100%;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 52px;
+        align-items: center;
+      }
+      .scene-5 .panel {
+        padding: 48px;
+        min-height: 670px;
+      }
+      .scene-5 .panel h2 {
+        margin-bottom: 32px;
+      }
+      .choice {
+        display: grid;
+        grid-template-columns: 96px 1fr;
+        gap: 22px;
+        align-items: center;
+        padding: 26px;
+        border-radius: 12px;
+        border: 1px solid var(--hairline);
+        background: #fbfaf8;
+        margin-bottom: 22px;
+      }
+      .choice .button {
+        width: 96px;
+        height: 96px;
+        border-radius: 999px;
+        display: grid;
+        place-items: center;
+        font-size: 54px;
+        font-weight: 900;
+        color: white;
+        background: var(--blue);
+      }
+      .choice.reject .button {
+        color: var(--ink);
+        background: white;
+        border: 3px solid var(--ink);
+      }
+      .scene-5 .stamp {
+        position: absolute;
+        left: 910px;
+        top: 664px;
+        width: 700px;
+        padding: 28px 38px;
+        border: 6px solid var(--green);
+        color: var(--green);
+        background: rgba(255,255,255,0.8);
+        font-size: 78px;
+        text-align: center;
+        transform: rotate(-8deg);
+        z-index: 8;
+      }
+      .scene-5 .proof img {
+        width: 100%;
+        border-radius: 12px;
+        border: 1px solid var(--hairline);
+      }
+      .scene-6 {
+        background: var(--night);
+        color: white;
+      }
+      .scene-6::before {
+        opacity: 0.18;
+        background-image:
+          radial-gradient(circle at 12% 20%, rgba(255,255,255,0.20) 0 2px, transparent 2px),
+          radial-gradient(circle at 80% 70%, rgba(255,255,255,0.16) 0 2px, transparent 2px);
+        background-size: 74px 74px, 96px 96px;
+      }
+      .scene-6 .final {
+        position: relative;
+        z-index: 5;
+        height: 100%;
+        display: grid;
+        grid-template-columns: 340px 1fr;
+        gap: 62px;
+        align-items: center;
+      }
+      .scene-6 .logo-mark {
+        width: 300px;
+        height: 300px;
+        border-radius: 64px;
+        box-shadow: 20px 20px 0 rgba(0,0,0,0.20);
+      }
+      .scene-6 .final h2 {
+        font-size: 126px;
+        line-height: 0.94;
+        letter-spacing: -4px;
+        margin-bottom: 34px;
+      }
+      .scene-6 .final .tag {
+        display: inline-block;
+        padding: 18px 30px;
+        background: var(--paper);
+        color: var(--ink);
+        border: 4px solid var(--ink);
+        box-shadow: 10px 10px 0 rgba(0,0,0,0.2);
+        font-size: 48px;
+        transform: rotate(-2deg);
+      }
+      .scene-6 .night-sticker {
+        position: absolute;
+        right: 124px;
+        top: 108px;
+        width: 280px;
+        height: 158px;
+        background: var(--pink);
+        border: 4px solid var(--ink);
+        transform: rotate(8deg);
+        box-shadow: 12px 12px 0 rgba(0,0,0,0.20);
+        z-index: 4;
+      }
+      .audio-reactive {
+        position: absolute;
+        inset: -12%;
+        pointer-events: none;
+        opacity: 0.13;
+        background: radial-gradient(circle at 50% 50%, var(--blue), transparent 54%);
+        z-index: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="24"
+      data-width="1920"
+      data-height="1080"
+    >
+      <audio id="music" data-start="0" data-duration="24" data-track-index="20" data-volume="0.34" src="assets/music/happy-beats-business-moves-vol-12-by-ende-dot-app.mp3"></audio>
+      <audio id="hit1" data-start="0.48" data-duration="0.18" data-track-index="21" data-volume="0.45" src="assets/sfx/impact/impactSoft_medium_001.ogg"></audio>
+      <audio id="slide1" data-start="7.78" data-duration="0.30" data-track-index="22" data-volume="0.22" src="assets/sfx/casino/card-slide-1.ogg"></audio>
+      <audio id="hit2" data-start="11.78" data-duration="0.18" data-track-index="23" data-volume="0.38" src="assets/sfx/impact/impactSoft_medium_004.ogg"></audio>
+      <audio id="click1" data-start="17.05" data-duration="0.04" data-track-index="24" data-volume="0.36" src="assets/sfx/interface/click_003.ogg"></audio>
+      <audio id="click2" data-start="17.93" data-duration="0.04" data-track-index="25" data-volume="0.31" src="assets/sfx/interface/click_003.ogg"></audio>
+      <audio id="stamp-sound" data-start="19.10" data-duration="0.13" data-track-index="26" data-volume="0.42" src="assets/sfx/interface/bong_001.ogg"></audio>
+      <audio id="final-bell" data-start="21.84" data-duration="0.80" data-track-index="27" data-volume="0.34" src="assets/sfx/impact/impactBell_heavy_000.ogg"></audio>
+
+      <section id="scene-1" class="clip scene scene-1" data-start="0" data-duration="3.2" data-track-index="1">
+        <div class="grain"></div>
+        <h1 class="display hook">your agent changed your <span class="blue">markdown.</span></h1>
+        <p class="body sub">Graft turns external edits into something you can review before they touch the draft.</p>
+        <div class="sticker hot-note hand">changed on disk</div>
+        <div class="sticker agent-strip mono">external edit detected</div>
+        <div class="scribble hand mark-a">who approved this?</div>
+        <div class="scribble hand mark-b">not yet.</div>
+      </section>
+
+      <div id="wipe-1" class="clip wipe" data-start="2.95" data-duration="0.55" data-track-index="70"></div>
+
+      <section id="scene-2" class="clip scene scene-2" data-start="3.2" data-duration="4.0" data-track-index="1">
+        <div class="grain"></div>
+        <div class="grid">
+          <div class="copy">
+            <img class="icon" src="assets/images/graft-app-icon.png" alt="Graft app icon" />
+            <h2 class="headline">plain markdown stays canonical.</h2>
+            <p class="body">No account system. No proprietary document store. Your folder remains the source.</p>
+            <div class="pill blue-pill mono">local files first</div>
+          </div>
+          <div class="files">
+            <div class="paper-card file-card file-a">
+              <div class="path mono">notes/launch-plan.md</div>
+              <div class="lines"><span class="line"></span><span class="line" style="width:82%"></span><span class="line" style="width:62%"></span></div>
+            </div>
+            <div class="paper-card file-card file-b">
+              <div class="path mono">.graft/reviews</div>
+              <div class="lines"><span class="line" style="width:92%"></span><span class="line" style="width:58%"></span><span class="line" style="width:76%"></span></div>
+            </div>
+            <div class="paper-card file-card file-c">
+              <div class="path mono">.graft/history</div>
+              <div class="lines"><span class="line" style="width:72%"></span><span class="line" style="width:88%"></span><span class="line" style="width:54%"></span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div id="wipe-2" class="clip wipe" data-start="6.92" data-duration="0.55" data-track-index="70"></div>
+
+      <section id="scene-3" class="clip scene scene-3" data-start="7.2" data-duration="4.39" data-track-index="1">
+        <div class="grain"></div>
+        <div class="edit-wall">
+          <h2 class="headline edit-title">agents can touch the same files.</h2>
+          <div class="agent-card mono">
+            <img src="assets/images/graft-agent-night.png" alt="Graft agent visual" />
+            codex edits<br />
+            cursor edits<br />
+            scripts edit<br />
+            <span style="color: var(--sky)">same folder</span>
+          </div>
+          <div class="diff-strip mono d1"><b>+</b> add launch checklist</div>
+          <div class="diff-strip mono d2"><span class="minus">-</span> vague promise</div>
+          <div class="diff-strip mono d3"><b>+</b> risk notes before launch</div>
+        </div>
+      </section>
+
+      <div id="wipe-3" class="clip wipe" data-start="11.36" data-duration="0.62" data-track-index="70"></div>
+
+      <section id="scene-4" class="clip scene scene-4" data-start="11.6" data-duration="5.0" data-track-index="1">
+        <div class="grain"></div>
+        <div class="packet paper-card">
+          <div class="packet-head">
+            <h2 class="headline">graft catches the edit.</h2>
+            <div class="meta">
+              <span class="pill blue-pill mono">external edit detected</span>
+              <span class="pill mono">2 hunks</span>
+              <span class="pill mono">checkpoint ready</span>
+            </div>
+          </div>
+          <div class="hunks">
+            <div class="hunk">
+              <div class="label mono">Current</div>
+              <div class="code mono"><span class="minus">- ship v1 soon</span><br />- add launch details later</div>
+            </div>
+            <div class="hunk">
+              <div class="label mono">Proposed</div>
+              <div class="code mono"><span class="plus">+ ship after review</span><br /><span class="plus">+ include rollout notes</span></div>
+            </div>
+            <div class="hunk">
+              <div class="label mono">Conflict-safe</div>
+              <div class="code mono">your draft stays visible while the proposal waits.</div>
+            </div>
+            <div class="hunk">
+              <div class="label mono">Review packet</div>
+              <div class="code mono">accept all, reject all, or handle one hunk.</div>
+            </div>
+          </div>
+        </div>
+        <div class="scribble hand capture" data-layout-ignore>review before it lands</div>
+      </section>
+
+      <div id="wipe-4" class="clip wipe" data-start="16.34" data-duration="0.55" data-track-index="70"></div>
+
+      <section id="scene-5" class="clip scene scene-5" data-start="16.6" data-duration="4.29" data-track-index="1">
+        <div class="grain"></div>
+        <div class="decision">
+          <div class="paper-card panel">
+            <h2 class="headline">you decide.</h2>
+            <div class="choice accept">
+              <div class="button">+</div>
+              <div>
+                <div class="mono" style="font-size:34px;color:var(--blue-text)">accept hunk</div>
+                <p class="body" style="font-size:29px">keep the change you actually wanted.</p>
+              </div>
+            </div>
+            <div class="choice reject">
+              <div class="button">x</div>
+              <div>
+                <div class="mono" style="font-size:34px">reject hunk</div>
+                <p class="body" style="font-size:29px">drop the rewrite you did not ask for.</p>
+              </div>
+            </div>
+          </div>
+          <div class="paper-card panel proof">
+            <h2 class="headline" style="font-size:78px">checkpoint before changes land.</h2>
+            <img src="assets/images/graft-file-trail.png" alt="Graft file trail product visual" />
+          </div>
+        </div>
+        <div class="stamp hand">checkpoint saved</div>
+      </section>
+
+      <div id="wipe-5" class="clip wipe" data-start="20.66" data-duration="0.55" data-track-index="70"></div>
+
+      <section id="scene-6" class="clip scene scene-6" data-start="20.9" data-duration="3.1" data-track-index="1">
+        <div class="audio-reactive" data-layout-allow-overflow></div>
+        <div class="night-sticker"></div>
+        <div class="final">
+          <img class="logo-mark" src="assets/images/graft-app-icon-final.png" alt="Graft app icon" />
+          <div>
+            <h2>agents can edit.<br />you decide.</h2>
+            <div class="tag hand">plain files. reviewable agent edits.</div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+
+      function enter(selector, vars, at) {
+        tl.from(selector, vars, at);
+      }
+
+      enter("#scene-1 .hook", { y: 70, opacity: 0, duration: 0.62, ease: "power4.out" }, 0.18);
+      enter("#scene-1 .sub", { y: 40, opacity: 0, duration: 0.48, ease: "power2.out" }, 0.62);
+      enter("#scene-1 .hot-note", { x: 190, y: -80, rotation: 15, scale: 0.82, opacity: 0, duration: 0.5, ease: "back.out(1.8)" }, 0.48);
+      enter("#scene-1 .agent-strip", { x: 180, rotation: -16, opacity: 0, duration: 0.44, ease: "expo.out" }, 0.92);
+      enter("#scene-1 .mark-a", { scale: 0.4, opacity: 0, duration: 0.34, ease: "back.out(2)" }, 1.18);
+      enter("#scene-1 .mark-b", { scale: 0.4, opacity: 0, duration: 0.34, ease: "back.out(2)" }, 1.48);
+
+      enter("#scene-2 .icon", { y: 80, scale: 0.72, opacity: 0, duration: 0.62, ease: "back.out(1.5)" }, 3.42);
+      enter("#scene-2 .headline", { x: -70, opacity: 0, duration: 0.62, ease: "expo.out" }, 3.64);
+      enter("#scene-2 .body", { x: -46, opacity: 0, duration: 0.48, ease: "power2.out" }, 3.96);
+      enter("#scene-2 .blue-pill", { y: 26, opacity: 0, duration: 0.42, ease: "power3.out" }, 4.32);
+      enter("#scene-2 .file-a", { x: 190, y: -40, rotation: -12, opacity: 0, duration: 0.55, ease: "back.out(1.25)" }, 4.05);
+      enter("#scene-2 .file-b", { x: 210, rotation: 10, opacity: 0, duration: 0.55, ease: "back.out(1.25)" }, 4.39);
+      enter("#scene-2 .file-c", { x: 180, y: 50, rotation: -10, opacity: 0, duration: 0.55, ease: "back.out(1.25)" }, 4.73);
+
+      enter("#scene-3 .edit-title", { y: 72, opacity: 0, duration: 0.62, ease: "power4.out" }, 7.42);
+      enter("#scene-3 .agent-card", { x: 120, rotation: 12, opacity: 0, duration: 0.52, ease: "back.out(1.4)" }, 7.72);
+      enter("#scene-3 .d1", { x: -260, rotation: -12, opacity: 0, duration: 0.42, ease: "expo.out" }, 8.18);
+      enter("#scene-3 .d2", { x: 260, rotation: 12, opacity: 0, duration: 0.42, ease: "expo.out" }, 8.74);
+      enter("#scene-3 .d3", { x: -260, rotation: -8, opacity: 0, duration: 0.42, ease: "expo.out" }, 9.29);
+
+      enter("#scene-4 .packet", { y: 90, scale: 0.96, opacity: 0, duration: 0.62, ease: "expo.out" }, 11.86);
+      enter("#scene-4 .packet-head h2", { x: -60, opacity: 0, duration: 0.46, ease: "power3.out" }, 12.18);
+      enter("#scene-4 .meta .pill", { y: 24, opacity: 0, duration: 0.36, stagger: 0.08, ease: "back.out(1.3)" }, 12.42);
+      enter("#scene-4 .hunk", { y: 56, opacity: 0, duration: 0.45, stagger: 0.10, ease: "power3.out" }, 12.72);
+      enter("#scene-4 .capture", { scale: 0.4, opacity: 0, duration: 0.4, ease: "back.out(2.2)" }, 14.28);
+
+      enter("#scene-5 .panel:first-child", { x: -110, opacity: 0, duration: 0.58, ease: "expo.out" }, 16.85);
+      enter("#scene-5 .panel:last-child", { x: 110, opacity: 0, duration: 0.58, ease: "expo.out" }, 17.05);
+      enter("#scene-5 .choice.accept", { y: 46, opacity: 0, duration: 0.38, ease: "back.out(1.5)" }, 17.35);
+      enter("#scene-5 .choice.reject", { y: 46, opacity: 0, duration: 0.38, ease: "back.out(1.5)" }, 17.82);
+      tl.from("#scene-5 .stamp", { scale: 2.3, opacity: 0, rotation: -28, duration: 0.34, ease: "back.out(1.2)" }, 19.10);
+
+      enter("#scene-6 .logo-mark", { y: 70, scale: 0.72, opacity: 0, duration: 0.58, ease: "back.out(1.4)" }, 21.22);
+      enter("#scene-6 h2", { x: 90, opacity: 0, duration: 0.64, ease: "expo.out" }, 21.46);
+      enter("#scene-6 .tag", { y: 42, rotation: -9, opacity: 0, duration: 0.46, ease: "back.out(1.6)" }, 22.18);
+      tl.to("#scene-6 .audio-reactive", { opacity: 0.24, scale: 1.08, duration: 1.3, ease: "sine.inOut" }, 21.1);
+      tl.to("#music", { volume: 0.10, duration: 1.4, ease: "power2.out" }, 22.45);
+
+      ["#wipe-1", "#wipe-2", "#wipe-3", "#wipe-4", "#wipe-5"].forEach((id, i) => {
+        const starts = [2.95, 6.92, 11.36, 16.34, 20.66];
+        tl.to(id, { x: 2350, duration: 0.55, ease: "power3.inOut" }, starts[i]);
+      });
+
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

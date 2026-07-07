@@ -1,41 +1,41 @@
-# Welcome to pagepacket
+# Welcome to Graft
 
-pagepacket is a local-first Markdown editor for people and coding agents.
+Graft is a local-first Markdown editor for people and coding agents.
 
 - Edit plain `.md` files in the app.
 - Let Codex, Claude Code, Cursor, Hermes, or shell scripts edit the same files.
-- Use local snapshots in `.pagepacket/history` before broad changes.
+- Use local snapshots in `.graft/history` before broad changes.
 - Keep images portable with relative Markdown links.
 
-## Obsidian-style workflow
+## Review-first workflow
 
 Switch between **Edit**, **Split**, and **Preview** modes. The editor writes real Markdown, and the preview renders headings, lists, tasks, code, quotes, links, and local images.
 
-> The file system is the source of truth. pagepacket adds history and collaboration metadata beside it.
+> The file system is the source of truth. Graft adds history and collaboration metadata beside it.
 
 ## Tasks
 
 - [x] Keep Markdown portable
 - [x] Watch for external agent edits
-- [ ] Connect cloud multiplayer and real email invites
+- [x] Review agent edits before accepting them
 
 ## Agent support matrix
 
 | Agent | Works today | Recommended command |
 |---|---:|---|
-| Codex | yes | `pagepacket-cli snapshot` |
-| Claude Code | yes | `pagepacket-cli apply` |
+| Codex | yes | `graft-cli snapshot` |
+| Claude Code | yes | `graft-cli submit-change` |
 | Cursor | yes | edit `.md` directly |
-| Hermes | yes | check `pagepacket-cli status` |
+| Hermes | yes | check `graft-cli status` |
 
 ## Agent CLI
 
 ```bash
-pagepacket-cli status SampleVault
-pagepacket-cli snapshot SampleVault welcome.md --message "Before Codex edits"
-pagepacket-cli apply SampleVault welcome.md --author codex
+graft-cli status SampleVault
+graft-cli snapshot SampleVault welcome.md --message "Before Codex edits"
+graft-cli submit-change SampleVault welcome.md --agent codex --summary "Edited welcome copy"
 ```
 
 ## Image support
 
-![pagepacket sample image](assets/welcome/pagepacket-sample.ppm)
+![Graft sample image](assets/welcome/graft-sample.ppm)

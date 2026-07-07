@@ -1,5 +1,9 @@
 # Pagepacket Markdown Editor Implementation Plan
 
+> **Pivot note, 2026-06-20:** This plan is superseded for product direction by `docs/superpowers/plans/2026-06-20-graft-agent-review-loop.md`. Graft is now positioned as an agent-reviewed local Markdown editor: humans edit plain files directly, external agents propose edits through reviewable diffs, and `.graft/` stores checkpoints plus review metadata.
+
+> **Follow-up note, 2026-06-20:** Document Review Surface V2 lives in `docs/superpowers/plans/2026-06-20-graft-document-review-surface-v2.md`. That follow-up narrows the product surface around native source editing, hunk-level review, explicit conflict resolution, and deterministic local image handling.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Build Pagepacket, a premium local-first macOS Markdown editor where humans and coding agents can edit the same plain files.
@@ -69,7 +73,7 @@
 
 - [x] Snapshot document revisions into `.pagepacket/history/`.
 - [x] Restore old revisions from the app.
-- [x] Copy selected images into `assets/` and insert relative Markdown.
+- [x] Copy selected images into deterministic per-document `assets/` folders and insert relative Markdown.
 - [x] Provide CLI commands for `status`, `snapshot`, `history`, and `apply`.
 - [x] Provide a repo-local `skills/pagepacket-sync/SKILL.md` workflow for coding agents.
 - [x] Include a sample vault that demonstrates Markdown, images, history, and agent-safe file editing.

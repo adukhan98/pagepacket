@@ -1,0 +1,8 @@
+{
+  "date": "2026-06-20",
+  "font_stack": "Google Fonts via index.html: Bricolage Grotesque, IBM Plex Sans, IBM Plex Mono",
+  "palette": "OKLCH custom properties in src/tokens.css",
+  "motion": "GSAP, Lenis, Three/R3F installed; current sketch page uses CSS-only motion",
+  "spacing": "4pt semantic spacing scale in src/tokens.css",
+  "framework": "Vite + React"
+}

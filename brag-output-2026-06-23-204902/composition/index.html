@@ -1,0 +1,982 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>Graft Paper Riot</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      @font-face {
+        font-family: "Bangers";
+        src: url("assets/fonts/bangers.ttf") format("truetype");
+        font-weight: 400;
+        font-style: normal;
+        font-display: swap;
+      }
+
+      @font-face {
+        font-family: "Permanent Marker";
+        src: url("assets/fonts/permanent-marker.ttf") format("truetype");
+        font-weight: 400;
+        font-style: normal;
+        font-display: swap;
+      }
+
+      @font-face {
+        font-family: "Space Mono";
+        src: url("assets/fonts/space-mono-regular.ttf") format("truetype");
+        font-weight: 400;
+        font-style: normal;
+        font-display: swap;
+      }
+
+      @font-face {
+        font-family: "Space Mono";
+        src: url("assets/fonts/space-mono-bold.ttf") format("truetype");
+        font-weight: 700;
+        font-style: normal;
+        font-display: swap;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        width: 1920px;
+        height: 1080px;
+        margin: 0;
+        overflow: hidden;
+        background: #fff2c7;
+      }
+
+      body {
+        font-family: monospace;
+        color: #0a0a0a;
+      }
+
+      #root {
+        position: relative;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        isolation: isolate;
+        background:
+          radial-gradient(circle at 11% 24%, rgba(255, 77, 139, 0.12) 0 9%, transparent 10%),
+          radial-gradient(circle at 83% 22%, rgba(156, 255, 61, 0.18) 0 12%, transparent 13%),
+          repeating-linear-gradient(0deg, rgba(10, 10, 10, 0.03) 0 2px, transparent 2px 36px),
+          repeating-linear-gradient(90deg, rgba(10, 10, 10, 0.025) 0 2px, transparent 2px 44px),
+          #fff2c7;
+      }
+
+      .scene {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        opacity: 0;
+        background:
+          linear-gradient(0deg, rgba(10, 10, 10, 0.035) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(10, 10, 10, 0.025) 1px, transparent 1px),
+          #fff2c7;
+        background-size: 54px 54px, 54px 54px, auto;
+      }
+
+      #scene-1 {
+        opacity: 1;
+        z-index: 1;
+      }
+
+      #scene-2 {
+        z-index: 2;
+        clip-path: inset(0 100% 0 0);
+      }
+
+      #scene-3 {
+        z-index: 3;
+        clip-path: inset(100% 0 0 0);
+      }
+
+      #scene-4 {
+        z-index: 4;
+        clip-path: polygon(0 0, 0 0, 0 100%, 0 100%);
+      }
+
+      #scene-5 {
+        z-index: 5;
+        clip-path: inset(0 0 100% 0);
+      }
+
+      #scene-6 {
+        z-index: 6;
+        clip-path: circle(0% at 50% 50%);
+      }
+
+      #scene-7 {
+        z-index: 7;
+        clip-path: inset(0 0 0 100%);
+        background: #0a0a0a;
+        color: #fff2c7;
+      }
+
+      .content {
+        position: relative;
+        display: flex;
+        width: 100%;
+        height: 100%;
+        padding: 86px 104px;
+        box-sizing: border-box;
+      }
+
+      .display {
+        margin: 0;
+        font-family: "Bangers", "Arial Black", Arial, Helvetica, sans-serif;
+        font-weight: 900;
+        letter-spacing: 0;
+        line-height: 0.86;
+        text-transform: uppercase;
+      }
+
+      .marker {
+        font-family: "Permanent Marker", "Arial Black", Arial, Helvetica, sans-serif;
+        letter-spacing: 0;
+      }
+
+      .mono {
+        font-family: "Space Mono", Consolas, monospace;
+      }
+
+      .paper {
+        background: #fff8df;
+        border: 7px solid #0a0a0a;
+        box-shadow: 14px 14px 0 #0a0a0a;
+      }
+
+      .torn {
+        clip-path: polygon(0 4%, 8% 0, 18% 3%, 29% 0, 41% 3%, 52% 0, 64% 4%, 75% 1%, 88% 5%, 100% 1%, 98% 21%, 100% 36%, 97% 55%, 100% 73%, 97% 100%, 82% 96%, 69% 100%, 55% 96%, 42% 100%, 28% 97%, 13% 100%, 0 96%, 3% 77%, 0 61%, 3% 42%, 0 25%);
+      }
+
+      .sticker {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 18px 26px;
+        border: 6px solid #0a0a0a;
+        background: #ffd400;
+        box-shadow: 8px 8px 0 #0a0a0a;
+        font-size: 28px;
+        font-weight: 700;
+        line-height: 1;
+        text-transform: uppercase;
+      }
+
+      .scribbles {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 20;
+      }
+
+      .scribbles path,
+      .scribbles polyline,
+      .scribbles circle {
+        fill: none;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      .draw-pink {
+        stroke: #ff4d8b;
+        stroke-width: 14;
+      }
+
+      .draw-black {
+        stroke: #0a0a0a;
+        stroke-width: 8;
+      }
+
+      .draw-green {
+        stroke: #9cff3d;
+        stroke-width: 18;
+      }
+
+      .danger-stripes {
+        position: absolute;
+        inset: auto -20px 58px -20px;
+        height: 96px;
+        transform: rotate(-2deg);
+        border-block: 7px solid #0a0a0a;
+        background: repeating-linear-gradient(135deg, #0a0a0a 0 34px, #ffd400 34px 68px);
+        z-index: 8;
+      }
+
+      .blast {
+        position: absolute;
+        width: 360px;
+        height: 360px;
+        border: 8px solid #0a0a0a;
+        clip-path: polygon(50% 0, 60% 35%, 96% 24%, 68% 50%, 96% 76%, 60% 65%, 50% 100%, 40% 65%, 4% 76%, 32% 50%, 4% 24%, 40% 35%);
+        background: #9cff3d;
+        opacity: 0.9;
+      }
+
+      .scene-1 .content {
+        align-items: center;
+        justify-content: space-between;
+        gap: 70px;
+      }
+
+      .warning-stack {
+        position: relative;
+        z-index: 10;
+        width: 980px;
+      }
+
+      .warning {
+        max-width: 950px;
+        font-size: 148px;
+        color: #0a0a0a;
+        text-shadow: 9px 9px 0 #ff4d8b, 16px 16px 0 #0a0a0a;
+      }
+
+      .warning-note {
+        width: max-content;
+        margin-top: 34px;
+        transform: rotate(-3deg);
+        background: #9cff3d;
+      }
+
+      .markdown-sheet {
+        position: relative;
+        z-index: 9;
+        width: 660px;
+        height: 720px;
+        padding: 54px 46px;
+        transform: rotate(4deg);
+      }
+
+      .file-label {
+        position: absolute;
+        left: -34px;
+        top: -34px;
+        transform: rotate(-8deg);
+        background: #fff8df;
+        color: #0a0a0a;
+      }
+
+      .md-line {
+        height: 32px;
+        margin-bottom: 24px;
+        background: #0a0a0a;
+      }
+
+      .md-line.short {
+        width: 46%;
+      }
+
+      .md-line.mid {
+        width: 72%;
+      }
+
+      .md-line.long {
+        width: 92%;
+      }
+
+      .agent-scratch {
+        position: absolute;
+        right: 44px;
+        top: 200px;
+        width: 360px;
+        padding: 22px 26px;
+        transform: rotate(-9deg);
+        background: #ff4d8b;
+        color: #0a0a0a;
+        border: 6px solid #0a0a0a;
+        box-shadow: 9px 9px 0 #0a0a0a;
+        font-size: 34px;
+        line-height: 1;
+      }
+
+      .blast.one {
+        left: 650px;
+        top: 92px;
+        transform: rotate(12deg);
+      }
+
+      .scene-2 .content,
+      .scene-4 .content {
+        align-items: center;
+        justify-content: center;
+      }
+
+      .editor {
+        position: relative;
+        width: 1420px;
+        height: 760px;
+        padding: 34px;
+        transform: rotate(-1.5deg);
+        background: #fff8df;
+      }
+
+      .toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-bottom: 26px;
+        border-bottom: 7px solid #0a0a0a;
+      }
+
+      .traffic {
+        display: flex;
+        gap: 14px;
+      }
+
+      .dot {
+        width: 32px;
+        height: 32px;
+        border: 5px solid #0a0a0a;
+        border-radius: 50%;
+        background: #ff4d8b;
+      }
+
+      .dot:nth-child(2) {
+        background: #ffd400;
+      }
+
+      .dot:nth-child(3) {
+        background: #9cff3d;
+      }
+
+      .toolbar-title {
+        font-size: 30px;
+        font-weight: 700;
+      }
+
+      .editor-body {
+        display: grid;
+        grid-template-columns: 250px 1fr 300px;
+        gap: 28px;
+        height: 612px;
+        padding-top: 28px;
+      }
+
+      .rail,
+      .source-pane,
+      .review-pane {
+        border: 5px solid #0a0a0a;
+        background: #fff2c7;
+        padding: 24px;
+      }
+
+      .rail-row {
+        margin-bottom: 18px;
+        padding: 12px;
+        border: 4px solid #0a0a0a;
+        background: #fff8df;
+        font-size: 18px;
+        font-weight: 700;
+      }
+
+      .rail-row.hot {
+        background: #ff4d8b;
+      }
+
+      .source-line {
+        display: flex;
+        align-items: center;
+        height: 39px;
+        border-bottom: 3px dashed rgba(10, 10, 10, 0.24);
+        font-size: 24px;
+        font-weight: 700;
+      }
+
+      .source-line .num {
+        width: 54px;
+        color: rgba(10, 10, 10, 0.45);
+      }
+
+      .dirty-badge {
+        position: absolute;
+        right: 84px;
+        top: 122px;
+        transform: rotate(7deg);
+        background: #ff4d8b;
+      }
+
+      .scene-line {
+        position: absolute;
+        left: 112px;
+        bottom: 96px;
+        max-width: 1560px;
+        font-size: 92px;
+        z-index: 12;
+      }
+
+      .scene-line.small {
+        font-size: 72px;
+      }
+
+      .patch-world {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        padding: 86px 96px;
+      }
+
+      .patch-title {
+        position: relative;
+        z-index: 10;
+        width: 1000px;
+        font-size: 126px;
+        transform: rotate(-2deg);
+      }
+
+      .patch-strip {
+        position: absolute;
+        left: 166px;
+        top: 478px;
+        width: 1510px;
+        min-height: 260px;
+        padding: 34px 46px;
+        transform: rotate(-4deg);
+        background: #ff4d8b;
+        border: 8px solid #0a0a0a;
+        box-shadow: 15px 15px 0 #0a0a0a;
+        z-index: 8;
+      }
+
+      .patch-strip h2 {
+        position: relative;
+        z-index: 3;
+        display: block;
+        margin: 0 0 42px;
+        font-size: 54px;
+      }
+
+      .diff-row {
+        display: inline-flex;
+        position: relative;
+        z-index: 2;
+        margin-right: 20px;
+        margin-bottom: 14px;
+        padding: 14px 20px;
+        border: 5px solid #0a0a0a;
+        background: #fff8df;
+        font-size: 30px;
+        font-weight: 700;
+      }
+
+      .diff-row.plus {
+        background: #9cff3d;
+      }
+
+      .diff-row.minus {
+        background: #ffd400;
+        text-decoration: line-through;
+      }
+
+      .robot-note {
+        position: absolute;
+        right: 130px;
+        top: 114px;
+        width: 430px;
+        padding: 26px;
+        transform: rotate(9deg);
+        background: #123c3c;
+        color: #fff8df;
+        border: 7px solid #0a0a0a;
+        box-shadow: 12px 12px 0 #0a0a0a;
+        font-size: 46px;
+        line-height: 1.02;
+        z-index: 11;
+      }
+
+      .review-card {
+        position: relative;
+        width: 1320px;
+        min-height: 690px;
+        padding: 46px;
+        background: #fff8df;
+        transform: rotate(1.2deg);
+      }
+
+      .review-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 30px;
+        margin-bottom: 34px;
+      }
+
+      .review-title {
+        font-size: 118px;
+      }
+
+      .conflict {
+        padding: 18px 24px;
+        transform: rotate(5deg);
+        background: #ff4d8b;
+        color: #0a0a0a;
+        border: 6px solid #0a0a0a;
+        font-size: 34px;
+        font-weight: 700;
+      }
+
+      .hunk {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 26px;
+      }
+
+      .hunk-box {
+        min-height: 250px;
+        padding: 26px;
+        border: 6px solid #0a0a0a;
+        background: #fff2c7;
+        font-size: 27px;
+        font-weight: 700;
+        line-height: 1.25;
+      }
+
+      .hunk-box.agent {
+        background: #ffd400;
+      }
+
+      .buttons {
+        display: flex;
+        gap: 28px;
+        margin-top: 34px;
+      }
+
+      .button {
+        flex: 1;
+        padding: 26px;
+        border: 7px solid #0a0a0a;
+        box-shadow: 9px 9px 0 #0a0a0a;
+        text-align: center;
+        font-size: 54px;
+      }
+
+      .reject {
+        background: #ff4d8b;
+      }
+
+      .accept {
+        background: #9cff3d;
+      }
+
+      .checkpoint-world {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        padding: 96px 104px;
+      }
+
+      .tape {
+        position: absolute;
+        left: 20px;
+        top: 436px;
+        width: 1840px;
+        padding: 40px 58px;
+        transform: rotate(-8deg);
+        border-block: 9px solid #0a0a0a;
+        background: #9cff3d;
+        color: #0a0a0a;
+        box-shadow: 0 18px 0 #0a0a0a;
+        font-size: 72px;
+        z-index: 8;
+      }
+
+      .stamp-row {
+        position: absolute;
+        left: 150px;
+        bottom: 190px;
+        z-index: 10;
+        display: flex;
+        gap: 34px;
+      }
+
+      .stamp {
+        width: 390px;
+        padding: 24px 26px;
+        transform: rotate(-4deg);
+        border: 8px solid #0a0a0a;
+        background: #fff8df;
+        box-shadow: 10px 10px 0 #0a0a0a;
+        font-size: 34px;
+        line-height: 1;
+      }
+
+      .stamp:nth-child(2) {
+        transform: rotate(3deg);
+        background: #ff4d8b;
+      }
+
+      .stamp:nth-child(3) {
+        transform: rotate(-1deg);
+        background: #9cff3d;
+        color: #0a0a0a;
+      }
+
+      .final-world {
+        position: relative;
+        z-index: 10;
+        display: grid;
+        grid-template-columns: 300px 1fr;
+        align-items: center;
+        gap: 84px;
+        width: 100%;
+        height: 100%;
+        padding: 112px 132px;
+      }
+
+      .scene-6 .scribbles {
+        z-index: 2;
+        opacity: 0.62;
+      }
+
+      .app-icon {
+        width: 252px;
+        height: 252px;
+        border-radius: 48px;
+        border: 8px solid #0a0a0a;
+        box-shadow: 18px 18px 0 #0a0a0a;
+        transform: rotate(-4deg);
+      }
+
+      .final-title {
+        max-width: 1090px;
+        font-size: 126px;
+        line-height: 0.9;
+        text-shadow: 7px 7px 0 #9cff3d, 13px 13px 0 #0a0a0a;
+      }
+
+      .final-sub {
+        width: fit-content;
+        max-width: 780px;
+        margin-top: 34px;
+        transform: rotate(2deg);
+        background: #ff4d8b;
+        font-size: 34px;
+        line-height: 1.02;
+      }
+
+      .tag-world {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        padding: 100px;
+        text-align: center;
+      }
+
+      .tag-world::before {
+        content: "";
+        position: absolute;
+        left: 130px;
+        top: 118px;
+        width: 250px;
+        height: 170px;
+        transform: rotate(-8deg);
+        border: 7px solid #fff2c7;
+        background: #ff4d8b;
+        box-shadow: 12px 12px 0 #fff2c7;
+        clip-path: polygon(0 8%, 12% 0, 27% 7%, 43% 0, 58% 9%, 73% 2%, 100% 10%, 95% 95%, 72% 100%, 55% 92%, 34% 100%, 18% 93%, 0 100%);
+        opacity: 0.95;
+      }
+
+      .tag-title {
+        color: #ff4d8b;
+        font-size: 126px;
+        transform: rotate(-2deg);
+      }
+
+      .tag-sub {
+        margin-top: 34px;
+        color: #fff2c7;
+        font-size: 48px;
+      }
+
+      .flash {
+        position: absolute;
+        inset: 0;
+        z-index: 90;
+        pointer-events: none;
+        opacity: 0;
+        background: #fff8df;
+      }
+
+      .inkout {
+        position: absolute;
+        inset: 0;
+        z-index: 91;
+        pointer-events: none;
+        opacity: 0;
+        background: #0a0a0a;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="24" data-width="1920" data-height="1080">
+      <section id="scene-1" class="scene scene-1">
+        <div class="blast one" data-layout-ignore></div>
+        <div class="danger-stripes" data-layout-ignore></div>
+        <div class="content">
+          <div class="warning-stack">
+            <h1 class="display warning">Your agent changed your Markdown.</h1>
+            <div class="sticker marker warning-note">review every change before it lands</div>
+          </div>
+          <div class="paper torn markdown-sheet">
+            <div class="sticker file-label">draft.md</div>
+            <div class="md-line long"></div>
+            <div class="md-line mid"></div>
+            <div class="md-line short"></div>
+            <div class="md-line long"></div>
+            <div class="md-line mid"></div>
+            <div class="md-line short"></div>
+            <div class="agent-scratch marker">external edit detected</div>
+          </div>
+        </div>
+        <svg class="scribbles" viewBox="0 0 1920 1080" aria-hidden="true" data-layout-ignore>
+          <path class="draw-pink scribble" d="M1180 196 C1288 254 1356 236 1458 314 C1534 372 1626 358 1718 434" />
+          <path class="draw-black scribble" d="M1218 708 C1324 620 1444 692 1556 590 C1640 514 1736 548 1830 466" />
+          <polyline class="draw-pink scribble" points="984,162 1038,114 1056,192 1122,146" />
+        </svg>
+      </section>
+
+      <section id="scene-2" class="scene scene-2">
+        <div class="content">
+          <div class="editor paper">
+            <div class="toolbar">
+              <div class="traffic">
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+              </div>
+              <div class="toolbar-title">Graft / SampleVault / welcome.md</div>
+              <div class="sticker">changed on disk</div>
+            </div>
+            <div class="editor-body">
+              <aside class="rail">
+                <div class="rail-row">welcome.md</div>
+                <div class="rail-row hot">brief.md +2</div>
+                <div class="rail-row">assets/</div>
+                <div class="rail-row">.graft/</div>
+              </aside>
+              <main class="source-pane">
+                <div class="source-line"><span class="num">01</span># Launch notes</div>
+                <div class="source-line"><span class="num">02</span>Human draft stays canonical.</div>
+                <div class="source-line"><span class="num">03</span>- plain markdown</div>
+                <div class="source-line"><span class="num">04</span>- external agents</div>
+                <div class="source-line"><span class="num">05</span>- review before replace</div>
+                <div class="source-line"><span class="num">06</span>Checkpoint before broad edits.</div>
+              </main>
+              <aside class="review-pane">
+                <div class="rail-row hot">agent edit waiting</div>
+                <div class="rail-row">1 conflict</div>
+                <div class="rail-row">checkpoint ready</div>
+              </aside>
+            </div>
+            <div class="sticker marker dirty-badge">local files. no account required.</div>
+          </div>
+        </div>
+        <h2 class="display scene-line">Plain Markdown. Real files. Full control.</h2>
+        <svg class="scribbles" viewBox="0 0 1920 1080" aria-hidden="true" data-layout-ignore>
+          <circle class="draw-pink scribble" cx="1420" cy="198" r="92" />
+          <path class="draw-black scribble" d="M132 864 C408 764 656 890 932 782 C1180 684 1382 770 1764 622" />
+        </svg>
+      </section>
+
+      <section id="scene-3" class="scene scene-3">
+        <div class="patch-world" data-layout-allow-overflow>
+          <h2 class="display patch-title">Agents can edit. You decide.</h2>
+          <div class="robot-note marker">edits wait for review</div>
+          <div class="patch-strip">
+            <h2 class="display">pending review packet</h2>
+            <span class="diff-row plus">+ tighter intro</span>
+            <span class="diff-row minus">- vague promise</span>
+            <span class="diff-row plus">+ image block</span>
+            <span class="diff-row plus">+ review summary</span>
+          </div>
+        </div>
+        <svg class="scribbles" viewBox="0 0 1920 1080" aria-hidden="true" data-layout-ignore>
+          <path class="draw-pink scribble" d="M86 820 C380 638 594 778 906 600 C1220 420 1402 494 1794 318" />
+          <polyline class="draw-black scribble" points="236,224 304,180 286,260 362,214 342,294" />
+        </svg>
+      </section>
+
+      <section id="scene-4" class="scene scene-4">
+        <div class="content">
+          <div class="review-card paper">
+            <div class="review-head">
+              <h2 class="display review-title">Review packet</h2>
+              <div class="conflict marker">conflict detected</div>
+            </div>
+            <div class="hunk">
+              <div class="hunk-box">
+                <strong>current draft</strong>
+                <p>Graft keeps the human text visible while agent changes wait for review.</p>
+              </div>
+              <div class="hunk-box agent">
+                <strong>agent proposal</strong>
+                <p>External edits become reviewable hunks.</p>
+              </div>
+            </div>
+            <div class="buttons">
+              <div class="button display reject">Reject</div>
+              <div class="button display accept">Accept</div>
+            </div>
+          </div>
+        </div>
+        <h2 class="display scene-line small">Graft makes the change visible.</h2>
+        <svg class="scribbles" viewBox="0 0 1920 1080" aria-hidden="true" data-layout-ignore>
+          <circle class="draw-green scribble" cx="1284" cy="776" r="118" />
+          <path class="draw-black scribble" d="M1204 780 L1262 842 L1398 700" />
+        </svg>
+      </section>
+
+      <section id="scene-5" class="scene scene-5">
+        <div class="checkpoint-world">
+          <h2 class="display patch-title">Nothing lands unseen.</h2>
+          <div class="tape display" data-layout-allow-overflow>Checkpoint before applying changes.</div>
+          <div class="stamp-row">
+            <div class="stamp marker">before agent</div>
+            <div class="stamp marker">review packet</div>
+            <div class="stamp marker">accepted change</div>
+          </div>
+        </div>
+        <svg class="scribbles" viewBox="0 0 1920 1080" aria-hidden="true" data-layout-ignore>
+          <path class="draw-pink scribble" d="M164 258 C356 182 504 300 726 226 C908 166 1030 208 1202 144" />
+          <path class="draw-black scribble" d="M1324 826 C1452 736 1598 804 1794 674" />
+        </svg>
+      </section>
+
+      <section id="scene-6" class="scene scene-6">
+        <div class="final-world">
+          <img class="app-icon" src="assets/brand/graft-app-icon.png" alt="Graft app icon" />
+          <div>
+            <h2 class="display final-title">Write with agents. Keep the draft.</h2>
+            <div class="sticker marker final-sub">local markdown. reviewable agent edits.</div>
+          </div>
+        </div>
+        <svg class="scribbles" viewBox="0 0 1920 1080" aria-hidden="true" data-layout-ignore>
+          <path class="draw-green scribble" d="M128 876 C376 732 600 822 842 662 C1108 488 1312 604 1644 392" />
+          <path class="draw-pink scribble" d="M120 190 C366 292 554 178 776 286 C1020 404 1216 278 1546 446" />
+        </svg>
+      </section>
+
+      <section id="scene-7" class="scene scene-7">
+        <div class="tag-world">
+          <h2 class="marker tag-title">graft for macOS</h2>
+          <p class="mono tag-sub">plain files. reviewable agent edits.</p>
+        </div>
+      </section>
+
+      <audio id="music-bed" data-start="0" data-duration="24" data-track-index="10" data-volume="0.38" src="assets/music/happy-beats-business-moves-vol-10-by-ende-dot-app.mp3"></audio>
+      <audio id="sfx-violation" data-start="0.22" data-duration="1" data-track-index="11" data-volume="0.78" src="assets/sfx/impact/impactPunch_heavy_000.ogg"></audio>
+      <audio id="sfx-glitch-a" data-start="1.3" data-duration="1" data-track-index="12" data-volume="0.55" src="assets/sfx/interface/glitch_002.ogg"></audio>
+      <audio id="sfx-scene2" data-start="3.05" data-duration="1" data-track-index="13" data-volume="0.68" src="assets/sfx/casino/card-slide-3.ogg"></audio>
+      <audio id="sfx-dirty" data-start="4.64" data-duration="1" data-track-index="14" data-volume="0.55" src="assets/sfx/interface/click_001.ogg"></audio>
+      <audio id="sfx-patch" data-start="6.55" data-duration="1" data-track-index="15" data-volume="0.82" src="assets/sfx/casino/card-shove-1.ogg"></audio>
+      <audio id="sfx-glitch-b" data-start="7.78" data-duration="1" data-track-index="16" data-volume="0.58" src="assets/sfx/interface/glitch_004.ogg"></audio>
+      <audio id="sfx-review" data-start="10.24" data-duration="1" data-track-index="17" data-volume="0.74" src="assets/sfx/impact/impactMetal_heavy_000.ogg"></audio>
+      <audio id="sfx-reject" data-start="12.45" data-duration="1" data-track-index="18" data-volume="0.5" src="assets/sfx/interface/error_005.ogg"></audio>
+      <audio id="sfx-accept" data-start="12.92" data-duration="1" data-track-index="19" data-volume="0.55" src="assets/sfx/interface/switch_004.ogg"></audio>
+      <audio id="sfx-checkpoint" data-start="14.18" data-duration="1" data-track-index="20" data-volume="0.78" src="assets/sfx/impact/impactPunch_heavy_001.ogg"></audio>
+      <audio id="sfx-stamps" data-start="16.0" data-duration="1" data-track-index="21" data-volume="0.62" src="assets/sfx/casino/chips-collide-1.ogg"></audio>
+      <audio id="sfx-logo" data-start="18.55" data-duration="1.4" data-track-index="22" data-volume="0.78" src="assets/sfx/impact/impactBell_heavy_004.ogg"></audio>
+
+      <div class="flash" data-layout-ignore></div>
+      <div class="inkout" data-layout-ignore></div>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+
+      document.querySelectorAll(".scribble").forEach((path) => {
+        const length = path.getTotalLength ? path.getTotalLength() : 900;
+        path.style.strokeDasharray = `${length}`;
+        path.style.strokeDashoffset = `${length}`;
+      });
+
+      const tl = gsap.timeline({ paused: true });
+
+      tl.from("#scene-1 .warning", { x: -120, y: -34, rotation: -4, opacity: 0, duration: 0.42, ease: "back.out(1.8)" }, 0.18)
+        .from("#scene-1 .markdown-sheet", { x: 180, y: 50, rotation: 12, scale: 0.82, opacity: 0, duration: 0.58, ease: "power4.out" }, 0.34)
+        .from("#scene-1 .warning-note", { y: 70, rotation: 7, opacity: 0, duration: 0.38, ease: "bounce.out" }, 0.72)
+        .from("#scene-1 .agent-scratch", { scale: 0.4, rotation: -24, opacity: 0, duration: 0.28, ease: "back.out(3)" }, 1.0)
+        .to("#scene-1 .scribble", { strokeDashoffset: 0, duration: 0.52, stagger: 0.12, ease: "power2.inOut" }, 1.12)
+        .to("#scene-1 .warning", { x: 8, y: -6, rotation: 1.5, duration: 0.08, repeat: 7, yoyo: true, ease: "steps(1)" }, 1.42)
+        .to(".flash", { opacity: 0.82, duration: 0.08, ease: "power4.out" }, 2.86)
+        .to("#scene-2", { opacity: 1, clipPath: "inset(0% 0% 0% 0%)", duration: 0.42, ease: "power4.inOut" }, 2.98)
+        .to(".flash", { opacity: 0, duration: 0.14 }, 3.08)
+        .set("#scene-1", { opacity: 0 }, 3.42);
+
+      tl.from("#scene-2 .editor", { y: 120, rotation: -7, scale: 0.86, opacity: 0, duration: 0.54, ease: "back.out(1.6)" }, 3.06)
+        .from("#scene-2 .rail-row", { x: -44, opacity: 0, duration: 0.22, stagger: 0.09, ease: "power3.out" }, 3.48)
+        .from("#scene-2 .source-line", { x: 50, opacity: 0, duration: 0.24, stagger: 0.055, ease: "power3.out" }, 3.62)
+        .from("#scene-2 .review-pane .rail-row", { y: 38, opacity: 0, duration: 0.24, stagger: 0.09, ease: "power3.out" }, 3.88)
+        .from("#scene-2 .dirty-badge", { scale: 0.4, rotation: 24, opacity: 0, duration: 0.28, ease: "back.out(3)" }, 4.56)
+        .from("#scene-2 .scene-line", { y: 90, opacity: 0, duration: 0.44, ease: "expo.out" }, 4.92)
+        .to("#scene-2 .scribble", { strokeDashoffset: 0, duration: 0.5, stagger: 0.1, ease: "power2.inOut" }, 5.2)
+        .to(".flash", { opacity: 0.88, duration: 0.08 }, 6.28)
+        .to("#scene-3", { opacity: 1, clipPath: "inset(0% 0% 0% 0%)", duration: 0.36, ease: "power4.inOut" }, 6.38)
+        .to(".flash", { opacity: 0, duration: 0.12 }, 6.48)
+        .set("#scene-2", { opacity: 0 }, 6.58);
+
+      tl.from("#scene-3 .patch-title", { x: -110, y: 60, rotation: -8, opacity: 0, duration: 0.36, ease: "back.out(1.8)" }, 6.42)
+        .from("#scene-3 .robot-note", { x: 120, y: -80, rotation: 20, opacity: 0, duration: 0.28, ease: "power4.out" }, 6.54)
+        .from("#scene-3 .patch-strip", { x: 860, rotation: -14, opacity: 0, duration: 0.36, ease: "power4.out" }, 6.48)
+        .from("#scene-3 .diff-row", { y: 44, rotation: -6, opacity: 0, duration: 0.18, stagger: 0.06, ease: "back.out(2.4)" }, 6.58)
+        .to("#scene-3 .scribble", { strokeDashoffset: 0, duration: 0.5, stagger: 0.1, ease: "power2.inOut" }, 7.18)
+        .to("#scene-3 .patch-strip", { x: 8, y: -6, rotation: -3, duration: 0.07, repeat: 6, yoyo: true, ease: "steps(1)" }, 8.54)
+        .to(".flash", { opacity: 0.92, duration: 0.08 }, 9.92)
+        .to("#scene-4", { opacity: 1, clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%)", duration: 0.42, ease: "power4.inOut" }, 10.02)
+        .to(".flash", { opacity: 0, duration: 0.12 }, 10.14)
+        .set("#scene-3", { opacity: 0 }, 10.22);
+
+      tl.from("#scene-4 .review-card", { scale: 0.68, rotation: -7, opacity: 0, duration: 0.48, ease: "back.out(1.8)" }, 10.34)
+        .from("#scene-4 .review-title", { y: 52, opacity: 0, duration: 0.32, ease: "power4.out" }, 10.54)
+        .from("#scene-4 .conflict", { scale: 0.35, rotation: 20, opacity: 0, duration: 0.28, ease: "back.out(3)" }, 10.78)
+        .from("#scene-4 .hunk-box", { y: 62, rotation: -2, opacity: 0, duration: 0.34, stagger: 0.12, ease: "power3.out" }, 11.0)
+        .from("#scene-4 .button", { y: 56, scale: 0.86, opacity: 0, duration: 0.24, stagger: 0.16, ease: "back.out(2)" }, 11.48)
+        .from("#scene-4 .scene-line", { y: 74, opacity: 0, duration: 0.36, ease: "expo.out" }, 11.92)
+        .to("#scene-4 .scribble", { strokeDashoffset: 0, duration: 0.46, stagger: 0.1, ease: "power2.inOut" }, 12.18)
+        .to("#scene-4 .reject", { x: -12, rotation: -3, duration: 0.08, repeat: 3, yoyo: true, ease: "steps(1)" }, 12.44)
+        .to("#scene-4 .accept", { scale: 1.08, duration: 0.12, yoyo: true, repeat: 1, ease: "power2.out" }, 12.9)
+        .to(".flash", { opacity: 0.9, duration: 0.08 }, 13.82)
+        .to("#scene-5", { opacity: 1, clipPath: "inset(0% 0% 0% 0%)", duration: 0.38, ease: "power4.inOut" }, 13.92)
+        .to(".flash", { opacity: 0, duration: 0.14 }, 14.02)
+        .set("#scene-4", { opacity: 0 }, 14.12);
+
+      tl.from("#scene-5 .patch-title", { x: -100, y: -40, opacity: 0, rotation: -8, duration: 0.36, ease: "back.out(1.7)" }, 14.26)
+        .from("#scene-5 .tape", { x: -2100, rotation: -15, opacity: 0, duration: 0.48, ease: "power4.out" }, 14.64)
+        .from("#scene-5 .stamp", { y: 110, rotation: -14, opacity: 0, duration: 0.28, stagger: 0.24, ease: "bounce.out" }, 15.66)
+        .to("#scene-5 .scribble", { strokeDashoffset: 0, duration: 0.48, stagger: 0.1, ease: "power2.inOut" }, 16.34)
+        .to("#scene-5 .tape", { x: 10, y: -5, rotation: -7, duration: 0.07, repeat: 7, yoyo: true, ease: "steps(1)" }, 16.76)
+        .to(".flash", { opacity: 0.94, duration: 0.08 }, 18.22)
+        .to("#scene-6", { opacity: 1, clipPath: "circle(145% at 50% 50%)", duration: 0.5, ease: "power4.inOut" }, 18.32)
+        .to(".flash", { opacity: 0, duration: 0.16 }, 18.46)
+        .set("#scene-5", { opacity: 0 }, 18.56);
+
+      tl.from("#scene-6 .app-icon", { scale: 0.2, rotation: -32, opacity: 0, duration: 0.46, ease: "back.out(2.2)" }, 18.64)
+        .from("#scene-6 .final-title", { x: 100, y: 52, rotation: 3, opacity: 0, duration: 0.58, ease: "expo.out" }, 18.9)
+        .from("#scene-6 .final-sub", { y: 56, rotation: -8, opacity: 0, duration: 0.34, ease: "back.out(2)" }, 19.42)
+        .to("#scene-6 .scribble", { strokeDashoffset: 0, duration: 0.62, stagger: 0.14, ease: "power2.inOut" }, 19.84)
+        .to("#scene-6 .final-title", { x: 6, y: -4, rotation: 0.8, duration: 0.07, repeat: 5, yoyo: true, ease: "steps(1)" }, 20.26)
+        .to("#scene-7", { opacity: 1, clipPath: "inset(0% 0% 0% 0%)", duration: 0.32, ease: "power4.inOut" }, 21.5)
+        .set("#scene-6", { opacity: 0 }, 21.66);
+
+      tl.from("#scene-7 .tag-title", { y: 70, rotation: 8, opacity: 0, duration: 0.46, ease: "back.out(1.8)" }, 21.82)
+        .from("#scene-7 .tag-sub", { y: 30, opacity: 0, duration: 0.32, ease: "power3.out" }, 22.28)
+        .to(".inkout", { opacity: 1, duration: 0.42, ease: "power2.in" }, 23.52);
+
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

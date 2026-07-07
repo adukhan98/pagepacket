@@ -1,0 +1,155 @@
+- generic [active] [ref=e1]:
+  - navigation "Primary navigation" [ref=e2]:
+    - link "pagepacket home" [ref=e3] [cursor=pointer]:
+      - /url: "#top"
+      - img [ref=e5]
+      - generic [ref=e9]: pagepacket
+    - generic [ref=e10]:
+      - generic [ref=e11]: open
+      - generic [ref=e12]: review packet
+      - generic [ref=e13]: ⌘K
+    - generic [ref=e14]:
+      - link "Tour" [ref=e15] [cursor=pointer]:
+        - /url: "#tour"
+      - link "Review" [ref=e16] [cursor=pointer]:
+        - /url: "#review"
+      - link "CLI" [ref=e17] [cursor=pointer]:
+        - /url: "#cli"
+    - link "Join waitlist" [ref=e18] [cursor=pointer]:
+      - /url: "#waitlist"
+  - main [ref=e19]:
+    - region "Your writing, before agents touch it." [ref=e20]:
+      - generic [ref=e21]:
+        - paragraph [ref=e22]: Local Markdown. Agent edits. Human call.
+        - heading "Your writing, before agents touch it." [level=1] [ref=e23]
+        - paragraph [ref=e24]: pagepacket is a native Mac editor for people who write in Markdown and use coding agents nearby. Join the waitlist to get early access to review packets, local history, and conflict-safe agent edits.
+        - generic [ref=e25]:
+          - generic [ref=e26]:
+            - generic [ref=e27]:
+              - generic [ref=e28]: Email address
+              - textbox "Email address" [ref=e29]:
+                - /placeholder: you@example.com
+            - button "Join waitlist" [ref=e30] [cursor=pointer]
+          - paragraph [ref=e31]: Early macOS build. No newsletter churn.
+          - paragraph [ref=e32]
+        - generic "Product facts" [ref=e33]:
+          - generic [ref=e34]:
+            - term [ref=e35]: Format
+            - definition [ref=e36]: .md files
+          - generic [ref=e37]:
+            - term [ref=e38]: Sidecars
+            - definition [ref=e39]: .pagepacket/
+          - generic [ref=e40]:
+            - term [ref=e41]: Access
+            - definition [ref=e42]: waitlist first
+      - generic "Review packet preview" [ref=e43]:
+        - generic [ref=e44]:
+          - generic [ref=e45]: draft
+          - generic [ref=e46]: agent
+          - generic [ref=e47]: packet
+        - article [ref=e48]:
+          - generic [ref=e49]:
+            - generic [ref=e50]:
+              - paragraph [ref=e51]: review packet
+              - heading "welcome.md" [level=2] [ref=e52]
+            - generic [ref=e53]: conflict kept visible
+          - list "Example Markdown diff" [ref=e54]:
+            - listitem [ref=e55]:
+              - generic [ref=e56]: "1"
+              - code [ref=e57]: "# Welcome to the vault"
+            - listitem [ref=e58]:
+              - generic [ref=e59]: "3"
+              - code [ref=e60]: This is a place for notes, ideas, and docs.
+            - listitem [ref=e61]:
+              - generic [ref=e62]: "3"
+              - code [ref=e63]: A living vault for notes, specs, and durable knowledge.
+            - listitem [ref=e64]:
+              - generic [ref=e65]: "5"
+              - code [ref=e66]: Your line changed here. The agent changed it too.
+          - generic "Review actions" [ref=e67]:
+            - button "Accept hunk" [ref=e68] [cursor=pointer]
+            - button "Reject" [ref=e69] [cursor=pointer]
+            - button "Checkpoint first" [ref=e70] [cursor=pointer]
+        - generic [ref=e71]: plain files stay canonical
+        - generic [ref=e72]: no silent overwrite
+    - 'region "The app is built around one act: review." [ref=e73]':
+      - generic [ref=e74]:
+        - 'heading "The app is built around one act: review." [level=2] [ref=e75]'
+        - paragraph [ref=e76]: "The first screen should not promise magic. It should show the job: you write, an agent edits, pagepacket packages the difference."
+      - generic [ref=e77]:
+        - article [ref=e78]:
+          - generic [ref=e79]:
+            - generic [ref=e80]: Write
+            - heading "Your Markdown remains the source." [level=3] [ref=e81]
+            - paragraph [ref=e82]: Open a folder and edit normal .md files. Preview, split view, local images, Git, shell tools, and other editors all keep working because there is no import step.
+          - generic [ref=e83]:
+            - paragraph [ref=e84]: "# Launch notes"
+            - paragraph [ref=e85]: Keep the claim small. Show the packet. Let the user decide.
+            - paragraph [ref=e86]: "- draft is local"
+            - paragraph [ref=e87]: "- history is visible"
+        - article [ref=e88]:
+          - generic [ref=e89]:
+            - generic [ref=e90]: Detect
+            - heading "External edits become packets." [level=3] [ref=e91]
+            - paragraph [ref=e92]: When Codex, Claude Code, Cursor, or a script changes a file on disk, pagepacket captures the proposed version instead of hiding the event.
+        - article [ref=e93]:
+          - generic [ref=e94]:
+            - generic [ref=e95]: Decide
+            - heading "Accept the useful parts." [level=3] [ref=e96]
+            - paragraph [ref=e97]: Review block-level hunks, keep your own line when there is a conflict, and checkpoint before applying anything risky.
+    - region "What a packet contains." [ref=e98]:
+      - generic [ref=e99]:
+        - heading "What a packet contains." [level=2] [ref=e100]
+        - paragraph [ref=e101]: A packet is not a chat transcript and not a black-box merge. It is a local, inspectable bundle of file changes, conflicts, and checkpoints.
+      - generic "Review packet parts" [ref=e102]:
+        - article [ref=e103]:
+          - generic [ref=e104]: A
+          - heading "Block-level diff" [level=3] [ref=e105]
+          - paragraph [ref=e106]: Changed Markdown is shown as readable hunks, not a wall of raw patch text.
+        - article [ref=e107]:
+          - generic [ref=e108]: B
+          - heading "Conflict context" [level=3] [ref=e109]
+          - paragraph [ref=e110]: Your draft and the agent proposal remain visible when both touch the same range.
+        - article [ref=e111]:
+          - generic [ref=e112]: C
+          - heading "Local history" [level=3] [ref=e113]
+          - paragraph [ref=e114]: Snapshots live in the workspace sidecar, so rollback does not require a cloud account.
+        - article [ref=e115]:
+          - generic [ref=e116]: D
+          - heading "Portable files" [level=3] [ref=e117]
+          - paragraph [ref=e118]: The Markdown file is still a Markdown file. pagepacket adds review context around it.
+    - region "Scriptable when agents need a handle." [ref=e119]:
+      - generic [ref=e120]:
+        - heading "Scriptable when agents need a handle." [level=2] [ref=e121]
+        - paragraph [ref=e122]: "`pagepacket-cli` gives local tools a narrow way to inspect status, save checkpoints, and open a review packet without pretending to own the editor."
+      - generic "pagepacket CLI example" [ref=e123]:
+        - code [ref=e124]: "$ pagepacket-cli status SampleVault workspace: SampleVault markdown: 12 files agent edits: pending conflicts: review required $ pagepacket-cli snapshot SampleVault welcome.md \\ --message \"Before agent edits\" saved: .pagepacket/history/welcome.md"
+    - region "Get the early Mac build." [ref=e125]:
+      - generic [ref=e126]:
+        - heading "Get the early Mac build." [level=2] [ref=e127]
+        - paragraph [ref=e128]: Leave an email and I’ll send the first pagepacket builds to writers and agent-heavy developers who want plain files with a real review step.
+      - generic [ref=e129]:
+        - generic [ref=e130]:
+          - generic [ref=e131]:
+            - generic [ref=e132]: Email address
+            - textbox "Email address" [ref=e133]:
+              - /placeholder: you@example.com
+          - button "Request access" [ref=e134] [cursor=pointer]
+        - paragraph [ref=e135]: Built for macOS. Plain Markdown stays portable.
+        - paragraph [ref=e136]
+  - contentinfo [ref=e137]:
+    - paragraph [ref=e138]: Plain files are the product boundary.
+    - generic [ref=e139]:
+      - link "pagepacket home" [ref=e140] [cursor=pointer]:
+        - /url: "#top"
+        - img [ref=e142]
+        - generic [ref=e146]: pagepacket
+      - navigation "Footer links" [ref=e147]:
+        - link "Tour" [ref=e148] [cursor=pointer]:
+          - /url: "#tour"
+        - link "Review" [ref=e149] [cursor=pointer]:
+          - /url: "#review"
+        - link "CLI" [ref=e150] [cursor=pointer]:
+          - /url: "#cli"
+        - link "Waitlist" [ref=e151] [cursor=pointer]:
+          - /url: "#waitlist"

@@ -7,20 +7,38 @@ let package = Package(
         .macOS(.v14)
     ],
     products: [
-        .executable(name: "Pagepacket", targets: ["Pagepacket"]),
-        .executable(name: "pagepacket-cli", targets: ["PagepacketCLI"])
+        .library(name: "GraftCore", targets: ["GraftCore"]),
+        .executable(name: "Pagepacket", targets: ["Graft"]),
+        .executable(name: "pagepacket-cli", targets: ["GraftCLI"]),
+        .executable(name: "pagepacket-behavior-harness", targets: ["GraftBehaviorHarness"])
     ],
     targets: [
+        .target(
+            name: "GraftCore",
+            path: "Sources/GraftCore"
+        ),
         .executableTarget(
-            name: "Pagepacket",
-            path: "Sources/Pagepacket",
+            name: "Graft",
+            dependencies: ["GraftCore"],
+            path: "Sources/Graft",
             resources: [
                 .copy("Resources")
             ]
         ),
         .executableTarget(
-            name: "PagepacketCLI",
-            path: "Sources/PagepacketCLI"
+            name: "GraftCLI",
+            dependencies: ["GraftCore"],
+            path: "Sources/GraftCLI"
+        ),
+        .executableTarget(
+            name: "GraftBehaviorHarness",
+            dependencies: ["GraftCore"],
+            path: "Sources/GraftBehaviorHarness"
+        ),
+        .testTarget(
+            name: "GraftCoreTests",
+            dependencies: ["GraftCore"],
+            path: "Tests/GraftCoreTests"
         )
     ]
 )

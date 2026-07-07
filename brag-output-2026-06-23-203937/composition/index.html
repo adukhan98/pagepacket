@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Graft Source Bloom</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      @font-face {
+        font-family: "Bricolage Grotesque";
+        font-style: normal;
+        font-weight: 800;
+        font-display: swap;
+        src: url("https://fonts.gstatic.com/s/bricolagegrotesque/v9/3y9U6as8bTXq_nANBjzKo3IeZx8z6up5BeSl5jBNz_19PpbpMXuECpwUxJBOm_OJWiaaD30YfKfjZZoLvZvlyM0.ttf") format("truetype");
+      }
+
+      @font-face {
+        font-family: "IBM Plex Sans";
+        font-style: normal;
+        font-weight: 500;
+        font-display: swap;
+        src: url("https://fonts.gstatic.com/s/ibmplexsans/v23/zYXGKVElMYYaJe8bpLHnCwDKr932-G7dytD-Dmu1swZSAXcomDVmadSD2FlzAA.ttf") format("truetype");
+      }
+
+      @font-face {
+        font-family: "IBM Plex Sans";
+        font-style: normal;
+        font-weight: 600;
+        font-display: swap;
+        src: url("https://fonts.gstatic.com/s/ibmplexsans/v23/zYXGKVElMYYaJe8bpLHnCwDKr932-G7dytD-Dmu1swZSAXcomDVmadSDNF5zAA.ttf") format("truetype");
+      }
+
+      @font-face {
+        font-family: "IBM Plex Sans";
+        font-style: normal;
+        font-weight: 700;
+        font-display: swap;
+        src: url("https://fonts.gstatic.com/s/ibmplexsans/v23/zYXGKVElMYYaJe8bpLHnCwDKr932-G7dytD-Dmu1swZSAXcomDVmadSDDV5zAA.ttf") format("truetype");
+      }
+
+      @font-face {
+        font-family: "IBM Plex Mono";
+        font-style: normal;
+        font-weight: 700;
+        font-display: swap;
+        src: url("https://fonts.gstatic.com/s/ibmplexmono/v20/-F6qfjptAgt5VM-kVkqdyU8n3pQP8lc.ttf") format("truetype");
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        overflow: hidden;
+        background: #f4efdf;
+      }
+
+      body {
+        color: #08100a;
+        font-family: "IBM Plex Sans", sans-serif;
+      }
+
+      #root {
+        position: relative;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        isolation: isolate;
+        background: #f4efdf;
+      }
+
+      .scene {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        opacity: 0;
+        background: #f4efdf;
+        color: #08100a;
+      }
+
+      #scene-1 {
+        opacity: 1;
+        z-index: 1;
+      }
+
+      #scene-2 {
+        z-index: 2;
+        clip-path: inset(0 0 100% 0);
+      }
+
+      #scene-3 {
+        z-index: 3;
+        clip-path: inset(0 100% 0 0);
+      }
+
+      #scene-4 {
+        z-index: 4;
+        clip-path: circle(0% at 42% 52%);
+      }
+
+      #scene-5 {
+        z-index: 5;
+        clip-path: inset(100% 0 0 0);
+      }
+
+      .plate {
+        position: absolute;
+        inset: -8%;
+        width: 116%;
+        height: 116%;
+        object-fit: cover;
+        transform-origin: 50% 50%;
+        will-change: transform, opacity;
+      }
+
+      .grain-vignette,
+      .exposure,
+      .ink-wash,
+      .source-rain,
+      .edge-index {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+      }
+
+      .grain-vignette {
+        z-index: 2;
+        background:
+          radial-gradient(circle at 50% 44%, rgba(255, 251, 239, 0) 0 54%, rgba(8, 16, 10, 0.09) 100%),
+          linear-gradient(90deg, rgba(255, 251, 239, 0.58), rgba(255, 251, 239, 0) 24%, rgba(255, 251, 239, 0) 76%, rgba(255, 251, 239, 0.44));
+        mix-blend-mode: multiply;
+      }
+
+      .exposure {
+        z-index: 20;
+        opacity: 0;
+        background:
+          radial-gradient(circle at 54% 46%, rgba(255, 251, 239, 1) 0 18%, rgba(255, 251, 239, 0.72) 34%, rgba(255, 251, 239, 0) 66%),
+          linear-gradient(90deg, rgba(255, 251, 239, 0), rgba(255, 251, 239, 0.9), rgba(255, 251, 239, 0));
+        mix-blend-mode: screen;
+      }
+
+      .ink-wash {
+        z-index: 4;
+        opacity: 0;
+        background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), rgba(4, 140, 61, 0.22), rgba(4, 140, 61, 0) 34%);
+        mix-blend-mode: multiply;
+      }
+
+      .scene-copy {
+        position: absolute;
+        z-index: 8;
+        width: 680px;
+      }
+
+      .scene-kicker {
+        margin: 0 0 26px;
+        color: #048c3d;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 23px;
+        font-weight: 700;
+        line-height: 1.05;
+        letter-spacing: 0;
+      }
+
+      .headline {
+        margin: 0;
+        color: #08100a;
+        font-family: "Bricolage Grotesque", sans-serif;
+        font-size: 92px;
+        font-weight: 800;
+        line-height: 0.94;
+        letter-spacing: 0;
+        text-wrap: balance;
+      }
+
+      .bodyline {
+        max-width: 560px;
+        margin: 28px 0 0;
+        color: #344039;
+        font-size: 29px;
+        font-weight: 600;
+        line-height: 1.34;
+        letter-spacing: 0;
+        text-wrap: balance;
+      }
+
+      .s1-copy {
+        left: 126px;
+        top: 106px;
+      }
+
+      .s2-copy {
+        right: 118px;
+        top: 126px;
+        width: 650px;
+      }
+
+      .s3-copy {
+        left: 112px;
+        bottom: 112px;
+        width: 760px;
+      }
+
+      .s4-copy {
+        right: 120px;
+        bottom: 118px;
+        width: 680px;
+      }
+
+      .s5-copy {
+        left: 154px;
+        top: 132px;
+        width: 750px;
+      }
+
+      .source-rain {
+        z-index: 6;
+        color: rgba(8, 16, 10, 0.18);
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 32px;
+        font-weight: 700;
+        line-height: 1.4;
+        white-space: pre;
+        transform: rotate(-8deg);
+        transform-origin: center;
+      }
+
+      .source-rain.one {
+        left: 910px;
+        top: 84px;
+      }
+
+      .source-rain.two {
+        left: 166px;
+        top: 604px;
+        opacity: 0.5;
+      }
+
+      .draw-layer {
+        position: absolute;
+        inset: 0;
+        z-index: 7;
+        pointer-events: none;
+      }
+
+      .draw-path {
+        fill: none;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      .draw-path.green {
+        stroke: #048c3d;
+        stroke-width: 9;
+      }
+
+      .draw-path.ink {
+        stroke: #08100a;
+        stroke-width: 3;
+        opacity: 0.58;
+      }
+
+      .draw-path.light {
+        stroke: #fffbef;
+        stroke-width: 5;
+        opacity: 0.86;
+      }
+
+      .edge-index {
+        z-index: 8;
+      }
+
+      .index-mark {
+        position: absolute;
+        color: rgba(8, 16, 10, 0.48);
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 20px;
+        font-weight: 700;
+      }
+
+      .index-mark.left {
+        left: 42px;
+        top: 50%;
+        transform: rotate(-90deg);
+      }
+
+      .index-mark.right {
+        right: 42px;
+        top: 50%;
+        transform: rotate(90deg);
+      }
+
+      .quiet-stack {
+        position: absolute;
+        z-index: 7;
+        display: grid;
+        gap: 18px;
+        width: 420px;
+        color: #08100a;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 28px;
+        font-weight: 700;
+        line-height: 1.12;
+      }
+
+      .quiet-stack span {
+        display: block;
+        opacity: 0.72;
+      }
+
+      .quiet-stack.s2-stack {
+        left: 138px;
+        bottom: 132px;
+      }
+
+      .quiet-stack.s4-stack {
+        left: 166px;
+        top: 126px;
+      }
+
+      .final-plate {
+        opacity: 0.72;
+      }
+
+      .brand-lockup {
+        position: absolute;
+        z-index: 8;
+        left: 154px;
+        bottom: 126px;
+        width: 190px;
+        height: auto;
+        border-radius: 42px;
+      }
+
+      .coming {
+        position: absolute;
+        z-index: 8;
+        right: 146px;
+        bottom: 146px;
+        margin: 0;
+        color: #048c3d;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 28px;
+        font-weight: 700;
+        line-height: 1.1;
+      }
+
+      .final-title {
+        margin: 0;
+        color: #08100a;
+        font-family: "Bricolage Grotesque", sans-serif;
+        font-size: 88px;
+        font-weight: 800;
+        line-height: 0.98;
+        letter-spacing: 0;
+        text-wrap: balance;
+      }
+
+      .final-note {
+        max-width: 620px;
+        margin: 34px 0 0;
+        color: #344039;
+        font-size: 31px;
+        font-weight: 600;
+        line-height: 1.28;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="24" data-width="1920" data-height="1080">
+      <section id="scene-1" class="scene">
+        <img class="plate s1-plate" src="assets/source-bloom-field.svg" alt="" data-layout-ignore />
+        <div class="grain-vignette" data-layout-ignore></div>
+        <div class="source-rain one" data-layout-ignore># brief.md
+## Launch
+write where agents work
+plain source, visible trail</div>
+        <svg class="draw-layer" viewBox="0 0 1920 1080" aria-hidden="true" data-layout-ignore>
+          <path class="draw-path green draw" d="M148 838 C376 694 548 750 724 566 C908 374 1112 438 1286 270 C1412 148 1578 156 1748 96" />
+          <path class="draw-path ink draw" d="M248 920 C456 784 644 824 826 654 C1024 468 1184 536 1394 366 C1532 254 1680 266 1836 216" />
+        </svg>
+        <div class="scene-copy s1-copy">
+          <p class="scene-kicker">SOURCE 01</p>
+          <h1 class="headline">Markdown is the source.</h1>
+          <p class="bodyline">The file stays plain. The workspace starts where your agents already know how to operate.</p>
+        </div>
+        <div class="edge-index" data-layout-ignore>
+          <span class="index-mark left">GRAFT / LOCAL MARKDOWN</span>
+        </div>
+      </section>
+
+      <section id="scene-2" class="scene">
+        <img class="plate s2-plate" src="assets/source-bloom-agent-light.svg" alt="" data-layout-ignore />
+        <div class="grain-vignette" data-layout-ignore></div>
+        <svg class="draw-layer" viewBox="0 0 1920 1080" aria-hidden="true" data-layout-ignore>
+          <path class="draw-path green draw" d="M-40 742 C194 538 388 672 614 484 C830 304 998 366 1212 238 C1436 104 1632 160 2010 76" />
+          <path class="draw-path light draw" d="M96 864 C324 720 476 772 668 604 C878 420 1066 526 1292 360 C1498 208 1660 250 1974 176" />
+        </svg>
+        <div class="quiet-stack s2-stack">
+          <span>agent.patch</span>
+          <span>notes.md</span>
+          <span>spec.md</span>
+          <span>.graft/history</span>
+        </div>
+        <div class="scene-copy s2-copy">
+          <p class="scene-kicker">AGENTS 02</p>
+          <h2 class="headline">Agents work where you write.</h2>
+          <p class="bodyline">Codex, Claude Code, Cursor, and scripts can edit the same local Markdown instead of moving work into another silo.</p>
+        </div>
+      </section>
+
+      <section id="scene-3" class="scene">
+        <img class="plate s3-plate" src="assets/source-bloom-folds.svg" alt="" data-layout-ignore />
+        <div class="grain-vignette" data-layout-ignore></div>
+        <div class="source-rain two" data-layout-ignore>human draft
+agent pass
+review join
+land change</div>
+        <svg class="draw-layer" viewBox="0 0 1920 1080" aria-hidden="true" data-layout-ignore>
+          <path class="draw-path ink draw" d="M-60 700 C238 596 500 638 760 520 C1018 402 1228 474 1510 336 C1680 254 1832 238 1998 246" />
+          <path class="draw-path green draw" d="M-20 850 C266 724 536 752 790 608 C1072 450 1286 520 1552 380 C1712 296 1842 276 2002 282" />
+        </svg>
+        <div class="scene-copy s3-copy">
+          <p class="scene-kicker">JOIN 03</p>
+          <h2 class="headline">Review the join before it lands.</h2>
+          <p class="bodyline">Graft makes the handoff visible so broad edits do not become hidden trust debt.</p>
+        </div>
+      </section>
+
+      <section id="scene-4" class="scene">
+        <img class="plate s4-plate" src="assets/source-bloom-history.svg" alt="" data-layout-ignore />
+        <div class="grain-vignette" data-layout-ignore></div>
+        <svg class="draw-layer" viewBox="0 0 1920 1080" aria-hidden="true" data-layout-ignore>
+          <path class="draw-path green draw" d="M170 812 C350 720 538 760 702 662 C866 562 1032 600 1234 492 C1400 402 1574 438 1742 362" />
+          <path class="draw-path ink draw" d="M142 372 C356 452 538 402 746 488 C944 570 1112 516 1320 608 C1512 694 1684 628 1828 718" />
+        </svg>
+        <div class="quiet-stack s4-stack">
+          <span>snapshot</span>
+          <span>compare</span>
+          <span>restore</span>
+        </div>
+        <div class="scene-copy s4-copy">
+          <p class="scene-kicker">TRAIL 04</p>
+          <h2 class="headline">Snapshot. Compare. Restore.</h2>
+          <p class="bodyline">Plain files stay plain. Graft adds a local trail for the changes that matter.</p>
+        </div>
+      </section>
+
+      <section id="scene-5" class="scene">
+        <img class="plate final-plate s5-plate" src="assets/source-bloom-final.svg" alt="" data-layout-ignore />
+        <div class="ink-wash final-bloom" style="--x: 28%; --y: 74%;" data-layout-ignore></div>
+        <div class="grain-vignette" data-layout-ignore></div>
+        <img class="brand-lockup" src="assets/graft-app-icon.png" alt="Graft app icon" />
+        <div class="scene-copy s5-copy">
+          <p class="scene-kicker">COMING SOON FOR macOS</p>
+          <h2 class="final-title">The Markdown editor for you and your agents.</h2>
+          <p class="final-note">Local-first on macOS. Built for human writing and agent work in the same folder.</p>
+        </div>
+        <p class="coming">plain files, visible trail</p>
+      </section>
+
+      <audio
+        id="music-bed"
+        data-start="0"
+        data-duration="24"
+        data-track-index="10"
+        data-volume="0.25"
+        src="assets/music/happy-beats-business-moves-vol-12-by-ende-dot-app.mp3"
+      ></audio>
+      <audio id="sfx-source" data-start="1.08" data-duration="1" data-track-index="11" data-volume="0.28" src="assets/sfx/interface/drop_001.ogg"></audio>
+      <audio id="sfx-agent" data-start="5.18" data-duration="1" data-track-index="12" data-volume="0.26" src="assets/sfx/interface/switch_001.ogg"></audio>
+      <audio id="sfx-review" data-start="9.74" data-duration="1" data-track-index="13" data-volume="0.3" src="assets/sfx/impact/impactSoft_medium_001.ogg"></audio>
+      <audio id="sfx-trail" data-start="14.14" data-duration="1" data-track-index="14" data-volume="0.22" src="assets/sfx/casino/card-slide-1.ogg"></audio>
+      <audio id="sfx-logo" data-start="18.92" data-duration="1.4" data-track-index="15" data-volume="0.26" src="assets/sfx/impact/impactBell_heavy_000.ogg"></audio>
+
+      <div class="exposure" data-layout-ignore></div>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+
+      document.querySelectorAll(".draw").forEach((path) => {
+        const length = path.getTotalLength ? path.getTotalLength() : 1200;
+        path.style.strokeDasharray = `${length}`;
+        path.style.strokeDashoffset = `${length}`;
+      });
+
+      const tl = gsap.timeline({ paused: true });
+
+      tl.from("#scene-1 .s1-plate", { scale: 1.16, x: -80, y: 32, duration: 4.7, ease: "sine.inOut" }, 0)
+        .from("#scene-1 .scene-kicker", { y: 18, opacity: 0, duration: 0.38, ease: "power3.out" }, 0.26)
+        .from("#scene-1 .headline", { y: 44, opacity: 0, duration: 0.72, ease: "expo.out" }, 0.42)
+        .from("#scene-1 .bodyline", { y: 22, opacity: 0, duration: 0.5, ease: "power2.out" }, 0.72)
+        .from("#scene-1 .source-rain", { x: 40, y: -26, opacity: 0, duration: 0.75, ease: "sine.out" }, 0.68)
+        .to("#scene-1 .draw", { strokeDashoffset: 0, duration: 1.55, stagger: 0.18, ease: "power2.inOut" }, 1.08)
+        .from("#scene-1 .index-mark", { opacity: 0, y: -18, duration: 0.48, ease: "sine.out" }, 1.22);
+
+      tl.to(".exposure", { opacity: 0.9, duration: 0.18, ease: "power4.out" }, 4.42)
+        .to("#scene-2", { opacity: 1, clipPath: "inset(0% 0% 0% 0%)", duration: 0.66, ease: "power4.inOut" }, 4.5)
+        .to(".exposure", { opacity: 0, duration: 0.38, ease: "sine.out" }, 4.62)
+        .set("#scene-1", { opacity: 0 }, 5.22)
+        .from("#scene-2 .s2-plate", { scale: 1.18, x: 86, y: -44, duration: 4.6, ease: "sine.inOut" }, 4.54)
+        .from("#scene-2 .scene-kicker", { x: 24, opacity: 0, duration: 0.38, ease: "power3.out" }, 4.86)
+        .from("#scene-2 .headline", { x: 42, opacity: 0, duration: 0.68, ease: "expo.out" }, 5.02)
+        .from("#scene-2 .bodyline", { y: 24, opacity: 0, duration: 0.5, ease: "power3.out" }, 5.34)
+        .from("#scene-2 .quiet-stack span", { x: -30, opacity: 0, duration: 0.42, stagger: 0.1, ease: "power3.out" }, 5.18)
+        .to("#scene-2 .draw", { strokeDashoffset: 0, duration: 1.46, stagger: 0.22, ease: "power2.inOut" }, 5.38);
+
+      tl.to(".exposure", { opacity: 0.72, duration: 0.18, ease: "power4.out" }, 9.05)
+        .to("#scene-3", { opacity: 1, clipPath: "inset(0% 0% 0% 0%)", duration: 0.72, ease: "expo.inOut" }, 9.14)
+        .to(".exposure", { opacity: 0, duration: 0.36, ease: "sine.out" }, 9.28)
+        .set("#scene-2", { opacity: 0 }, 9.84)
+        .from("#scene-3 .s3-plate", { scale: 1.15, x: -72, y: 64, duration: 4.5, ease: "sine.inOut" }, 9.2)
+        .from("#scene-3 .source-rain", { x: -36, y: 24, opacity: 0, duration: 0.72, ease: "sine.out" }, 9.54)
+        .from("#scene-3 .scene-kicker", { y: 18, opacity: 0, duration: 0.36, ease: "power3.out" }, 9.58)
+        .from("#scene-3 .headline", { y: 42, opacity: 0, duration: 0.66, ease: "expo.out" }, 9.74)
+        .from("#scene-3 .bodyline", { y: 20, opacity: 0, duration: 0.48, ease: "power3.out" }, 10.06)
+        .to("#scene-3 .draw", { strokeDashoffset: 0, duration: 1.36, stagger: 0.18, ease: "power2.inOut" }, 10.08);
+
+      tl.to(".exposure", { opacity: 0.78, duration: 0.18, ease: "power4.out" }, 13.66)
+        .to("#scene-4", { opacity: 1, clipPath: "circle(145% at 42% 52%)", duration: 0.78, ease: "power3.inOut" }, 13.72)
+        .to(".exposure", { opacity: 0, duration: 0.36, ease: "sine.out" }, 13.84)
+        .set("#scene-3", { opacity: 0 }, 14.44)
+        .from("#scene-4 .s4-plate", { scale: 1.18, x: 92, y: 24, duration: 4.7, ease: "sine.inOut" }, 13.78)
+        .from("#scene-4 .quiet-stack span", { y: 24, opacity: 0, duration: 0.42, stagger: 0.12, ease: "power3.out" }, 14.14)
+        .from("#scene-4 .scene-kicker", { x: 24, opacity: 0, duration: 0.36, ease: "power3.out" }, 14.18)
+        .from("#scene-4 .headline", { y: 42, opacity: 0, duration: 0.66, ease: "expo.out" }, 14.34)
+        .from("#scene-4 .bodyline", { y: 20, opacity: 0, duration: 0.46, ease: "power3.out" }, 14.64)
+        .to("#scene-4 .draw", { strokeDashoffset: 0, duration: 1.38, stagger: 0.2, ease: "power2.inOut" }, 14.56);
+
+      tl.to(".exposure", { opacity: 0.92, duration: 0.2, ease: "power4.out" }, 18.28)
+        .to("#scene-5", { opacity: 1, clipPath: "inset(0% 0% 0% 0%)", duration: 0.74, ease: "power3.inOut" }, 18.38)
+        .to(".exposure", { opacity: 0, duration: 0.42, ease: "sine.out" }, 18.54)
+        .set("#scene-4", { opacity: 0 }, 19.08)
+        .from("#scene-5 .s5-plate", { scale: 1.16, x: -54, y: 26, duration: 5.3, ease: "sine.inOut" }, 18.42)
+        .fromTo("#scene-5 .final-bloom", { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1.2, duration: 1.2, ease: "sine.out" }, 18.66)
+        .from("#scene-5 .brand-lockup", { y: 34, opacity: 0, scale: 0.92, duration: 0.66, ease: "power3.out" }, 18.92)
+        .from("#scene-5 .scene-kicker", { y: 18, opacity: 0, duration: 0.36, ease: "power3.out" }, 19.12)
+        .from("#scene-5 .final-title", { y: 46, opacity: 0, duration: 0.72, ease: "expo.out" }, 19.3)
+        .from("#scene-5 .final-note", { y: 20, opacity: 0, duration: 0.48, ease: "power3.out" }, 19.72)
+        .from("#scene-5 .coming", { y: 20, opacity: 0, duration: 0.46, ease: "power3.out" }, 20.04);
+
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

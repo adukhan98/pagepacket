@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <filter id="grain" x="-20%" y="-20%" width="140%" height="140%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.72" numOctaves="4" seed="29"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 0.07 0 0 0 0 0.08 0 0 0 0 0.06 0 0 0 0.17 0"/>
+    </filter>
+    <linearGradient id="back" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#fffbef"/>
+      <stop offset="0.58" stop-color="#f4efdf"/>
+      <stop offset="1" stop-color="#e8dec8"/>
+    </linearGradient>
+    <linearGradient id="foldA" x1="0" x2="1">
+      <stop offset="0" stop-color="#fffdf3"/>
+      <stop offset="0.52" stop-color="#e7dec9"/>
+      <stop offset="1" stop-color="#fff8e7"/>
+    </linearGradient>
+    <linearGradient id="foldB" x1="0" x2="1">
+      <stop offset="0" stop-color="#e5dac4"/>
+      <stop offset="0.48" stop-color="#fffbef"/>
+      <stop offset="1" stop-color="#dff7e6"/>
+    </linearGradient>
+  </defs>
+  <rect width="1920" height="1080" fill="url(#back)"/>
+  <path d="M-120 888 C150 756 382 760 650 652 C962 526 1186 590 1470 444 C1660 346 1820 308 2040 314 L2040 1160 L-120 1160 Z" fill="url(#foldA)" opacity="0.98"/>
+  <path d="M-160 526 C138 424 356 456 596 360 C846 260 1046 310 1278 206 C1470 120 1706 132 2048 86 L2048 504 C1692 522 1470 562 1250 638 C1016 718 812 650 560 744 C310 838 110 800 -160 940 Z" fill="url(#foldB)" opacity="0.82"/>
+  <path d="M-60 702 C258 608 516 650 766 524 C1042 384 1248 464 1524 332 C1698 248 1866 232 1996 238" fill="none" stroke="#08100a" stroke-width="2" opacity="0.28"/>
+  <path d="M-20 848 C268 720 528 748 790 606 C1072 452 1278 520 1550 380 C1698 304 1826 278 1996 282" fill="none" stroke="#048c3d" stroke-width="9" opacity="0.44" stroke-linecap="round"/>
+  <path d="M-80 382 C284 274 520 346 780 232 C1008 132 1170 196 1380 128 C1548 74 1726 76 2028 18" fill="none" stroke="#08100a" stroke-width="1.4" opacity="0.24"/>
+  <g opacity="0.16" stroke="#08100a" stroke-width="1.4">
+    <path d="M320 190 L520 1000"/>
+    <path d="M710 80 L860 1030"/>
+    <path d="M1140 56 L1112 1010"/>
+    <path d="M1518 86 L1398 998"/>
+  </g>
+  <g fill="none" stroke="#08100a" stroke-width="2.6" stroke-linecap="round" opacity="0.36">
+    <path d="M316 410 C360 432 400 432 438 410"/>
+    <path d="M960 298 C1014 324 1068 326 1120 302"/>
+    <path d="M1330 754 C1384 774 1434 766 1480 736"/>
+  </g>
+  <rect width="1920" height="1080" filter="url(#grain)" opacity="0.8"/>
+</svg>

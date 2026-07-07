@@ -14,12 +14,14 @@ APP_MACOS="$APP_CONTENTS/MacOS"
 APP_RESOURCES="$APP_CONTENTS/Resources"
 APP_BINARY="$APP_MACOS/$APP_NAME"
 INFO_PLIST="$APP_CONTENTS/Info.plist"
-ICON_SOURCE="$ROOT_DIR/Sources/Pagepacket/Resources/Pagepacket.icns"
+ICON_SOURCE="$ROOT_DIR/Sources/Graft/Resources/Graft.icns"
+BUILD_PATH="${GRAFT_BUILD_PATH:-$ROOT_DIR/.build}"
+SWIFT_BUILD_JOBS="${SWIFT_BUILD_JOBS:-1}"
 
 pkill -x "$APP_NAME" >/dev/null 2>&1 || true
 
-swift build
-BUILD_BINARY="$(swift build --show-bin-path)/$APP_NAME"
+swift build --jobs "$SWIFT_BUILD_JOBS" --build-path "$BUILD_PATH"
+BUILD_BINARY="$(swift build --jobs "$SWIFT_BUILD_JOBS" --build-path "$BUILD_PATH" --show-bin-path)/$APP_NAME"
 
 rm -rf "$APP_BUNDLE"
 mkdir -p "$APP_MACOS" "$APP_RESOURCES"
@@ -46,8 +48,12 @@ cat >"$INFO_PLIST" <<PLIST
   <string>APPL</string>
   <key>LSMinimumSystemVersion</key>
   <string>$MIN_SYSTEM_VERSION</string>
+  <key>NSApplicationSupportsSecureRestorableState</key>
+  <false/>
   <key>NSPrincipalClass</key>
   <string>NSApplication</string>
+  <key>NSQuitAlwaysKeepsWindows</key>
+  <false/>
 </dict>
 </plist>
 PLIST
