@@ -111,7 +111,7 @@ struct PagepacketCLI {
         return enumerator
             .compactMap { $0 as? URL }
             .filter { $0.pathExtension.lowercased() == "md" }
-            .filter { !$0.path.contains("/.pagepacket/") && !$0.path.contains("/.graft/") }
+            .filter { !$0.path.contains("/.pagepacket/") && !$0.path.contains("/.pagepacket/") }
             .sorted { $0.path < $1.path }
     }
 

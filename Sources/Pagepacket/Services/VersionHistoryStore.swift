@@ -61,12 +61,8 @@ struct VersionHistoryStore {
             .compactMap { url in
                 let date = (try? url.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate) ?? Date()
                 let content = (try? String(contentsOf: url, encoding: .utf8)) ?? ""
-                let reason = frontMatterValue("pagepacket_reason", in: content)
-                    ?? frontMatterValue("graft_reason", in: content)
-                    ?? "Checkpoint"
-                let source = frontMatterValue("pagepacket_source", in: content)
-                    ?? frontMatterValue("graft_source", in: content)
-                    ?? "Pagepacket"
+                let reason = frontMatterValue("pagepacket_reason", in: content) ?? "Checkpoint"
+                let source = frontMatterValue("pagepacket_source", in: content) ?? "Pagepacket"
                 return VersionSnapshot(
                     id: url.deletingPathExtension().lastPathComponent,
                     documentPath: file.relativePath,

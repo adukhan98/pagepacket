@@ -17,35 +17,37 @@ struct HistoryView: View {
             if workspace.snapshots.isEmpty {
                 Text("No snapshots yet. Save or create a checkpoint to start local history.")
                     .font(.callout)
-                    .foregroundStyle(.secondary)
-                    .graftCard()
+                    .foregroundStyle(PagepacketTheme.muted)
+                    .pagepacketCard()
             } else {
                 ForEach(workspace.snapshots) { snapshot in
                     VStack(alignment: .leading, spacing: 8) {
                         HStack {
                             Circle()
-                                .fill(GraftTheme.ochre)
+                                .fill(PagepacketTheme.ochre)
                                 .frame(width: 9, height: 9)
                             Text(snapshot.displayTitle)
                                 .font(.headline)
+                                .foregroundStyle(PagepacketTheme.ink)
                             Spacer()
                         }
                         Text(snapshot.reason)
                             .font(.callout)
+                            .foregroundStyle(PagepacketTheme.body)
                         Text(snapshot.timestamp.formatted(date: .abbreviated, time: .shortened))
                             .font(.caption)
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(PagepacketTheme.muted)
                         HStack {
                             Text("\(snapshot.byteCount) bytes")
                                 .font(.caption2)
-                                .foregroundStyle(.secondary)
+                                .foregroundStyle(PagepacketTheme.muted)
                             Spacer()
                             Button("Restore") {
                                 workspace.restore(snapshot)
                             }
                         }
                     }
-                    .graftCard()
+                    .pagepacketCard()
                 }
             }
         }

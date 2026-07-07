@@ -7,20 +7,20 @@ let package = Package(
         .macOS(.v14)
     ],
     products: [
-        .executable(name: "Pagepacket", targets: ["Graft"]),
-        .executable(name: "pagepacket-cli", targets: ["GraftCLI"])
+        .executable(name: "Pagepacket", targets: ["Pagepacket"]),
+        .executable(name: "pagepacket-cli", targets: ["PagepacketCLI"])
     ],
     targets: [
         .executableTarget(
-            name: "Graft",
-            path: "Sources/Graft",
+            name: "Pagepacket",
+            path: "Sources/Pagepacket",
             resources: [
                 .copy("Resources")
             ]
         ),
         .executableTarget(
-            name: "GraftCLI",
-            path: "Sources/GraftCLI"
+            name: "PagepacketCLI",
+            path: "Sources/PagepacketCLI"
         )
     ]
 )

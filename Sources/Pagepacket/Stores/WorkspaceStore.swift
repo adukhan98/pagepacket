@@ -11,7 +11,7 @@ final class WorkspaceStore: ObservableObject {
     @Published var editorText = ""
     @Published var lastLoadedText = ""
     @Published var editorMode: EditorMode = .split
-    @Published var isInspectorVisible = true
+    @Published var isInspectorVisible = false
     @Published var externalChangeBanner: String?
     @Published var snapshots: [VersionSnapshot] = []
     @Published var invites: [Invite] = [
@@ -89,7 +89,7 @@ final class WorkspaceStore: ObservableObject {
         files = enumerator
             .compactMap { $0 as? URL }
             .filter { $0.pathExtension.lowercased() == "md" }
-            .filter { !$0.path.contains("/.pagepacket/") && !$0.path.contains("/.graft/") }
+            .filter { !$0.path.contains("/.pagepacket/") && !$0.path.contains("/.pagepacket/") }
             .map { MarkdownFile(url: $0, workspaceURL: workspaceURL) }
             .sorted { $0.relativePath.localizedStandardCompare($1.relativePath) == .orderedAscending }
         watcher.update(files: files)

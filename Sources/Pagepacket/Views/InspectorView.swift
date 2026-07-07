@@ -30,7 +30,8 @@ struct InspectorView: View {
                 .padding(16)
             }
         }
-        .background(GraftTheme.surfaceSoft)
+        .foregroundStyle(PagepacketTheme.body)
+        .background(PagepacketTheme.surfaceSoft)
     }
 }
 
@@ -42,29 +43,31 @@ private struct AgentsPanel: View {
             SectionHeader(title: "Agent-Safe Editing", icon: "wand.and.sparkles")
             Text("Pagepacket keeps Markdown files writable by coding agents. External changes are detected from disk and protected by local snapshots.")
                 .font(.callout)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(PagepacketTheme.muted)
 
             ForEach(workspace.agents) { agent in
                 VStack(alignment: .leading, spacing: 8) {
                     HStack {
                         Circle()
-                            .fill(GraftTheme.accent(agent.accentName))
+                            .fill(PagepacketTheme.accent(agent.accentName))
                             .frame(width: 10, height: 10)
                         Text(agent.name)
                             .font(.headline)
+                            .foregroundStyle(PagepacketTheme.ink)
                         Spacer()
                         Text(agent.status)
                             .font(.caption.weight(.semibold))
+                            .foregroundStyle(PagepacketTheme.ink)
                             .padding(.horizontal, 8)
                             .padding(.vertical, 4)
-                            .background(GraftTheme.accent(agent.accentName).opacity(0.18))
+                            .background(PagepacketTheme.accent(agent.accentName).opacity(0.18))
                             .clipShape(Capsule())
                     }
                     Text(agent.detail)
                         .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(PagepacketTheme.muted)
                 }
-                .graftCard()
+                .pagepacketCard()
             }
 
             VStack(alignment: .leading, spacing: 8) {
@@ -73,9 +76,9 @@ private struct AgentsPanel: View {
                 MonospaceLine("pagepacket-cli status <vault>")
                 MonospaceLine("pagepacket-cli snapshot <vault> <file> --message \"Before edits\"")
                 MonospaceLine("pagepacket-cli apply <vault> <file> --author codex")
-                MonospaceLine("Use skills/graft-sync/SKILL.md for agent workflow")
+                MonospaceLine("Use skills/pagepacket-sync/SKILL.md for agent workflow")
             }
-            .graftCard()
+            .pagepacketCard()
         }
     }
 }
@@ -87,9 +90,10 @@ struct SectionHeader: View {
     var body: some View {
         HStack(spacing: 8) {
             Image(systemName: icon)
-                .foregroundStyle(GraftTheme.teal)
+                .foregroundStyle(PagepacketTheme.teal)
             Text(title)
                 .font(.system(.headline, design: .rounded))
+                .foregroundStyle(PagepacketTheme.ink)
             Spacer()
         }
     }
@@ -105,6 +109,7 @@ struct MonospaceLine: View {
     var body: some View {
         Text(text)
             .font(.system(.caption, design: .monospaced))
+            .foregroundStyle(PagepacketTheme.ink)
             .textSelection(.enabled)
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(8)

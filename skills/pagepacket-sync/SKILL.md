@@ -1,5 +1,5 @@
 ---
-name: graft-sync
+name: pagepacket-sync
 description: Coordinate coding-agent edits with pagepacket Markdown workspaces
 ---
 

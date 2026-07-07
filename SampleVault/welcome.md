@@ -38,4 +38,4 @@ pagepacket-cli apply SampleVault welcome.md --author codex
 
 ## Image support
 
-![pagepacket sample image](assets/welcome/graft-sample.ppm)
+![pagepacket sample image](assets/welcome/pagepacket-sample.ppm)

@@ -1,6 +1,6 @@
 # pagepacket
 
-![pagepacket logo](Assets/Brand/graft-logo-lockup.png)
+![pagepacket logo](Assets/Brand/pagepacket-logo-lockup.png)
 
 pagepacket is a premium local-first Markdown editor for macOS. It keeps Markdown files as plain files on disk so people and coding agents can work in the same workspace.
 
@@ -18,7 +18,7 @@ pagepacket is a premium local-first Markdown editor for macOS. It keeps Markdown
 - Email invite intent UI saved to `.pagepacket/shares/invites.json`, with mail-client compose actions for invites.
 - Agent activity and CLI sync contract surfaced in the inspector.
 - `pagepacket-cli` commands for vault status, snapshots, apply checkpoints, and history.
-- Repo-local agent skill at `skills/graft-sync/SKILL.md`.
+- Repo-local agent skill at `skills/pagepacket-sync/SKILL.md`.
 - Build/run integration for Codex Desktop through `.codex/environments/environment.toml`.
 
 ## Run

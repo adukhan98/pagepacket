@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct GraftCommands: Commands {
+struct PagepacketCommands: Commands {
     @ObservedObject var workspace: WorkspaceStore
 
     var body: some Commands {

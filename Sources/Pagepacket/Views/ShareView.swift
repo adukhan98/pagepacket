@@ -10,7 +10,7 @@ struct ShareView: View {
             SectionHeader(title: "Email Invites", icon: "person.2")
             Text("V1 writes invite intent to `.pagepacket/shares/invites.json`. A cloud backend can later turn these same records into real memberships.")
                 .font(.callout)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(PagepacketTheme.muted)
 
             VStack(spacing: 10) {
                 TextField("teammate@example.com", text: $email)
@@ -30,7 +30,7 @@ struct ShareView: View {
                 .buttonStyle(.borderedProminent)
                 .frame(maxWidth: .infinity, alignment: .trailing)
             }
-            .graftCard()
+            .pagepacketCard()
 
             ForEach(workspace.invites) { invite in
                 HStack(spacing: 10) {
@@ -40,12 +40,14 @@ struct ShareView: View {
                         .overlay {
                             Text(String(invite.email.prefix(1)).uppercased())
                                 .font(.caption.weight(.bold))
+                                .foregroundStyle(PagepacketTheme.ink)
                         }
                     VStack(alignment: .leading, spacing: 2) {
                         Text(invite.email)
+                            .foregroundStyle(PagepacketTheme.ink)
                         Text(invite.role.title)
                             .font(.caption)
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(PagepacketTheme.muted)
                     }
                     Spacer()
                     Button {
@@ -62,16 +64,16 @@ struct ShareView: View {
                     }
                     .buttonStyle(.plain)
                 }
-                .graftCard()
+                .pagepacketCard()
             }
         }
     }
 
     private func roleColor(_ role: InviteRole) -> Color {
         switch role {
-        case .viewer: GraftTheme.lavender
-        case .commenter: GraftTheme.ochre
-        case .editor: GraftTheme.mint
+        case .viewer: PagepacketTheme.lavender
+        case .commenter: PagepacketTheme.ochre
+        case .editor: PagepacketTheme.mint
         }
     }
 }

@@ -14,7 +14,7 @@ APP_MACOS="$APP_CONTENTS/MacOS"
 APP_RESOURCES="$APP_CONTENTS/Resources"
 APP_BINARY="$APP_MACOS/$APP_NAME"
 INFO_PLIST="$APP_CONTENTS/Info.plist"
-ICON_SOURCE="$ROOT_DIR/Sources/Graft/Resources/Graft.icns"
+ICON_SOURCE="$ROOT_DIR/Sources/Pagepacket/Resources/Pagepacket.icns"
 
 pkill -x "$APP_NAME" >/dev/null 2>&1 || true
 

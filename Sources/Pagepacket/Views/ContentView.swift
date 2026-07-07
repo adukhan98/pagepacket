@@ -13,7 +13,8 @@ struct ContentView: View {
                 EditorContainerView()
                 StatusStrip()
             }
-            .background(GraftTheme.canvas)
+            .foregroundStyle(PagepacketTheme.body)
+            .background(PagepacketTheme.canvas)
         }
         .inspector(isPresented: $workspace.isInspectorVisible) {
             InspectorView()
@@ -74,7 +75,7 @@ private struct ExternalChangeBanner: View {
         if let banner = workspace.externalChangeBanner {
             HStack(spacing: 12) {
                 Image(systemName: "arrow.triangle.2.circlepath")
-                    .foregroundStyle(GraftTheme.teal)
+                    .foregroundStyle(PagepacketTheme.teal)
                 Text(banner)
                     .font(.callout)
                 Spacer()
@@ -93,7 +94,8 @@ private struct ExternalChangeBanner: View {
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 10)
-            .background(GraftTheme.lavender.opacity(0.28))
+            .foregroundStyle(PagepacketTheme.body)
+            .background(PagepacketTheme.lavender.opacity(0.28))
         }
     }
 }
@@ -104,24 +106,27 @@ private struct StatusStrip: View {
     var body: some View {
         HStack(spacing: 14) {
             Label(workspace.isDirty ? "Unsaved" : "Saved", systemImage: workspace.isDirty ? "circle.fill" : "checkmark.circle")
-                .foregroundStyle(workspace.isDirty ? GraftTheme.pink : GraftTheme.teal)
+                .foregroundStyle(workspace.isDirty ? PagepacketTheme.pink : PagepacketTheme.teal)
             Text("\(workspace.editorText.split(whereSeparator: \.isWhitespace).count) words")
+                .foregroundStyle(PagepacketTheme.body)
             Text(workspace.workspaceURL?.lastPathComponent ?? "No workspace")
+                .foregroundStyle(PagepacketTheme.body)
             Spacer()
             ForEach(workspace.agents.prefix(3)) { agent in
                 HStack(spacing: 5) {
                     Circle()
-                        .fill(GraftTheme.accent(agent.accentName))
+                        .fill(PagepacketTheme.accent(agent.accentName))
                         .frame(width: 8, height: 8)
                     Text(agent.name)
+                        .foregroundStyle(PagepacketTheme.body)
                 }
             }
             Text(".pagepacket local-first")
-                .foregroundStyle(.secondary)
+                .foregroundStyle(PagepacketTheme.body.opacity(0.72))
         }
         .font(.caption)
         .padding(.horizontal, 16)
         .frame(height: 30)
-        .background(.regularMaterial)
+        .background(PagepacketTheme.statusBar.opacity(0.24))
     }
 }

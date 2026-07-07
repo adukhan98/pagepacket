@@ -3,7 +3,7 @@ import path from "node:path";
 import { SpreadsheetFile, Workbook } from "@oai/artifact-tool";
 
 const outputDir = "/Users/adnaankhan/Desktop/markdown/outputs/behavior-spec";
-const outputPath = path.join(outputDir, "graft-behavior-spec.xlsx");
+const outputPath = path.join(outputDir, "pagepacket-behavior-spec.xlsx");
 
 const rows = [
   {
@@ -11,7 +11,7 @@ const rows = [
     area: "App Shell",
     story: "As a user, I can launch the macOS app into a main Markdown workspace window.",
     expected: "The app activates as a regular macOS app, creates WindowGroup(\"Pagepacket\"), injects a WorkspaceStore environment object, sets a minimum window size of 1120x720, and calls workspace.bootstrap() on appear.",
-    source: "Sources/Graft/App/GraftApp.swift:4 AppDelegate; Sources/Graft/App/GraftApp.swift:12 GraftApp",
+    source: "Sources/Pagepacket/App/PagepacketApp.swift:4 AppDelegate; Sources/Pagepacket/App/PagepacketApp.swift:12 PagepacketApp",
     questions: ""
   },
   {
@@ -19,7 +19,7 @@ const rows = [
     area: "Workspace",
     story: "As a user, I can choose a folder workspace from the app.",
     expected: "Open Workspace actions call openWorkspacePanel(), which shows an NSOpenPanel that allows directories only, disables multiple selection, and calls openWorkspace(url) for the selected folder.",
-    source: "Sources/Graft/Stores/WorkspaceStore.swift:50 openWorkspacePanel; Sources/Graft/Views/ContentView.swift:22 toolbar; Sources/Graft/App/GraftCommands.swift:7 commands",
+    source: "Sources/Pagepacket/Stores/WorkspaceStore.swift:50 openWorkspacePanel; Sources/Pagepacket/Views/ContentView.swift:22 toolbar; Sources/Pagepacket/App/PagepacketCommands.swift:7 commands",
     questions: ""
   },
   {
@@ -27,7 +27,7 @@ const rows = [
     area: "Workspace",
     story: "As a user, I may start with a sample vault if it exists.",
     expected: "bootstrap() returns if a workspace is already set; otherwise it checks ~/Desktop/markdown/SampleVault and opens it automatically when that directory exists.",
-    source: "Sources/Graft/Stores/WorkspaceStore.swift:41 bootstrap",
+    source: "Sources/Pagepacket/Stores/WorkspaceStore.swift:41 bootstrap",
     questions: "Is automatic sample-vault loading intended first-run UX or a development convenience?"
   },
   {
@@ -35,23 +35,23 @@ const rows = [
     area: "Workspace",
     story: "As a user, I can open a folder and have the first Markdown file loaded.",
     expected: "openWorkspace(_:) sets workspaceURL, prepares history/share sidecars, reloads the file list, selects files.first, loads it if present, and starts the file watcher on the discovered files.",
-    source: "Sources/Graft/Stores/WorkspaceStore.swift:62 openWorkspace(_:); Sources/Graft/Services/VersionHistoryStore.swift:14 prepare",
+    source: "Sources/Pagepacket/Stores/WorkspaceStore.swift:62 openWorkspace(_:); Sources/Pagepacket/Services/VersionHistoryStore.swift:14 prepare",
     questions: "Empty or non-Markdown folders are not rejected in the store."
   },
   {
     id: "APP-005",
     area: "Workspace",
     story: "As a user, I can browse Markdown files from my workspace.",
-    expected: "reloadFileList() recursively enumerates the workspace with skipsHiddenFiles, includes files whose extension lowercases to md, filters paths containing /.pagepacket/ or legacy /.graft/, maps them to MarkdownFile values, sorts by relative path, and updates the watcher.",
-    source: "Sources/Graft/Stores/WorkspaceStore.swift:77 reloadFileList; Sources/Graft/Models/MarkdownFile.swift:10 MarkdownFile.init",
-    questions: ".pagepacket is skipped by hidden-file enumeration and explicit filtering; legacy .graft paths are also filtered."
+    expected: "reloadFileList() recursively enumerates the workspace with skipsHiddenFiles, includes files whose extension lowercases to md, filters paths containing /.pagepacket/, maps them to MarkdownFile values, sorts by relative path, and updates the watcher.",
+    source: "Sources/Pagepacket/Stores/WorkspaceStore.swift:77 reloadFileList; Sources/Pagepacket/Models/MarkdownFile.swift:10 MarkdownFile.init",
+    questions: ".pagepacket is skipped by hidden-file enumeration and explicit filtering."
   },
   {
     id: "APP-006",
     area: "Workspace",
     story: "As a user, I can select a Markdown file and load its text for editing.",
     expected: "load(file:) snapshots the current document first if the editor is dirty, sets selectedFile, reads UTF-8 content or an empty string on failure, sets editorText and lastLoadedText, clears externalChangeBanner, and refreshes snapshots.",
-    source: "Sources/Graft/Stores/WorkspaceStore.swift:98 load(file:); Sources/Graft/Views/SidebarView.swift:19 List(selection:)",
+    source: "Sources/Pagepacket/Stores/WorkspaceStore.swift:98 load(file:); Sources/Pagepacket/Views/SidebarView.swift:19 List(selection:)",
     questions: ""
   },
   {
@@ -59,7 +59,7 @@ const rows = [
     area: "Workspace",
     story: "As a user, I can save the selected Markdown document to disk.",
     expected: "saveCurrentDocument() snapshots with reason Before save, writes editorText atomically as UTF-8 to selectedFile.url, updates lastLoadedText, marks the watcher clean, reloads file list, and refreshes snapshots; write failures set externalChangeBanner.",
-    source: "Sources/Graft/Stores/WorkspaceStore.swift:110 saveCurrentDocument; Sources/Graft/Views/MarkdownEditorView.swift:23 Save button",
+    source: "Sources/Pagepacket/Stores/WorkspaceStore.swift:110 saveCurrentDocument; Sources/Pagepacket/Views/MarkdownEditorView.swift:23 Save button",
     questions: ""
   },
   {
@@ -67,7 +67,7 @@ const rows = [
     area: "Workspace",
     story: "As a user, I can see whether the current document has unsaved changes.",
     expected: "isDirty returns editorText != lastLoadedText; StatusStrip shows Unsaved with circle.fill and pink when dirty, otherwise Saved with checkmark.circle and teal.",
-    source: "Sources/Graft/Stores/WorkspaceStore.swift:31 isDirty; Sources/Graft/Views/ContentView.swift:101 StatusStrip",
+    source: "Sources/Pagepacket/Stores/WorkspaceStore.swift:31 isDirty; Sources/Pagepacket/Views/ContentView.swift:101 StatusStrip",
     questions: ""
   },
   {
@@ -75,7 +75,7 @@ const rows = [
     area: "Workspace",
     story: "As a user, I can see current workspace and word-count status.",
     expected: "StatusStrip displays a word count from editorText.split(whereSeparator: .isWhitespace).count, the workspace folder name or No workspace, up to three agent names, and the text .pagepacket local-first.",
-    source: "Sources/Graft/Views/ContentView.swift:101 StatusStrip",
+    source: "Sources/Pagepacket/Views/ContentView.swift:101 StatusStrip",
     questions: ""
   },
   {
@@ -83,7 +83,7 @@ const rows = [
     area: "Sidebar",
     story: "As a user, I can orient myself in the sidebar.",
     expected: "SidebarView shows the pagepacket title, the tagline Local-first Markdown for humans and agents, a Markdown section of file rows with doc.text icons, titles, and relative paths, and an Agents section with agent names and current statuses.",
-    source: "Sources/Graft/Views/SidebarView.swift:7 header; Sources/Graft/Views/SidebarView.swift:19 Markdown section; Sources/Graft/Views/SidebarView.swift:45 Agents section",
+    source: "Sources/Pagepacket/Views/SidebarView.swift:7 header; Sources/Pagepacket/Views/SidebarView.swift:19 Markdown section; Sources/Pagepacket/Views/SidebarView.swift:45 Agents section",
     questions: ""
   },
   {
@@ -91,7 +91,7 @@ const rows = [
     area: "Empty State",
     story: "As a user, I see a helpful prompt when no document is selected.",
     expected: "EditorContainerView renders EmptyWorkspaceView when selectedFile is nil, with Open a Markdown workspace copy and a button that opens the workspace panel.",
-    source: "Sources/Graft/Views/EditorContainerView.swift:5 EditorContainerView; Sources/Graft/Views/EditorContainerView.swift:29 EmptyWorkspaceView",
+    source: "Sources/Pagepacket/Views/EditorContainerView.swift:5 EditorContainerView; Sources/Pagepacket/Views/EditorContainerView.swift:29 EmptyWorkspaceView",
     questions: ""
   },
   {
@@ -99,7 +99,7 @@ const rows = [
     area: "Editor Modes",
     story: "As a user, I can switch among Edit, Split, and Preview modes.",
     expected: "EditorMode defines edit/split/preview with titles Edit, Split, Preview; the store defaults to split; toolbar and menu pickers bind to workspace.editorMode; EditorContainerView renders MarkdownEditorView, MarkdownPreviewView, or an HSplitView containing both.",
-    source: "Sources/Graft/Models/EditorMode.swift:3 EditorMode; Sources/Graft/Stores/WorkspaceStore.swift:13 editorMode; Sources/Graft/Views/EditorContainerView.swift:11 switch",
+    source: "Sources/Pagepacket/Models/EditorMode.swift:3 EditorMode; Sources/Pagepacket/Stores/WorkspaceStore.swift:13 editorMode; Sources/Pagepacket/Views/EditorContainerView.swift:11 switch",
     questions: "No persistence for last selected mode was found."
   },
   {
@@ -107,7 +107,7 @@ const rows = [
     area: "Markdown Editing",
     story: "As a user, I can directly edit Markdown text.",
     expected: "MarkdownEditorView displays the selected title and relative path, then binds a TextEditor directly to workspace.editorText using a monospaced font sized by workspace.editorFontSize.",
-    source: "Sources/Graft/Views/MarkdownEditorView.swift:3 MarkdownEditorView",
+    source: "Sources/Pagepacket/Views/MarkdownEditorView.swift:3 MarkdownEditorView",
     questions: ""
   },
   {
@@ -115,7 +115,7 @@ const rows = [
     area: "Markdown Preview",
     story: "As a user, I can preview headings with visual hierarchy.",
     expected: "MarkdownRenderer maps lines beginning with # to heading blocks with level capped at 6; MarkdownPreviewView displays them with size 38 for h1, 30 for h2, 24 for h3, and 19 for other heading levels.",
-    source: "Sources/Graft/Services/MarkdownRenderer.swift:50 heading parsing; Sources/Graft/Views/MarkdownPreviewView.swift:22 heading view",
+    source: "Sources/Pagepacket/Services/MarkdownRenderer.swift:50 heading parsing; Sources/Pagepacket/Views/MarkdownPreviewView.swift:22 heading view",
     questions: ""
   },
   {
@@ -123,7 +123,7 @@ const rows = [
     area: "Markdown Preview",
     story: "As a user, I can preview paragraph and inline Markdown text.",
     expected: "Non-special trimmed lines become paragraph blocks; MarkdownInlineText attempts AttributedString(markdown:) and falls back to plain Text when parsing fails.",
-    source: "Sources/Graft/Services/MarkdownRenderer.swift:68 paragraph fallback; Sources/Graft/Views/MarkdownPreviewView.swift:145 MarkdownInlineText",
+    source: "Sources/Pagepacket/Services/MarkdownRenderer.swift:68 paragraph fallback; Sources/Pagepacket/Views/MarkdownPreviewView.swift:145 MarkdownInlineText",
     questions: ""
   },
   {
@@ -131,7 +131,7 @@ const rows = [
     area: "Markdown Preview",
     story: "As a user, I can preview quotes.",
     expected: "Lines beginning with > become quote blocks after trimming the marker; preview renders a lavender vertical bar and secondary-styled MarkdownInlineText.",
-    source: "Sources/Graft/Services/MarkdownRenderer.swift:53 quote parsing; Sources/Graft/Views/MarkdownPreviewView.swift:32 quote view",
+    source: "Sources/Pagepacket/Services/MarkdownRenderer.swift:53 quote parsing; Sources/Pagepacket/Views/MarkdownPreviewView.swift:32 quote view",
     questions: ""
   },
   {
@@ -139,7 +139,7 @@ const rows = [
     area: "Markdown Preview",
     story: "As a user, I can preview unordered and ordered lists.",
     expected: "Lines beginning - or * become unordered items unless they are tasks; numeric prefixes followed by a dot become orderedItem blocks; preview renders unordered bullets with teal dots and ordered items with a static 1. label.",
-    source: "Sources/Graft/Services/MarkdownRenderer.swift:59 list parsing; Sources/Graft/Views/MarkdownPreviewView.swift:42 list views",
+    source: "Sources/Pagepacket/Services/MarkdownRenderer.swift:59 list parsing; Sources/Pagepacket/Views/MarkdownPreviewView.swift:42 list views",
     questions: "Ordered list preview always displays 1. rather than the original number."
   },
   {
@@ -147,7 +147,7 @@ const rows = [
     area: "Markdown Preview",
     story: "As a user, I can preview Markdown task list items.",
     expected: "Lines beginning - [ ] or * [ ] become incomplete task blocks; - [x], * [x], - [X], or * [X] become complete task blocks; preview uses square or checkmark.square.fill.",
-    source: "Sources/Graft/Services/MarkdownRenderer.swift:55 task parsing; Sources/Graft/Views/MarkdownPreviewView.swift:55 task view",
+    source: "Sources/Pagepacket/Services/MarkdownRenderer.swift:55 task parsing; Sources/Pagepacket/Views/MarkdownPreviewView.swift:55 task view",
     questions: ""
   },
   {
@@ -155,7 +155,7 @@ const rows = [
     area: "Markdown Preview",
     story: "As a user, I can preview fenced code blocks.",
     expected: "Lines after an opening ``` are collected until another ```; text after the opening fence becomes optional language; preview shows an uppercase language label when present and monospaced selectable code in a card.",
-    source: "Sources/Graft/Services/MarkdownRenderer.swift:18 code parsing; Sources/Graft/Views/MarkdownPreviewView.swift:62 code view",
+    source: "Sources/Pagepacket/Services/MarkdownRenderer.swift:18 code parsing; Sources/Pagepacket/Views/MarkdownPreviewView.swift:62 code view",
     questions: "No syntax highlighting is implemented."
   },
   {
@@ -163,7 +163,7 @@ const rows = [
     area: "Markdown Preview",
     story: "As a user, I can preview Markdown tables.",
     expected: "A row containing | followed by a separator row made of - and : cells becomes a table; subsequent pipe rows become rows; preview normalizes shorter rows to header width and alternates row backgrounds.",
-    source: "Sources/Graft/Services/MarkdownRenderer.swift:31 table parsing; Sources/Graft/Views/MarkdownPreviewView.swift:74 table view",
+    source: "Sources/Pagepacket/Services/MarkdownRenderer.swift:31 table parsing; Sources/Pagepacket/Views/MarkdownPreviewView.swift:74 table view",
     questions: "Alignment markers are accepted but not represented."
   },
   {
@@ -171,7 +171,7 @@ const rows = [
     area: "Markdown Preview",
     story: "As a user, I can preview Markdown images relative to the document.",
     expected: "A line matching ![alt](path) becomes an image block; preview resolves the path relative to the selected file's folder, shows the NSImage if found, and otherwise displays Missing image: <path>.",
-    source: "Sources/Graft/Services/MarkdownRenderer.swift:76 parseImage; Sources/Graft/Views/MarkdownPreviewView.swift:112 imageView",
+    source: "Sources/Pagepacket/Services/MarkdownRenderer.swift:76 parseImage; Sources/Pagepacket/Views/MarkdownPreviewView.swift:112 imageView",
     questions: ""
   },
   {
@@ -179,7 +179,7 @@ const rows = [
     area: "Markdown Preview",
     story: "As a user, I can preview horizontal rules.",
     expected: "A trimmed line equal to --- or *** becomes horizontalRule; preview renders a thin black-opacity rectangle with vertical padding.",
-    source: "Sources/Graft/Services/MarkdownRenderer.swift:48 horizontalRule; Sources/Graft/Views/MarkdownPreviewView.swift:135 horizontalRule view",
+    source: "Sources/Pagepacket/Services/MarkdownRenderer.swift:48 horizontalRule; Sources/Pagepacket/Views/MarkdownPreviewView.swift:135 horizontalRule view",
     questions: ""
   },
   {
@@ -187,7 +187,7 @@ const rows = [
     area: "Image Import",
     story: "As a user, I can insert an image into the current Markdown document.",
     expected: "insertImageFromPanel() allows png, jpeg, gif, tiff, heic, and webP files; ImageImportService copies the selected file into assets/<document-name>/<source-base>-<unix-seconds>.<ext>; the editor appends a Markdown image link and creates an Inserted image snapshot.",
-    source: "Sources/Graft/Stores/WorkspaceStore.swift:171 insertImageFromPanel; Sources/Graft/Services/ImageImportService.swift:7 importImage",
+    source: "Sources/Pagepacket/Stores/WorkspaceStore.swift:171 insertImageFromPanel; Sources/Pagepacket/Services/ImageImportService.swift:7 importImage",
     questions: "Import failure returns nil with no user-visible error. Snapshot is created before an explicit save persists the appended Markdown."
   },
   {
@@ -195,7 +195,7 @@ const rows = [
     area: "Version History",
     story: "As a user, my workspace gets local sidecar folders for history and shares.",
     expected: "VersionHistoryStore.prepare() creates .pagepacket/history and .pagepacket/shares under the workspace URL.",
-    source: "Sources/Graft/Services/VersionHistoryStore.swift:14 prepare",
+    source: "Sources/Pagepacket/Services/VersionHistoryStore.swift:14 prepare",
     questions: ""
   },
   {
@@ -203,7 +203,7 @@ const rows = [
     area: "Version History",
     story: "As a user, I can create a manual snapshot.",
     expected: "Toolbar, menu, and History tab snapshot actions call snapshotCurrentDocument(reason: Manual checkpoint, source: Pagepacket), which writes a VersionHistoryStore snapshot and inserts it at the front of the in-memory snapshots list.",
-    source: "Sources/Graft/Views/ContentView.swift:47 Snapshot button; Sources/Graft/App/GraftCommands.swift:18 Snapshot Version; Sources/Graft/Views/HistoryView.swift:10 plus button; Sources/Graft/Stores/WorkspaceStore.swift:139 snapshotCurrentDocument",
+    source: "Sources/Pagepacket/Views/ContentView.swift:47 Snapshot button; Sources/Pagepacket/App/PagepacketCommands.swift:18 Snapshot Version; Sources/Pagepacket/Views/HistoryView.swift:10 plus button; Sources/Pagepacket/Stores/WorkspaceStore.swift:139 snapshotCurrentDocument",
     questions: ""
   },
   {
@@ -211,15 +211,15 @@ const rows = [
     area: "Version History",
     story: "As a user, snapshots preserve document content with metadata.",
     expected: "snapshot(file:content:reason:source:) writes .pagepacket/history/<safe-relative-path>/<yyyyMMdd-HHmmss-SSS>.md with front matter keys pagepacket_document, pagepacket_source, pagepacket_reason, pagepacket_created_at, then the content; it returns a VersionSnapshot with byte count.",
-    source: "Sources/Graft/Services/VersionHistoryStore.swift:19 snapshot; Sources/Graft/Models/VersionSnapshot.swift:3 VersionSnapshot",
+    source: "Sources/Pagepacket/Services/VersionHistoryStore.swift:19 snapshot; Sources/Pagepacket/Models/VersionSnapshot.swift:3 VersionSnapshot",
     questions: ""
   },
   {
     id: "APP-027",
     area: "Version History",
     story: "As a user, I can see snapshots for the current file.",
-    expected: "refreshSnapshots() loads snapshots for selectedFile; snapshots(for:) reads .md files from the safe document folder, uses each snapshot file's contentModificationDate as the VersionSnapshot timestamp, extracts pagepacket_reason/pagepacket_source with legacy graft_reason/graft_source fallback, defaults to Checkpoint/Pagepacket, and sorts by that timestamp descending.",
-    source: "Sources/Graft/Stores/WorkspaceStore.swift:163 refreshSnapshots; Sources/Graft/Services/VersionHistoryStore.swift:53 snapshots(for:)",
+    expected: "refreshSnapshots() loads snapshots for selectedFile; snapshots(for:) reads .md files from the safe document folder, uses each snapshot file's contentModificationDate as the VersionSnapshot timestamp, extracts pagepacket_reason/pagepacket_source, defaults to Checkpoint/Pagepacket, and sorts by that timestamp descending.",
+    source: "Sources/Pagepacket/Stores/WorkspaceStore.swift:163 refreshSnapshots; Sources/Pagepacket/Services/VersionHistoryStore.swift:53 snapshots(for:)",
     questions: ""
   },
   {
@@ -227,7 +227,7 @@ const rows = [
     area: "Version History",
     story: "As a user, I understand the history panel state and snapshot cards.",
     expected: "HistoryView shows a Version History header and plus snapshot button; when snapshots is empty it shows No snapshots yet copy; otherwise each card shows displayTitle, reason, formatted date/time, byte count, and a Restore button.",
-    source: "Sources/Graft/Views/HistoryView.swift:3 HistoryView; Sources/Graft/Views/HistoryView.swift:17 empty state; Sources/Graft/Views/HistoryView.swift:23 snapshot cards",
+    source: "Sources/Pagepacket/Views/HistoryView.swift:3 HistoryView; Sources/Pagepacket/Views/HistoryView.swift:17 empty state; Sources/Pagepacket/Views/HistoryView.swift:23 snapshot cards",
     questions: ""
   },
   {
@@ -235,7 +235,7 @@ const rows = [
     area: "Version History",
     story: "As a user, I can restore a previous snapshot.",
     expected: "HistoryView Restore calls workspace.restore(snapshot); restoreContent strips front matter when present; restore snapshots the current document first, writes restored content to the selected file, updates lastLoadedText, marks watcher clean, and refreshes snapshots.",
-    source: "Sources/Graft/Views/HistoryView.swift:43 Restore; Sources/Graft/Stores/WorkspaceStore.swift:147 restore; Sources/Graft/Services/VersionHistoryStore.swift:79 restoreContent",
+    source: "Sources/Pagepacket/Views/HistoryView.swift:43 Restore; Sources/Pagepacket/Stores/WorkspaceStore.swift:147 restore; Sources/Pagepacket/Services/VersionHistoryStore.swift:79 restoreContent",
     questions: "No restore confirmation flow is implemented."
   },
   {
@@ -243,7 +243,7 @@ const rows = [
     area: "External Changes",
     story: "As a user, external edits are detected while a workspace is open.",
     expected: "FileWatcher.start() stores known modification dates for watched files and schedules a one-second repeating timer; when an existing watched file's modification date increases, it calls the supplied onChange callback.",
-    source: "Sources/Graft/Services/FileWatcher.swift:9 start(watching:onChange:)",
+    source: "Sources/Pagepacket/Services/FileWatcher.swift:9 start(watching:onChange:)",
     questions: "New files are watched only after store reload/update paths run."
   },
   {
@@ -251,7 +251,7 @@ const rows = [
     area: "External Changes",
     story: "As a user, a clean selected file reloads after an external edit.",
     expected: "handleExternalChange reloads the file list; if the changed URL is the selected file, disk text differs from lastLoadedText, and the editor is not dirty, editorText and lastLoadedText are replaced from disk, banner becomes Reloaded external edit from disk, Codex agent status becomes Reloaded, and snapshots refresh.",
-    source: "Sources/Graft/Stores/WorkspaceStore.swift:225 handleExternalChange(at:)",
+    source: "Sources/Pagepacket/Stores/WorkspaceStore.swift:225 handleExternalChange(at:)",
     questions: ""
   },
   {
@@ -259,7 +259,7 @@ const rows = [
     area: "External Changes",
     story: "As a user, I am warned before overwriting local edits when an external edit arrives.",
     expected: "If the selected file changes externally while the editor is dirty, the app snapshots External change conflict base, sets an external-change banner saying review before overwriting, and changes the Codex agent status/detail to Conflict.",
-    source: "Sources/Graft/Stores/WorkspaceStore.swift:237 dirty external-change branch; Sources/Graft/Views/ContentView.swift:70 ExternalChangeBanner",
+    source: "Sources/Pagepacket/Stores/WorkspaceStore.swift:237 dirty external-change branch; Sources/Pagepacket/Views/ContentView.swift:70 ExternalChangeBanner",
     questions: "No merge/diff UI is implemented for the conflict."
   },
   {
@@ -267,7 +267,7 @@ const rows = [
     area: "External Changes",
     story: "As a user, I can choose the disk version after an external-change banner.",
     expected: "Use Disk calls reloadSelectedFromDisk(), which reads selected file content from disk, snapshots Before accepting external change, replaces editorText and lastLoadedText, clears the banner, and refreshes snapshots.",
-    source: "Sources/Graft/Views/ContentView.swift:80 Use Disk; Sources/Graft/Stores/WorkspaceStore.swift:124 reloadSelectedFromDisk",
+    source: "Sources/Pagepacket/Views/ContentView.swift:80 Use Disk; Sources/Pagepacket/Stores/WorkspaceStore.swift:124 reloadSelectedFromDisk",
     questions: ""
   },
   {
@@ -275,7 +275,7 @@ const rows = [
     area: "External Changes",
     story: "As a user, I can keep my local version after an external-change banner.",
     expected: "Keep Mine calls keepLocalVersion(), which saves the current document through saveCurrentDocument() and clears externalChangeBanner.",
-    source: "Sources/Graft/Views/ContentView.swift:83 Keep Mine; Sources/Graft/Stores/WorkspaceStore.swift:134 keepLocalVersion",
+    source: "Sources/Pagepacket/Views/ContentView.swift:83 Keep Mine; Sources/Pagepacket/Stores/WorkspaceStore.swift:134 keepLocalVersion",
     questions: ""
   },
   {
@@ -283,7 +283,7 @@ const rows = [
     area: "External Changes",
     story: "As a user, I can dismiss an external-change banner.",
     expected: "The xmark button sets workspace.externalChangeBanner to nil without changing disk or editor content.",
-    source: "Sources/Graft/Views/ContentView.swift:87 xmark banner button",
+    source: "Sources/Pagepacket/Views/ContentView.swift:87 xmark banner button",
     questions: ""
   },
   {
@@ -291,7 +291,7 @@ const rows = [
     area: "External Changes",
     story: "As a user, non-selected file edits update agent status without interrupting my current document.",
     expected: "When handleExternalChange receives a changed URL that is not the selected file, it sets agents[0].status to Changed and detail to External edit detected in another Markdown file, then returns.",
-    source: "Sources/Graft/Stores/WorkspaceStore.swift:228 non-selected change branch",
+    source: "Sources/Pagepacket/Stores/WorkspaceStore.swift:228 non-selected change branch",
     questions: "No per-file change list is implemented."
   },
   {
@@ -299,7 +299,7 @@ const rows = [
     area: "Inspector",
     story: "As a user, I can show or hide the inspector.",
     expected: "ContentView attaches an inspector bound to workspace.isInspectorVisible; toolbar Inspector and the View menu Toggle Inspector command invert that Boolean, with Cmd-Option-I wired as a keyboard shortcut.",
-    source: "Sources/Graft/Views/ContentView.swift:18 inspector; Sources/Graft/Views/ContentView.swift:60 Inspector toolbar button; Sources/Graft/App/GraftCommands.swift:35 Toggle Inspector",
+    source: "Sources/Pagepacket/Views/ContentView.swift:18 inspector; Sources/Pagepacket/Views/ContentView.swift:60 Inspector toolbar button; Sources/Pagepacket/App/PagepacketCommands.swift:35 Toggle Inspector",
     questions: ""
   },
   {
@@ -307,7 +307,7 @@ const rows = [
     area: "Inspector",
     story: "As a user, I can switch inspector tabs for History, Share, and Agents.",
     expected: "InspectorView stores selectedTab defaulting to History; a segmented Picker switches among History, Share, and Agents; the scroll area renders HistoryView, ShareView, or AgentsPanel.",
-    source: "Sources/Graft/Views/InspectorView.swift:3 InspectorView",
+    source: "Sources/Pagepacket/Views/InspectorView.swift:3 InspectorView",
     questions: ""
   },
   {
@@ -315,7 +315,7 @@ const rows = [
     area: "Inspector",
     story: "As a user, I can inspect agent-safe editing guidance and statuses.",
     expected: "AgentsPanel shows explanatory copy, renders workspace.agents cards, and lists the CLI sync contract commands pagepacket-cli status, snapshot, apply, and the skill path.",
-    source: "Sources/Graft/Views/InspectorView.swift:37 AgentsPanel; Sources/Graft/Stores/WorkspaceStore.swift:21 agents",
+    source: "Sources/Pagepacket/Views/InspectorView.swift:37 AgentsPanel; Sources/Pagepacket/Stores/WorkspaceStore.swift:21 agents",
     questions: "AgentKind defines Hermes and Shell, but default displayed agents are Codex, Claude Code, and Cursor."
   },
   {
@@ -323,7 +323,7 @@ const rows = [
     area: "Sharing",
     story: "As a user, I can add a local invite intent by email and role.",
     expected: "ShareView binds a text field and segmented role picker; Add Invite calls addInvite(email:role:), which ignores blank trimmed emails, appends an Invite, writes the manifest, and then clears the field.",
-    source: "Sources/Graft/Views/ShareView.swift:3 ShareView; Sources/Graft/Stores/WorkspaceStore.swift:189 addInvite; Sources/Graft/Models/Invite.swift:3 InviteRole",
+    source: "Sources/Pagepacket/Views/ShareView.swift:3 ShareView; Sources/Pagepacket/Stores/WorkspaceStore.swift:189 addInvite; Sources/Pagepacket/Models/Invite.swift:3 InviteRole",
     questions: "No email-format validation is implemented; store starts with hardcoded sample invites."
   },
   {
@@ -331,7 +331,7 @@ const rows = [
     area: "Sharing",
     story: "As a user, invite changes are saved beside the workspace.",
     expected: "addInvite, removeInvite, and composeEmail all call writeInviteManifest(), which creates .pagepacket/shares and writes pretty-printed sorted JSON to .pagepacket/shares/invites.json.",
-    source: "Sources/Graft/Stores/WorkspaceStore.swift:189 addInvite; Sources/Graft/Stores/WorkspaceStore.swift:195 removeInvite; Sources/Graft/Stores/WorkspaceStore.swift:200 composeEmail; Sources/Graft/Stores/WorkspaceStore.swift:252 writeInviteManifest",
+    source: "Sources/Pagepacket/Stores/WorkspaceStore.swift:189 addInvite; Sources/Pagepacket/Stores/WorkspaceStore.swift:195 removeInvite; Sources/Pagepacket/Stores/WorkspaceStore.swift:200 composeEmail; Sources/Pagepacket/Stores/WorkspaceStore.swift:252 writeInviteManifest",
     questions: "No code reads invites.json back into the app state."
   },
   {
@@ -339,7 +339,7 @@ const rows = [
     area: "Sharing",
     story: "As a user, I can compose an invite email.",
     expected: "The envelope button calls composeEmail(for:), which writes the manifest, builds a mailto URL to the invite email with a Pagepacket invitation subject/body containing role, workspace name/path, and local-first instructions, then opens it through NSWorkspace.",
-    source: "Sources/Graft/Views/ShareView.swift:51 envelope button; Sources/Graft/Stores/WorkspaceStore.swift:200 composeEmail",
+    source: "Sources/Pagepacket/Views/ShareView.swift:51 envelope button; Sources/Pagepacket/Stores/WorkspaceStore.swift:200 composeEmail",
     questions: "The app composes only; actual sending is delegated to the OS mail client."
   },
   {
@@ -347,7 +347,7 @@ const rows = [
     area: "Sharing",
     story: "As a user, I can remove a local invite intent.",
     expected: "The xmark button calls removeInvite(_:) and removes all invites with the same id, then writes the manifest.",
-    source: "Sources/Graft/Views/ShareView.swift:58 remove button; Sources/Graft/Stores/WorkspaceStore.swift:195 removeInvite",
+    source: "Sources/Pagepacket/Views/ShareView.swift:58 remove button; Sources/Pagepacket/Stores/WorkspaceStore.swift:195 removeInvite",
     questions: ""
   },
   {
@@ -355,7 +355,7 @@ const rows = [
     area: "Settings",
     story: "As a user, I can see an autosave setting in Settings.",
     expected: "SettingsView exposes a Toggle labeled Autosave on every edit bound to workspace.autosaveEnabled; the store default is false. MarkdownEditorView observes editorText and calls saveCurrentDocument when autosaveEnabled is true and the document is dirty.",
-    source: "Sources/Graft/App/SettingsView.swift:8 Editor section; Sources/Graft/Stores/WorkspaceStore.swift:26 autosaveEnabled; Sources/Graft/Views/MarkdownEditorView.swift:36 onChange",
+    source: "Sources/Pagepacket/App/SettingsView.swift:8 Editor section; Sources/Pagepacket/Stores/WorkspaceStore.swift:26 autosaveEnabled; Sources/Pagepacket/Views/MarkdownEditorView.swift:36 onChange",
     questions: ""
   },
   {
@@ -363,7 +363,7 @@ const rows = [
     area: "Settings",
     story: "As a user, I can adjust editor font size.",
     expected: "SettingsView exposes a Stepper from 12 to 24 bound to workspace.editorFontSize; MarkdownEditorView uses that value for the TextEditor monospaced font size.",
-    source: "Sources/Graft/App/SettingsView.swift:10 Stepper; Sources/Graft/Views/MarkdownEditorView.swift:33 font",
+    source: "Sources/Pagepacket/App/SettingsView.swift:10 Stepper; Sources/Pagepacket/Views/MarkdownEditorView.swift:33 font",
     questions: "No persistence for the setting was found."
   },
   {
@@ -371,7 +371,7 @@ const rows = [
     area: "Settings",
     story: "As a user, I can disable external agent-change detection.",
     expected: "SettingsView exposes a Toggle bound to externalChangeDetectionEnabled; handleExternalChange returns immediately when that Boolean is false.",
-    source: "Sources/Graft/App/SettingsView.swift:11 Toggle; Sources/Graft/Stores/WorkspaceStore.swift:226 guard externalChangeDetectionEnabled",
+    source: "Sources/Pagepacket/App/SettingsView.swift:11 Toggle; Sources/Pagepacket/Stores/WorkspaceStore.swift:226 guard externalChangeDetectionEnabled",
     questions: ""
   },
   {
@@ -379,7 +379,7 @@ const rows = [
     area: "Settings",
     story: "As a user, I can see the configured sidecar and asset folders.",
     expected: "SettingsView displays read-only labeled content values Sidecar folder .pagepacket and Asset folder assets.",
-    source: "Sources/Graft/App/SettingsView.swift:14 Workspace section",
+    source: "Sources/Pagepacket/App/SettingsView.swift:14 Workspace section",
     questions: ""
   },
   {
@@ -387,7 +387,7 @@ const rows = [
     area: "Keyboard Shortcuts",
     story: "As a keyboard-driven user, I can use menu shortcuts for common workspace actions.",
     expected: "Pagepacket commands add Open Workspace... with Cmd-Shift-O, Save Document with Cmd-S, Snapshot Version with Cmd-Shift-S, and Toggle Inspector with Cmd-Option-I.",
-    source: "Sources/Graft/App/GraftCommands.swift:7 Open Workspace; Sources/Graft/App/GraftCommands.swift:13 Save Document; Sources/Graft/App/GraftCommands.swift:18 Snapshot Version; Sources/Graft/App/GraftCommands.swift:35 Toggle Inspector",
+    source: "Sources/Pagepacket/App/PagepacketCommands.swift:7 Open Workspace; Sources/Pagepacket/App/PagepacketCommands.swift:13 Save Document; Sources/Pagepacket/App/PagepacketCommands.swift:18 Snapshot Version; Sources/Pagepacket/App/PagepacketCommands.swift:35 Toggle Inspector",
     questions: ""
   },
   {
@@ -395,15 +395,15 @@ const rows = [
     area: "CLI",
     story: "As a CLI user, I can discover supported commands.",
     expected: "No command or an unknown command prints usage text listing status, snapshot, apply, and history commands.",
-    source: "Sources/GraftCLI/main.swift:4 GraftCLI.main; Sources/GraftCLI/main.swift:130 printUsage",
+    source: "Sources/PagepacketCLI/main.swift:4 PagepacketCLI.main; Sources/PagepacketCLI/main.swift:130 printUsage",
     questions: "Unknown commands print usage but do not explicitly exit nonzero."
   },
   {
     id: "CLI-002",
     area: "CLI",
     story: "As a CLI user, I can inspect a vault's Markdown inventory.",
-    expected: "pagepacket-cli status <vault> prints the vault path, Markdown file count, .pagepacket sidecar path, and up to 12 sorted relative .md paths; hidden files and paths containing /.pagepacket/ or legacy /.graft/ are skipped.",
-    source: "Sources/GraftCLI/main.swift:25 status; Sources/GraftCLI/main.swift:106 markdownFiles",
+    expected: "pagepacket-cli status <vault> prints the vault path, Markdown file count, .pagepacket sidecar path, and up to 12 sorted relative .md paths; hidden files and paths containing /.pagepacket/ or legacy /.pagepacket/ are skipped.",
+    source: "Sources/PagepacketCLI/main.swift:25 status; Sources/PagepacketCLI/main.swift:106 markdownFiles",
     questions: "A missing/nonexistent vault reports zero Markdown files instead of an error."
   },
   {
@@ -411,7 +411,7 @@ const rows = [
     area: "CLI",
     story: "As a CLI user, I can checkpoint a Markdown file before edits.",
     expected: "pagepacket-cli snapshot <vault> <file> --message <message> reads the file, defaults message to CLI checkpoint when absent, and writes a millisecond timestamped snapshot under .pagepacket/history/<safe-file>/ with pagepacket_* front matter.",
-    source: "Sources/GraftCLI/main.swift:37 snapshot; Sources/GraftCLI/main.swift:76 writeSnapshot",
+    source: "Sources/PagepacketCLI/main.swift:37 snapshot; Sources/PagepacketCLI/main.swift:76 writeSnapshot",
     questions: ""
   },
   {
@@ -419,7 +419,7 @@ const rows = [
     area: "CLI",
     story: "As a CLI user, I can record an external edit by an agent or author.",
     expected: "pagepacket-cli apply <vault> <file> --author <author> defaults author to agent and writes a snapshot with reason Applied external edit by <author> and source <author>.",
-    source: "Sources/GraftCLI/main.swift:48 apply; Sources/GraftCLI/main.swift:76 writeSnapshot",
+    source: "Sources/PagepacketCLI/main.swift:48 apply; Sources/PagepacketCLI/main.swift:76 writeSnapshot",
     questions: "apply currently checkpoints; it does not apply or reconcile a diff."
   },
   {
@@ -427,16 +427,16 @@ const rows = [
     area: "CLI",
     story: "As a CLI user, I can list snapshot history for a Markdown file.",
     expected: "pagepacket-cli history <vault> <file> reads .pagepacket/history/<safe-file>/, prints No snapshots for missing folders, otherwise prints snapshot IDs newest-first by filename.",
-    source: "Sources/GraftCLI/main.swift:59 history",
+    source: "Sources/PagepacketCLI/main.swift:59 history",
     questions: "History does not show reason/source metadata."
   },
   {
     id: "CLI-006",
     area: "Package",
     story: "As a developer, I can build the app and CLI from SwiftPM.",
-    expected: "Package.swift defines a macOS 14 package named Pagepacket with executable products Pagepacket and pagepacket-cli and executable targets Sources/Graft and Sources/GraftCLI.",
+    expected: "Package.swift defines a macOS 14 package named Pagepacket with executable products Pagepacket and pagepacket-cli and executable targets Sources/Pagepacket and Sources/PagepacketCLI.",
     source: "Package.swift:4 package; Package.swift:10 products; Package.swift:14 targets",
-    questions: "Internal target/source-directory names still use Graft; product and executable names are Pagepacket/pagepacket-cli."
+    questions: "Internal target/source-directory names still use Pagepacket; product and executable names are Pagepacket/pagepacket-cli."
   },
   {
     id: "CLI-007",
@@ -594,7 +594,7 @@ const rows = [
     id: "SAMPLE-001",
     area: "Sample Vault",
     story: "As a user, I can open a sample Markdown vault showing supported content.",
-    expected: "SampleVault/welcome.md contains headings, lists, tasks, a quote, a table, fenced code, and an image link to assets/welcome/graft-sample.ppm.",
+    expected: "SampleVault/welcome.md contains headings, lists, tasks, a quote, a table, fenced code, and an image link to assets/welcome/pagepacket-sample.ppm.",
     source: "SampleVault/welcome.md:1 sample Markdown",
     questions: "Sample text mentions link rendering; renderer relies on AttributedString inline parsing rather than a link block model."
   },
@@ -604,7 +604,7 @@ const rows = [
     story: "As a maintainer, I can inspect sample pending agent-change sidecar metadata.",
     expected: "SampleVault/.pagepacket/changes/*.json records include agent, authorKind, authorName, createdAt, filePath, id, metadataVersion, source, status, and summary.",
     source: "SampleVault/.pagepacket/changes/20260620-001429-904-codex.json:1 sample change JSON",
-    questions: "No Sources/Graft code reads .pagepacket/changes files."
+    questions: "No Sources/Pagepacket code reads .pagepacket/changes files."
   },
   {
     id: "SAMPLE-003",
@@ -612,7 +612,7 @@ const rows = [
     story: "As a maintainer, I can inspect sample pending review-packet sidecar metadata.",
     expected: "SampleVault/.pagepacket/reviews/pending/<id>.json includes author metadata, file path, base/proposed text, range entries with before/after line ranges and conflict flags, pending status, and summary.",
     source: "SampleVault/.pagepacket/reviews/pending/31665715-93BE-4863-A3EF-D4F6D73DD71B.json:1 sample review JSON",
-    questions: "No Review model/store implementation was found in Sources/Graft."
+    questions: "No Review model/store implementation was found in Sources/Pagepacket."
   },
   {
     id: "SAMPLE-004",
@@ -634,8 +634,8 @@ const rows = [
     id: "DOC-001",
     area: "Agent Skill",
     story: "As a coding agent, I can follow a repo-local workflow for safe Markdown edits.",
-    expected: "skills/graft-sync/SKILL.md instructs agents to run pagepacket-cli status, snapshot before broad edits, edit normal Markdown files directly, avoid hand-editing .pagepacket, register completed edits with pagepacket-cli apply, and stop for user choice on external-change conflicts.",
-    source: "skills/graft-sync/SKILL.md:1 pagepacket Sync",
+    expected: "skills/pagepacket-sync/SKILL.md instructs agents to run pagepacket-cli status, snapshot before broad edits, edit normal Markdown files directly, avoid hand-editing .pagepacket, register completed edits with pagepacket-cli apply, and stop for user choice on external-change conflicts.",
+    source: "skills/pagepacket-sync/SKILL.md:1 pagepacket Sync",
     questions: ""
   },
   {
@@ -653,10 +653,10 @@ const defectSeeds = [
     id: "D-001",
     featureId: "SITE-007 / SITE-010 / APP-024 / CLI-002 / SAMPLE-002 / SAMPLE-003 / SAMPLE-004",
     area: "Branding / Sidecar",
-    defect: "Landing page and sample artifacts advertised pagepacket-cli and .pagepacket while the app and CLI exposed old Graft/graft-cli/.graft surfaces.",
+    defect: "Landing page and sample artifacts advertised pagepacket-cli and .pagepacket while the app and CLI exposed old Pagepacket/pagepacket-cli/.pagepacket surfaces.",
     type: "Functional/logistical",
     status: "Verified",
-    source: "landing page/index.html:90; landing page/index.html:236; Sources/GraftCLI/main.swift:31; Sources/Graft/Services/VersionHistoryStore.swift:7",
+    source: "landing page/index.html:90; landing page/index.html:236; Sources/PagepacketCLI/main.swift:31; Sources/Pagepacket/Services/VersionHistoryStore.swift:7",
     resolution: "Renamed package products, app bundle/script output, visible app copy, CLI copy/output, docs, sample vault, and sidecar writes to Pagepacket/pagepacket-cli/.pagepacket."
   },
   {
@@ -666,17 +666,17 @@ const defectSeeds = [
     defect: "Autosave setting was exposed but no code path saved on edit when autosaveEnabled was true.",
     type: "Functional/logistical",
     status: "Verified",
-    source: "Sources/Graft/App/SettingsView.swift:9; Sources/Graft/Stores/WorkspaceStore.swift:26",
+    source: "Sources/Pagepacket/App/SettingsView.swift:9; Sources/Pagepacket/Stores/WorkspaceStore.swift:26",
     resolution: "MarkdownEditorView now observes editorText and calls saveCurrentDocument when autosaveEnabled and dirty."
   },
   {
     id: "D-003",
     featureId: "SAMPLE-002 / SAMPLE-003",
     area: "Review Packets",
-    defect: "Sample .pagepacket review/change sidecars exist, but no Sources/Graft model or store reads them.",
+    defect: "Sample .pagepacket review/change sidecars exist, but no Sources/Pagepacket model or store reads them.",
     type: "Open question",
     status: "Open question",
-    source: "SampleVault/.pagepacket/reviews/pending/31665715-93BE-4863-A3EF-D4F6D73DD71B.json:1; Sources/Graft/Stores/WorkspaceStore.swift",
+    source: "SampleVault/.pagepacket/reviews/pending/31665715-93BE-4863-A3EF-D4F6D73DD71B.json:1; Sources/Pagepacket/Stores/WorkspaceStore.swift",
     resolution: "Left as an explicit product/implementation gap rather than a loop bug; no app behavior currently claims to read these sidecars."
   },
   {
@@ -696,7 +696,7 @@ const defectSeeds = [
     defect: "App and CLI snapshot IDs used second-level timestamps, so rapid snapshots for the same file could overwrite/collide.",
     type: "Functional/logistical",
     status: "Verified",
-    source: "Sources/Graft/Services/VersionHistoryStore.swift:101; Sources/GraftCLI/main.swift:85",
+    source: "Sources/Pagepacket/Services/VersionHistoryStore.swift:101; Sources/PagepacketCLI/main.swift:85",
     resolution: "App and CLI snapshot IDs now include milliseconds; temp-vault retest produced two distinct same-second snapshots."
   }
 ];
@@ -874,7 +874,7 @@ const logValues = [
   ["Timestamp", "Phase / iteration", "Command or method", "Result", "Notes"],
   [generatedAt, "Phase 0", "Static repo scan", "Completed", "Detected SwiftPM macOS app, pagepacket-cli, static landing page, no Swift test targets in Package.swift, empty Tests/BrandingTests directory."],
   [generatedAt, "Phase 1", "Code-derived catalog", "Completed", `Cataloged ${rows.length} user stories from source files and sample artifacts.`],
-  [generatedAt, "Loop 1 Test", "swift build --jobs 1 --build-path /tmp/graft-behavior-spec-build", "Pass", "Build complete; Pagepacket and pagepacket-cli linked."],
+  [generatedAt, "Loop 1 Test", "swift build --jobs 1 --build-path /tmp/pagepacket-behavior-spec-build", "Pass", "Build complete; Pagepacket and pagepacket-cli linked."],
   [generatedAt, "Loop 1 Test", "./script/build_and_run.sh --verify", "Pass", "Build script staged dist/Pagepacket.app, opened it, and pgrep -x Pagepacket succeeded."],
   [generatedAt, "Loop 1 Test", "pagepacket-cli usage/status/history", "Pass", "Usage printed for missing/unknown commands; status SampleVault reported one Markdown file and .pagepacket sidecar path; history listed sample .pagepacket snapshots."],
   [generatedAt, "Loop 1 Test", "pagepacket-cli snapshot/apply/history in temp vault", "Pass", "snapshot and apply now write distinct millisecond IDs in the same second."],

@@ -5,16 +5,19 @@ struct MarkdownPreviewView: View {
     @EnvironmentObject private var workspace: WorkspaceStore
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 14) {
-                ForEach(workspace.renderedBlocks) { block in
-                    blockView(block)
+        GeometryReader { proxy in
+            ScrollView {
+                VStack(alignment: .leading, spacing: 14) {
+                    ForEach(workspace.renderedBlocks) { block in
+                        blockView(block)
+                    }
                 }
+                .frame(width: contentWidth(for: proxy.size.width), alignment: .leading)
+                .padding(32)
+                .foregroundStyle(PagepacketTheme.body)
             }
-            .frame(maxWidth: 760, alignment: .leading)
-            .padding(32)
+            .background(PagepacketTheme.surfaceSoft)
         }
-        .background(GraftTheme.surfaceSoft)
     }
 
     @ViewBuilder
@@ -23,63 +26,69 @@ struct MarkdownPreviewView: View {
         case let .heading(level, text):
             Text(text)
                 .font(.system(size: headingSize(level), weight: .medium, design: .rounded))
-                .foregroundStyle(GraftTheme.ink)
+                .foregroundStyle(PagepacketTheme.ink)
                 .padding(.top, level == 1 ? 8 : 4)
         case let .paragraph(text):
             MarkdownInlineText(text)
                 .font(.body)
+                .foregroundStyle(PagepacketTheme.body)
                 .lineSpacing(4)
         case let .quote(text):
             HStack(alignment: .top, spacing: 12) {
                 RoundedRectangle(cornerRadius: 2)
-                    .fill(GraftTheme.lavender)
+                    .fill(PagepacketTheme.lavender)
                     .frame(width: 4)
                 MarkdownInlineText(text)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(PagepacketTheme.muted)
             }
             .padding(.vertical, 4)
         case let .unorderedItem(text):
             Label {
                 MarkdownInlineText(text)
+                    .foregroundStyle(PagepacketTheme.body)
             } icon: {
                 Circle()
-                    .fill(GraftTheme.teal)
+                    .fill(PagepacketTheme.teal)
                     .frame(width: 6, height: 6)
             }
         case let .orderedItem(text):
             HStack(alignment: .top) {
                 Text("1.")
-                    .foregroundStyle(GraftTheme.ochre)
+                    .foregroundStyle(PagepacketTheme.ochre)
                 MarkdownInlineText(text)
+                    .foregroundStyle(PagepacketTheme.body)
             }
         case let .task(done, text):
             HStack {
                 Image(systemName: done ? "checkmark.square.fill" : "square")
-                    .foregroundStyle(done ? GraftTheme.teal : .secondary)
+                    .foregroundStyle(done ? PagepacketTheme.teal : PagepacketTheme.muted)
                 MarkdownInlineText(text)
+                    .foregroundStyle(PagepacketTheme.body)
             }
         case let .code(language, text):
             VStack(alignment: .leading, spacing: 8) {
                 if let language {
                     Text(language.uppercased())
                         .font(.caption.weight(.semibold))
-                        .foregroundStyle(GraftTheme.muted)
+                        .foregroundStyle(PagepacketTheme.muted)
                 }
                 Text(text)
                     .font(.system(.body, design: .monospaced))
+                    .foregroundStyle(PagepacketTheme.ink)
                     .textSelection(.enabled)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .graftCard()
+            .pagepacketCard()
         case let .table(headers, rows):
             VStack(alignment: .leading, spacing: 0) {
                 HStack(spacing: 0) {
                     ForEach(Array(headers.enumerated()), id: \.offset) { _, header in
                         Text(header)
                             .font(.caption.weight(.semibold))
+                            .foregroundStyle(PagepacketTheme.ink)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(8)
-                            .background(GraftTheme.ochre.opacity(0.28))
+                            .background(PagepacketTheme.ochre.opacity(0.28))
                     }
                 }
                 ForEach(Array(rows.enumerated()), id: \.offset) { rowIndex, row in
@@ -87,6 +96,7 @@ struct MarkdownPreviewView: View {
                         ForEach(Array(normalized(row, width: headers.count).enumerated()), id: \.offset) { _, cell in
                             MarkdownInlineText(cell)
                                 .font(.callout)
+                                .foregroundStyle(PagepacketTheme.body)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .padding(8)
                                 .background(rowIndex.isMultiple(of: 2) ? Color.black.opacity(0.025) : Color.clear)
@@ -97,7 +107,7 @@ struct MarkdownPreviewView: View {
             .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
             .overlay {
                 RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .stroke(.black.opacity(0.08), lineWidth: 1)
+                    .stroke(PagepacketTheme.divider.opacity(0.75), lineWidth: 1)
             }
             .padding(.vertical, 4)
         case let .image(alt, path):
@@ -125,13 +135,13 @@ struct MarkdownPreviewView: View {
                         .lineLimit(1)
                 }
                 .font(.caption)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(PagepacketTheme.muted)
             }
-            .graftCard()
+            .pagepacketCard()
         } else {
             Label("Missing image: \(path)", systemImage: "photo")
-                .foregroundStyle(GraftTheme.pink)
-                .graftCard()
+                .foregroundStyle(PagepacketTheme.pink)
+                .pagepacketCard()
         }
     }
 
@@ -156,6 +166,10 @@ struct MarkdownPreviewView: View {
         }
         return row + Array(repeating: "", count: width - row.count)
     }
+
+    private func contentWidth(for containerWidth: CGFloat) -> CGFloat {
+        min(max(containerWidth - 64, 260), 760)
+    }
 }
 
 private struct MarkdownInlineText: View {
@@ -166,10 +180,14 @@ private struct MarkdownInlineText: View {
     }
 
     var body: some View {
-        if let attributed = try? AttributedString(markdown: text) {
-            Text(attributed)
-        } else {
-            Text(text)
+        Group {
+            if let attributed = try? AttributedString(markdown: text) {
+                Text(attributed)
+            } else {
+                Text(text)
+            }
         }
+        .lineLimit(nil)
+        .fixedSize(horizontal: false, vertical: true)
     }
 }

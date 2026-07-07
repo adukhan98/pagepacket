@@ -14,11 +14,16 @@ struct EditorContainerView: View {
                 case .preview:
                     MarkdownPreviewView()
                 case .split:
-                    HSplitView {
+                    HStack(spacing: 0) {
                         MarkdownEditorView()
-                            .frame(minWidth: 360)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .clipped()
+                        Rectangle()
+                            .fill(PagepacketTheme.divider)
+                            .frame(width: 1)
                         MarkdownPreviewView()
-                            .frame(minWidth: 360)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .clipped()
                     }
                 }
             }
@@ -33,22 +38,23 @@ private struct EmptyWorkspaceView: View {
         VStack(spacing: 20) {
             ZStack {
                 RoundedRectangle(cornerRadius: 28, style: .continuous)
-                    .fill(GraftTheme.peach)
+                    .fill(PagepacketTheme.peach)
                     .frame(width: 168, height: 128)
                     .rotationEffect(.degrees(-4))
                 RoundedRectangle(cornerRadius: 24, style: .continuous)
-                    .fill(GraftTheme.lavender)
+                    .fill(PagepacketTheme.lavender)
                     .frame(width: 142, height: 104)
                     .rotationEffect(.degrees(6))
                 Image(systemName: "doc.richtext")
                     .font(.system(size: 46, weight: .medium))
-                    .foregroundStyle(GraftTheme.ink)
+                    .foregroundStyle(PagepacketTheme.ink)
             }
             Text("Open a Markdown workspace")
                 .font(.system(size: 36, weight: .medium, design: .rounded))
+                .foregroundStyle(PagepacketTheme.ink)
             Text("Pagepacket keeps your Markdown as plain files so people, Codex, Claude Code, Cursor, Hermes, and shell tools can edit the same workspace.")
                 .font(.title3)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(PagepacketTheme.muted)
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: 620)
             Button {
@@ -61,6 +67,7 @@ private struct EmptyWorkspaceView: View {
         }
         .padding(48)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(GraftTheme.canvas)
+        .foregroundStyle(PagepacketTheme.body)
+        .background(PagepacketTheme.canvas)
     }
 }

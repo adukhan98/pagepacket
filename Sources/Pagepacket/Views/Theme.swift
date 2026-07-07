@@ -1,6 +1,7 @@
+import AppKit
 import SwiftUI
 
-enum GraftTheme {
+enum PagepacketTheme {
     static let canvas = Color(hex: 0xFFFAF0)
     static let surfaceSoft = Color(hex: 0xFAF5E8)
     static let surfaceCard = Color(hex: 0xF5F0E0)
@@ -13,6 +14,13 @@ enum GraftTheme {
     static let peach = Color(hex: 0xFFB084)
     static let ochre = Color(hex: 0xE8B94A)
     static let mint = Color(hex: 0xA4D4C5)
+    static let divider = Color.black.opacity(0.14)
+    static let statusBar = Color(hex: 0x8B8577)
+
+    static let nsCanvas = NSColor(hex: 0xFFFAF0)
+    static let nsBody = NSColor(hex: 0x3A3A3A)
+    static let nsInk = NSColor(hex: 0x0A0A0A)
+    static let nsSelection = NSColor(hex: 0xA4D4C5, alpha: 0.42)
 
     static func accent(_ name: String) -> Color {
         switch name {
@@ -38,21 +46,33 @@ extension Color {
     }
 }
 
+extension NSColor {
+    convenience init(hex: UInt, alpha: CGFloat = 1) {
+        self.init(
+            calibratedRed: CGFloat((hex >> 16) & 0xff) / 255,
+            green: CGFloat((hex >> 8) & 0xff) / 255,
+            blue: CGFloat(hex & 0xff) / 255,
+            alpha: alpha
+        )
+    }
+}
+
 struct CardBackground: ViewModifier {
     func body(content: Content) -> some View {
         content
             .padding(14)
-            .background(GraftTheme.surfaceCard)
+            .foregroundStyle(PagepacketTheme.body)
+            .background(PagepacketTheme.surfaceCard)
             .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
             .overlay {
                 RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .stroke(.black.opacity(0.08), lineWidth: 1)
+                    .stroke(PagepacketTheme.divider.opacity(0.75), lineWidth: 1)
             }
     }
 }
 
 extension View {
-    func graftCard() -> some View {
+    func pagepacketCard() -> some View {
         modifier(CardBackground())
     }
 }
